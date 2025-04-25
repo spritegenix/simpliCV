@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Resume {
+  id              String           @id @default(cuid())
+  userId          String
+  title           String?
+  description     String?
+  photoUrl        String?
+  colorHex        String           @default("#000000")
+  borderStyle     String           @default("squircle")
+  baseFontSize    Int              @default(10)
+  summary         String?
+  firstName       String?
+  lastName        String?
+  jobTitle        String?
+  city            String?
+  country         String?
+  phone           String?
+  email           String?
+  socialLinks     String[]
+  portfolioLink   String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  skills          Skill[]
+  educations      Education[]
+  workExperiences WorkExperience[]
+  projectWorks    ProjectWork[]
+  certifications  Certification[]
+  others          Other?
+  styleId         String?
+
+  @@map("resumes")
+}
+
+model WorkExperience {
+  id          String    @id @default(cuid())
+  position    String?
+  company     String?
+  jobLocation String?
+  startDate   DateTime?
+  endDate     DateTime?
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resumeId String @default("1")
+
+  @@map("work_experiences")
+}
+
+model Education {
+  id          String    @id @default(cuid())
+  degree      String?
+  school      String?
+  location    String?
+  marks       String?
+  stream      String?
+  startDate   DateTime?
+  endDate     DateTime?
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resumeId String
+
+  @@map("educations")
+}
+
+model ProjectWork {
+  id          String    @id @default(cuid())
+  company     String?
+  title       String?
+  startDate   DateTime?
+  endDate     DateTime?
+  description String?
+  createdAt   DateTime  @default(now())
+  links       String[]
+  updatedAt   DateTime  @updatedAt
+
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resumeId String
+
+  @@map("project_works")
+}
+
+model Certification {
+  id          String   @id @default(cuid())
+  title       String?
+  description String?
+  link        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resumeId String
+
+  @@map("certifications")
+}
+
+model Skill {
+  id        String   @id @default(cuid())
+  title     String?
+  skillName String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resumeId String
+
+  @@map("skills")
+}
+
+model Other {
+  id     String @id @default(cuid())
+  resume Resume @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  title       String?   
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("others")
+}
+
+model UserSubscription {
+  id                      String   @id @default(cuid())
+  userId                  String   @unique
+  stripeCustomerId        String   @unique
+  stripeSubscriptionId    String   @unique
+  stripePriceId           String
+  stripeCurrentPeriodEnd  DateTime
+  stripeCancelAtPeriodEnd Boolean  @default(false)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@map("user_subscriptions")
+}
