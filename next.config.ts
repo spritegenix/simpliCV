@@ -9,6 +9,7 @@ const pwaConfig = withPWA({
 
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   runtime: "nodejs",
   experimental: {
     serverActions: {

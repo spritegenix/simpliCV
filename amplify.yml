@@ -39,6 +39,15 @@ frontend:
     baseDirectory: .next
     files:
       - "**/*"
+    secondaryArtifacts:
+      standalone:
+        baseDirectory: .next/standalone
+        files:
+          - "**/*"
+      static:
+        baseDirectory: public
+        files:
+          - "**/*"
   cache:
     paths:
       - node_modules/**/*
