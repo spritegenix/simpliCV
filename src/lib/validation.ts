@@ -12,16 +12,24 @@ export type GeneralInfoValues = z.infer<typeof generalInfoSchema>;
 
 export const personalInfoSchema = z.object({
   photo: z
-    .custom<File | undefined>()
-    .refine(
-      (file) =>
-        !file || (file instanceof File && file.type.startsWith("image/")),
-      "Must be an image file",
-    )
-    .refine(
-      (file) => !file || file.size <= 1024 * 1024 * 4,
-      "File must be less than 4MB",
-    ),
+    .union([
+      // Case 1: Photo is a File (for when a new file is uploaded)
+      z.instanceof(File).refine(
+        (file) => file.type.startsWith("image/"),
+        "Must be an image file"
+      ).refine(
+        (file) => file.size <= 1024 * 1024 * 4,
+        "File must be less than 4MB"
+      ),
+      
+      // Case 2: Photo is a string (for when a URL is already provided)
+      z.string().url("Invalid URL for photo").optional(),
+      
+      // Case 3: Photo can be null (for deleting photo)
+      z.literal(null).optional(),
+    ])
+    .optional(),
+  
   firstName: optionalString,
   lastName: optionalString,
   jobTitle: optionalString,

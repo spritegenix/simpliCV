@@ -5,8 +5,12 @@ import prisma from "@/lib/prisma";
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { resumeSchema, ResumeValues } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
-import { del, put } from "@vercel/blob";
-import path from "path";
+// import { del, put } from "@vercel/blob";
+// import { uploadToS3, deleteFromS3 } from "@/lib/s3"; 
+import { deleteFromS3 } from "@/lib/s3"; 
+// import path from "path";
+
+
 
 export async function saveResume(values: ResumeValues) {
   const { id } = values;
@@ -50,19 +54,51 @@ export async function saveResume(values: ResumeValues) {
 
   let newPhotoUrl: string | undefined | null = undefined;
 
-  if (photo instanceof File) {
-    if (existingResume?.photoUrl) {
-      await del(existingResume.photoUrl);
-    }
+  // Old S3 Code Upload
+  // if (photo instanceof File) {
+  //   if (existingResume?.photoUrl) {
+  //     // await del(existingResume.photoUrl);
+  //     const urlParts = new URL(existingResume.photoUrl);
+  //     const key = urlParts.pathname.substring(1);
+  //     await deleteFromS3(key);
+  //   }
 
-    const blob = await put(`resume_photos/${path.extname(photo.name)}`, photo, {
-      access: "public",
-    });
+  //   // const blob = await put(`resume_photos/${path.extname(photo.name)}`, photo, {
+  //   //   access: "public",
+  //   // });
 
-    newPhotoUrl = blob.url;
+  //   // newPhotoUrl = blob.url;
+  //   const fileExtension = path.extname(photo.name);
+  //   const key = `resume_photos/${userId}_${Date.now()}${fileExtension}`;
+  //   const arrayBuffer = await photo.arrayBuffer();
+  //   const buffer = Buffer.from(arrayBuffer);
+    
+  //   // Upload to S3 with the content type from the File object
+  //   const newUrl = await uploadToS3(buffer, key, photo.type);
+  //   newPhotoUrl = newUrl;
+  // } else if (photo === null) {
+  //   if (existingResume?.photoUrl) {
+  //     //-------> Vercel Bolb 
+  //     // await del(existingResume.photoUrl);
+  //     //---------> S3
+  //     const urlParts = new URL(existingResume.photoUrl);
+  //     const key = urlParts.pathname.substring(1); // Remove leading slash
+  //     await deleteFromS3(key);
+  //   }
+  //   newPhotoUrl = null;
+  // }
+
+  // New improved S3 code
+  if (typeof photo === "string") {
+    // 🛠️ Updated: Photo is already uploaded via presigned URL, save the URL
+    newPhotoUrl = photo;
   } else if (photo === null) {
+    // 🛠️ Updated: If photo is null (user deleted), delete from S3
     if (existingResume?.photoUrl) {
-      await del(existingResume.photoUrl);
+      const urlParts = new URL(existingResume.photoUrl);
+      const key = urlParts.pathname.substring(1); // Remove leading slash
+      await deleteFromS3(key);
+      existingResume.photoUrl = null;
     }
     newPhotoUrl = null;
   }

@@ -25,7 +25,12 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
 
   const [showSmResumePreview, setShowSmResumePreview] = useState(false);
 
-  const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData);
+  const { isSaving, hasUnsavedChanges } = useAutoSaveResume(
+    resumeData,
+    setResumeData,
+  );
+  // const { isSaving: isSavingP, hasUnsavedChanges: hasUnsavedChangesP } =
+  //   useAutoSavePhoto(resumeData, setResumeData);
 
   useUnloadWarning(hasUnsavedChanges);
 
@@ -80,3 +85,149 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
     </div>
   );
 }
+
+// -------------------------------------- //
+// export function useAutoSavePhoto(
+//   resumeData: ResumeValues,
+//   setResumeData: (data: ResumeValues) => void,
+// ) {
+//   const { toast } = useToast();
+
+//   const { photo } = resumeData;
+
+//   const [isSaving, setIsSaving] = useState(false);
+//   const [isError, setIsError] = useState(false);
+//   const [lastSavedData, setLastSavedData] = useState(resumeData);
+
+//   const hasUnsavedChanges =
+//     JSON.stringify(resumeData.photo) !== JSON.stringify(lastSavedData.photo);
+
+//   useEffect(() => {
+//     async function save() {
+//       try {
+//         setIsSaving(true);
+//         setIsError(false);
+
+//         let updatedPhoto = photo;
+
+//         // 👉 Upload photo to S3 if it's a new file
+//         if (photo instanceof File) {
+//           const { uploadFileToS3 } = await import("@/lib/upload-file");
+//           updatedPhoto = await uploadFileToS3(photo);
+
+//           // ✅ Update resumeData with new uploaded photo URL
+//           setResumeData({
+//             ...resumeData,
+//             photo: updatedPhoto,
+//           });
+//         }
+
+//         // ✅ Save to database
+//         await saveResume({
+//           id: resumeData.id,
+//           photo: updatedPhoto,
+//         });
+
+//         // ✅ Update last saved data
+//         setLastSavedData({
+//           ...resumeData,
+//           photo: updatedPhoto,
+//         });
+//       } catch (error) {
+//         setIsError(true);
+//         console.error(error);
+//         const { dismiss } = toast({
+//           variant: "destructive",
+//           description: (
+//             <div className="space-y-3">
+//               <p>Could not save changes.</p>
+//               <Button
+//                 variant="secondary"
+//                 onClick={() => {
+//                   dismiss();
+//                   save();
+//                 }}
+//               >
+//                 Retry
+//               </Button>
+//             </div>
+//           ),
+//         });
+//       } finally {
+//         setIsSaving(false);
+//       }
+//     }
+
+//     if (hasUnsavedChanges && !isSaving && !isError) {
+//       save();
+//     }
+//   }, [photo, resumeData.photo, isSaving, isError, toast, setResumeData]);
+
+//   return {
+//     isSaving,
+//     hasUnsavedChanges,
+//   };
+// }
+
+/*
+  useEffect(() => {
+    async function save() {
+      try {
+        setIsSaving(true);
+        setIsError(false);
+
+        let updatedPhoto = photo;
+
+        // 👉 Upload photo to S3 if it's a new file
+        if (photo instanceof File) {
+          const { uploadFileToS3 } = await import("@/lib/upload-file");
+          updatedPhoto = await uploadFileToS3(photo);
+
+          // ✅ Update resumeData with new uploaded photo URL
+          setResumeData({
+            ...resumeData,
+            photo: updatedPhoto,
+          });
+        }
+
+        // ✅ Save to database
+        await saveResume({
+          id: resumeData.id,
+          photo: updatedPhoto,
+        });
+
+        // ✅ Update last saved data
+        setLastSavedData({
+          ...resumeData,
+          photo: updatedPhoto,
+        });
+      } catch (error) {
+        setIsError(true);
+        console.error(error);
+        const { dismiss } = toast({
+          variant: "destructive",
+          description: (
+            <div className="space-y-3">
+              <p>Could not save changes.</p>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  dismiss();
+                  save();
+                }}
+              >
+                Retry
+              </Button>
+            </div>
+          ),
+        });
+      } finally {
+        setIsSaving(false);
+      }
+    }
+
+    if (!isSaving && !isError) {
+      save();
+    }
+  }, [photo, resumeData.photo, isSaving, isError, toast]);
+*/
