@@ -33,8 +33,17 @@ export function usePrintPdf() {
       const blob = await response.blob();
       if (controller.signal.aborted) return;
       const pdfUrl = URL.createObjectURL(blob);
+
+      // ✅ Force download
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.download = "resume.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
       // Only open if still not aborted
-      window.open(pdfUrl, "_self");
+      // window.open(pdfUrl, "_self");
 
       // Clean up after a short delay
       setTimeout(() => URL.revokeObjectURL(pdfUrl), 10000);
