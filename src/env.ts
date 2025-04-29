@@ -3,21 +3,24 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    POSTGRES_URL: z.string().min(1),
     POSTGRES_PRISMA_URL: z.string().min(1),
-    POSTGRES_URL_NO_SSL: z.string().min(1),
     POSTGRES_URL_NON_POOLING: z.string().min(1),
-    POSTGRES_USER: z.string().min(1),
-    POSTGRES_HOST: z.string().min(1),
-    POSTGRES_PASSWORD: z.string().min(1),
-    POSTGRES_DATABASE: z.string().min(1),
-    CLERK_SECRET_KEY: z.string().min(1),
-    BLOB_READ_WRITE_TOKEN: z.string().min(1),
+
+    // POSTGRES_URL: z.string().min(1),
+    // POSTGRES_URL_NO_SSL: z.string().min(1),
+    // POSTGRES_USER: z.string().min(1),
+    // POSTGRES_HOST: z.string().min(1),
+    // POSTGRES_PASSWORD: z.string().min(1),
+    // POSTGRES_DATABASE: z.string().min(1),
+    // CLERK_SECRET_KEY: z.string().min(1),
+    // BLOB_READ_WRITE_TOKEN: z.string().min(1),
+
     // OPENAI_API_KEY: z.string().min(1),
     GEMINI_API_KEY: z.string().min(1),
+
     // STRIPE_SECRET_KEY: z.string().min(1),
     // STRIPE_WEBHOOK_SECRET: z.string().min(1),
-    
+
     AWS_ACCESS_KEY_ID: z.string().min(1),
     AWS_SECRET_ACCESS_KEY: z.string().min(1),
     AWS_REGION: z.string().min(1),

@@ -124,7 +124,7 @@ model Other {
   id     String @id @default(cuid())
   resume Resume @relation(fields: [id], references: [id], onDelete: Cascade)
 
-  title       String?   
+  title       String?
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
