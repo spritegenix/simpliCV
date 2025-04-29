@@ -3,12 +3,38 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "Installing dependencies with legacy-peer-deps"
+        - npx --yes npm@latest install --location=global npm # Ensure latest npm
         - npm install --legacy-peer-deps
-        - npm install --include=optional sharp || npm install --os=linux --cpu=x64 sharp
+        # Install `sharp` in Linux mode for image processing
+        - npm install --platform=linux --arch=x64 sharp
     build:
       commands:
-        - npm run build
+        # Write ALL required env variables to `.env` file (supports App Router + API routes)
+        - echo "POSTGRES_PRISMA_URL=$POSTGRES_PRISMA_URL" >> .env
+        - echo "POSTGRES_URL_NON_POOLING=$POSTGRES_URL_NON_POOLING" >> .env
+
+        - echo "STORAGE_AWS_ACCESS_KEY_ID=$STORAGE_AWS_ACCESS_KEY_ID" >> .env
+        - echo "STORAGE_AWS_SECRET_ACCESS_KEY=$STORAGE_AWS_SECRET_ACCESS_KEY" >> .env
+        - echo "STORAGE_AWS_REGION=$STORAGE_AWS_REGION" >> .env
+
+        - echo "NEXT_PUBLIC_S3_BUCKET_NAME=$NEXT_PUBLIC_S3_BUCKET_NAME" >> .env
+
+        - echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> .env
+
+        - echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" >> .env
+        - echo "NEXT_PUBLIC_CLERK_SIGN_IN_URL=$NEXT_PUBLIC_CLERK_SIGN_IN_URL" >> .env
+        - echo "NEXT_PUBLIC_CLERK_SIGN_UP_URL=$NEXT_PUBLIC_CLERK_SIGN_UP_URL" >> .env
+
+        - echo "NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY=$NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY" >> .env
+        - echo "NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY=$NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY" >> .env
+
+        - echo "NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL" >> .env
+        - echo "NEXT_PUBLIC_NODE_ENV=$NEXT_PUBLIC_NODE_ENV" >> .env
+        - echo "NODE_ENV=$NODE_ENV" >> .env
+
+        # Disable telemetry and build
+        - NEXT_TELEMETRY_DISABLED=1 npm run build
+
   artifacts:
     baseDirectory: .next
     files:
@@ -16,3 +42,6 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
+      - .next/cache/**/*
+  build:
+    image: node:20
