@@ -7,7 +7,7 @@ import { resumeSchema, ResumeValues } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
 // import { del, put } from "@vercel/blob";
 // import { uploadToS3, deleteFromS3 } from "@/lib/s3"; 
-import { deleteFromS3 } from "@/lib/s3"; 
+import { deleteFromS3 } from "@/lib/s3";
 // import path from "path";
 
 
@@ -72,7 +72,7 @@ export async function saveResume(values: ResumeValues) {
   //   const key = `resume_photos/${userId}_${Date.now()}${fileExtension}`;
   //   const arrayBuffer = await photo.arrayBuffer();
   //   const buffer = Buffer.from(arrayBuffer);
-    
+
   //   // Upload to S3 with the content type from the File object
   //   const newUrl = await uploadToS3(buffer, key, photo.type);
   //   newPhotoUrl = newUrl;
@@ -96,8 +96,16 @@ export async function saveResume(values: ResumeValues) {
     // 🛠️ Updated: If photo is null (user deleted), delete from S3
     if (existingResume?.photoUrl) {
       const urlParts = new URL(existingResume.photoUrl);
-      const key = urlParts.pathname.substring(1); // Remove leading slash
-      await deleteFromS3(key);
+      const rawKey = urlParts.pathname.substring(1); // Removes leading "/"
+      const key = decodeURIComponent(rawKey); // ✅ Decode to get correct S3 key
+
+      // console.log("S3 Pathname:", urlParts.pathname);           // e.g., "/resume_photos%2Fabc.webp"
+      // console.log("Raw Key:", rawKey);                           // e.g., "resume_photos%2Fabc.webp"
+      // console.log("Decoded S3 Key:", key);                       // ✅ e.g., "resume_photos/abc.webp"
+
+      const deleted = await deleteFromS3(key);
+      console.log("Deleting S3 key result:", deleted);
+
       existingResume.photoUrl = null;
     }
     newPhotoUrl = null;
@@ -145,11 +153,11 @@ export async function saveResume(values: ResumeValues) {
             endDate: project.endDate ? new Date(project.endDate) : undefined,
           })),
         },
-        others: others ? {       
+        others: others ? {
           upsert: {
-            update:  { ...others },
-            create:  { ...others },
-          }, 
+            update: { ...others },
+            create: { ...others },
+          },
         } : undefined,
       },
     });
