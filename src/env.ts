@@ -6,31 +6,18 @@ export const env = createEnv({
     POSTGRES_PRISMA_URL: z.string().min(1),
     POSTGRES_URL_NON_POOLING: z.string().min(1),
 
-    // POSTGRES_URL: z.string().min(1),
-    // POSTGRES_URL_NO_SSL: z.string().min(1),
-    // POSTGRES_USER: z.string().min(1),
-    // POSTGRES_HOST: z.string().min(1),
-    // POSTGRES_PASSWORD: z.string().min(1),
-    // POSTGRES_DATABASE: z.string().min(1),
-    // CLERK_SECRET_KEY: z.string().min(1),
-    // BLOB_READ_WRITE_TOKEN: z.string().min(1),
-
-    // OPENAI_API_KEY: z.string().min(1),
     GEMINI_API_KEY: z.string().min(1),
 
-    // STRIPE_SECRET_KEY: z.string().min(1),
-    // STRIPE_WEBHOOK_SECRET: z.string().min(1),
-
-    AWS_ACCESS_KEY_ID: z.string().min(1),
-    AWS_SECRET_ACCESS_KEY: z.string().min(1),
-    AWS_REGION: z.string().min(1),
-    S3_BUCKET_NAME: z.string().min(1),
+    STORAGE_AWS_ACCESS_KEY_ID: z.string().min(1),
+    STORAGE_AWS_SECRET_ACCESS_KEY: z.string().min(1),
+    STORAGE_AWS_REGION: z.string().min(1),
+    NODE_ENV: z.enum(["development", "production", "test"]),
   },
   client: {
+    NEXT_PUBLIC_S3_BUCKET_NAME: z.string().min(1),
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
     NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().min(1),
     NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().min(1),
-    // NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
     NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY: z.string().min(1),
     NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY: z.string().min(1),
     NEXT_PUBLIC_BASE_URL: z.string().min(1).url(),
@@ -49,5 +36,6 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_S3_BUCKET_NAME: process.env.NEXT_PUBLIC_S3_BUCKET_NAME,
   },
 });

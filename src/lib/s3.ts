@@ -1,16 +1,17 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { env } from "@/env";
 
 const s3 = new S3Client({
   region: "ap-south-1",
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: env.STORAGE_AWS_ACCESS_KEY_ID!,
+    secretAccessKey: env.STORAGE_AWS_SECRET_ACCESS_KEY!,
   },
 });
 
-export const BUCKET_NAME = process.env.S3_BUCKET_NAME as string;
+export const BUCKET_NAME = env.NEXT_PUBLIC_S3_BUCKET_NAME as string;
 
 // Helper function to determine content type
 function determineContentType(file: Blob | Buffer, filename: string): string {
