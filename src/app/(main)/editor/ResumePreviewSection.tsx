@@ -39,7 +39,7 @@ export default function ResumePreviewSection({
     <div
       className={cn("group relative hidden w-full md:flex md:w-1/2", className)}
     >
-      <div className="absolute left-1 top-1 z-10 flex flex-none flex-col gap-3 opacity-50 transition-opacity group-hover:opacity-100 lg:left-3 lg:top-3 xl:opacity-100">
+      <div className="absolute left-1 top-1 z-10 flex flex-none flex-col gap-3 opacity-50 transition-opacity group-hover:opacity-100 lg:left-1 lg:top-3 xl:opacity-100">
         <ColorPicker
           color={resumeData.colorHex}
           onChange={(color) =>
@@ -61,9 +61,6 @@ export default function ResumePreviewSection({
         <ShareButton resumeData={resumeData} />
       </div>
       <div className="relative flex w-full justify-center overflow-y-auto bg-secondary p-3">
-        <p className="absolute left-0 w-24 text-nowrap border-t border-red-600 text-[10px] text-red-600 max-md:hidden md:top-[902px]">
-          Next Page
-        </p>
         {ResumeStylePreview ? (
           <div onClick={() => setPreviewOpen(true)} className="cursor-pointer">
             <ResumeStylePreview
