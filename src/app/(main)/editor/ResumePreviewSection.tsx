@@ -1,4 +1,5 @@
 // import ResumePreview from "@/components/ResumeStyles/ResumePreview";
+"use client";
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
 import BorderStyleButton from "./BorderStyleButton";
@@ -9,6 +10,9 @@ import ShareButton from "./ShareButton";
 import { resumeStyles } from "@/components/ResumeStyles/Styles";
 import { useSearchParams } from "next/navigation";
 import { env } from "@/env";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useState } from "react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface ResumePreviewSectionProps {
   resumeData: ResumeValues;
@@ -28,6 +32,9 @@ export default function ResumePreviewSection({
   const ResumeStylePreview = resumeStyles.find(
     (style) => style.id === currentStyleId,
   )?.component;
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+
   return (
     <div
       className={cn("group relative hidden w-full md:flex md:w-1/2", className)}
@@ -58,14 +65,31 @@ export default function ResumePreviewSection({
           Next Page
         </p>
         {ResumeStylePreview ? (
-          <ResumeStylePreview
-            resumeData={resumeData}
-            className="max-w-2xl shadow-md"
-          />
+          <div onClick={() => setPreviewOpen(true)} className="cursor-pointer">
+            <ResumeStylePreview
+              resumeData={resumeData}
+              className="max-w-2xl shadow-md"
+            />
+          </div>
         ) : (
           <div className="text-center">You need to select a resume style</div>
         )}
       </div>
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="scrollbar-hide max-h-[90vh] w-auto max-w-none overflow-y-auto border-none bg-transparent p-0 [&>.absolute]:hidden">
+          <VisuallyHidden>
+            <DialogTitle>Resume Preview</DialogTitle>
+          </VisuallyHidden>
+          <div className="scrollbar-hide mx-auto aspect-[1/1.414] w-[894px] overflow-y-auto rounded-sm bg-white shadow-2xl">
+            {ResumeStylePreview && (
+              <ResumeStylePreview
+                resumeData={resumeData}
+                className="h-full w-full"
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
