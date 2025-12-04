@@ -6,22 +6,31 @@ import { UserButton } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import Wrapper from "@/components/Wrappers";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import Logo from "../../Logo";
 export default function Header({
   show,
   upperNavItems,
   activeItemId,
   handleNavItemClick,
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
   const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   return (
     <header
-      className={`fixed top-0 z-50 w-full bg-w3 transition-transform duration-300 font-teko ${show}`}
+      className={`fixed top-0 z-50 w-full bg-w3 font-teko transition-transform duration-300 ${show}`}
     >
       {/* Desktop Section */}
       {/* Upper Nav  */}
-      <Wrapper as={"nav"} className="flex w-full items-center justify-between py-1 max-md:hidden">
+      <Wrapper
+        as={"nav"}
+        className="flex w-full items-center justify-between py-1 max-md:hidden"
+      >
         {/* Logo with Link */}
         <Logo />
         <div className="flex items-center gap-3 md:gap-4">
@@ -33,53 +42,60 @@ export default function Header({
             />
           </ul>
           {/* <ThemeToggle /> */}
-          <UserButton
-            appearance={{
-              baseTheme: theme === "dark" ? dark : undefined,
-              elements: {
-                avatarBox: {
-                  width: 35,
-                  height: 35,
+          {mounted && (
+            <UserButton
+              appearance={{
+                baseTheme: theme === "dark" ? dark : undefined,
+                elements: {
+                  avatarBox: {
+                    width: 35,
+                    height: 35,
+                  },
                 },
-              },
-            }}
-          >
-            {/* <UserButton.MenuItems>
-              <UserButton.Link
-                label="Billing"
-                labelIcon={<CreditCard className="size-4" />}
-                href="/billing"
-              />
-            </UserButton.MenuItems> */}
-          </UserButton>
+              }}
+            >
+              {/* <UserButton.MenuItems>
+                <UserButton.Link
+                  label="Billing"
+                  labelIcon={<CreditCard className="size-4" />}
+                  href="/billing"
+                />
+              </UserButton.MenuItems> */}
+            </UserButton>
+          )}
         </div>
       </Wrapper>
       {/* -------------------------------------  */}
       {/* Mobile Section */}
-      <Wrapper as={"nav"} className="flex w-full items-center justify-between gap-3 py-2 md:hidden">
+      <Wrapper
+        as={"nav"}
+        className="flex w-full items-center justify-between gap-3 py-2 md:hidden"
+      >
         {/* Logo with Link */}
         <Logo />
         <div className="flex items-center gap-x-4">
           {/* <ThemeToggle /> */}
-          <UserButton
-            appearance={{
-              baseTheme: theme === "dark" ? dark : undefined,
-              elements: {
-                avatarBox: {
-                  width: 35,
-                  height: 35,
+          {mounted && (
+            <UserButton
+              appearance={{
+                baseTheme: theme === "dark" ? dark : undefined,
+                elements: {
+                  avatarBox: {
+                    width: 35,
+                    height: 35,
+                  },
                 },
-              },
-            }}
-          >
-            {/* <UserButton.MenuItems>
-              <UserButton.Link
-                label="Billing"
-                labelIcon={<CreditCard className="size-4" />}
-                href="/billing"
-              />
-            </UserButton.MenuItems> */}
-          </UserButton>
+              }}
+            >
+              {/* <UserButton.MenuItems>
+                <UserButton.Link
+                  label="Billing"
+                  labelIcon={<CreditCard className="size-4" />}
+                  href="/billing"
+                />
+              </UserButton.MenuItems> */}
+            </UserButton>
+          )}
         </div>
       </Wrapper>
     </header>

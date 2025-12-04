@@ -1,4 +1,4 @@
-import React from "react";
+import PaginatedResumePreview from "@/components/PaginatedResumePreview";
 import prisma from "@/lib/prisma";
 import { resumeDataInclude } from "@/lib/types";
 import { mapToResumeValues } from "@/lib/utils";
@@ -28,20 +28,21 @@ export default async function FullScreenResumePreview({
     : null;
   const resumeData = resumeToEdit ? mapToResumeValues(resumeToEdit) : {};
 
-  const ResumeStylePreview = resumeStyles.find(
-    (style) => style.id === currentStyleId.toString(),
-  )?.component;
+  // We don't need to find the component here, PaginatedResumePreview does it by ID
+  // But we need to check if it exists to show error
+  const styleExists = resumeStyles.some(style => style.id === currentStyleId.toString());
 
   return (
-    <>
-      {ResumeStylePreview ? (
-        <ResumeStylePreview
+    <div className="flex min-h-screen w-full justify-center bg-secondary p-8">
+      {styleExists ? (
+        <PaginatedResumePreview
           resumeData={resumeData}
-          className="w-full"
+          styleId={currentStyleId.toString()}
+          className="max-w-3xl" // Slightly wider container for full screen
         />
       ) : (
         <div className="text-center">Incorrect URL</div>
       )}
-    </>
+    </div>
   );
 }

@@ -1,7 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import puppeteer, { type Browser } from "puppeteer";
-import puppeteerCore, { type Browser as BrowserCore } from "puppeteer-core";
-import chromium from "@sparticuz/chromium-min";
+import { chromium } from "playwright";
 import { env } from "@/env";
 
 export const dynamic = "force-dynamic";
@@ -10,55 +8,39 @@ export const maxDuration = 60;
 export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json();
-
     if (!url) {
       return NextResponse.json({ error: "Missing URL parameter" }, { status: 400 });
     }
 
-    let browser: Browser | BrowserCore;
-
-    if (env.NEXT_PUBLIC_NODE_ENV === "production") {
-      const executablePath = await chromium.executablePath(
-        "https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar"
-      );
-
-      browser = await puppeteerCore.launch({
-        executablePath,
-        args: chromium.args,
-        headless: chromium.headless,
-        defaultViewport: chromium.defaultViewport,
-      });
-    } else {
-        // ✅ Local dev — uses regular puppeteer
-      browser = await puppeteer.launch({
-        headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      });
-    }
+    const browser = await chromium.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
 
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "networkidle0" });
-    // await page.evaluateHandle("document.fonts.ready");
-    await page.addStyleTag({
-      content: `
-        @page { margin: 0; }
-        html, body {
-          margin: 0 !important;
-          padding: 0 !important;
-          box-sizing: border-box;
-        }
-      `,
-    });
+
+    // Wait for network to be idle to ensure all content loads
+    await page.goto(url, { waitUntil: "networkidle" });
+    
+    // Wait for the resume content to be visible
+    await page.waitForSelector('#resumePreviewContent', { timeout: 10000 });
+    
+    // Additional wait for fonts and dynamic content to load
+    await page.waitForTimeout(500);
 
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
-      margin: { top: "0px", bottom: "0px", left: "0px", right: "0px" },
+      margin: { top: "0.6cm", bottom: "0.6cm", left: "0.6cm", right: "0.6cm" },
+      preferCSSPageSize: true, // renders more accurately
     });
 
     await browser.close();
 
-    return new NextResponse(pdfBuffer, {
+    // convert Node Buffer to a Uint8Array so it matches BodyInit (ArrayBufferView)
+    const pdfUint8 = new Uint8Array(pdfBuffer);
+
+    return new NextResponse(pdfUint8, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
