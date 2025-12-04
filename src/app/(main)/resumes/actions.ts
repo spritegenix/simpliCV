@@ -24,12 +24,7 @@ export async function deleteResume(id: string) {
   }
 
   if (resume.photoUrl) {
-    try {
-      await del(resume.photoUrl);
-    } catch (error) {
-      console.error("Failed to delete photo:", error);
-      // Continue with resume deletion even if photo deletion fails
-    }
+    await del(resume.photoUrl);
   }
 
   await prisma.resume.delete({
