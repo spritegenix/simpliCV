@@ -11,6 +11,7 @@ import Footer from "./Footer";
 import ResumePreviewSection from "./ResumePreviewSection";
 import { steps } from "./steps";
 import useAutoSaveResume from "./useAutoSaveResume";
+import AddContentModal from "@/components/AddContentModal";
 
 interface ResumeEditorProps {
   resumeToEdit: ResumeServerData | null;
@@ -56,7 +57,10 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
               showSmResumePreview && "hidden",
             )}
           >
-            <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
+            <div className="mb-4 flex justify-center items-center">
+                {/* <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} /> */}
+                <AddContentModal onSelectSection={setStep} />
+            </div>
             {FormComponent && (
               <FormComponent
                 resumeData={resumeData}
