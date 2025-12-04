@@ -13,7 +13,7 @@ import { env } from "@/env";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState, useRef, useEffect } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import useDimensions from "@/hooks/useDimensions";
+import PaginatedResumePreview from "@/components/PaginatedResumePreview";
 
 interface ResumePreviewSectionProps {
   resumeData: ResumeValues;
@@ -35,11 +35,6 @@ export default function ResumePreviewSection({
   )?.component;
 
   const [previewOpen, setPreviewOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { width, height } = useDimensions(containerRef);
-
-  // Calculate A4 page height based on current width (Aspect Ratio 1:1.414)
-  const pageHeight = width ? width * 1.414 : 0;
 
   return (
     <div
@@ -66,24 +61,15 @@ export default function ResumePreviewSection({
         />
         <ShareButton resumeData={resumeData} />
       </div>
-      <div className="relative flex w-full justify-center overflow-auto bg-secondary p-3">
+      <div 
+        className="relative flex w-full flex-col gap-6 overflow-auto bg-secondary p-6"
+      >
         {ResumeStylePreview ? (
-          <div
-            onClick={() => setPreviewOpen(true)}
-            className="relative w-full max-w-2xl cursor-pointer shadow-md"
-            ref={containerRef}
-            style={{
-              "--page-height": `${pageHeight}px`,
-              "--page-width": `${width}px`,
-            } as React.CSSProperties}
-          >
-            <ResumeStylePreview
-              resumeData={resumeData}
-              className={cn(
-                width > 0 && "h-[var(--page-height)] [column-width:var(--page-width)] [column-gap:20px] [column-fill:auto] [column-rule:1px_dashed_#d1d5db] overflow-x-auto"
-              )}
+            <PaginatedResumePreview 
+                resumeData={resumeData}
+                styleId={currentStyleId}
+                onPageClick={() => setPreviewOpen(true)}
             />
-          </div>
         ) : (
           <div className="text-center">You need to select a resume style</div>
         )}
