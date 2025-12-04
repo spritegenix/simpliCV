@@ -38,32 +38,8 @@ export default function ResumePreviewSection({
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useDimensions(containerRef);
 
-  // Apply multi-column layout to simulate pages
-  useEffect(() => {
-    if (!containerRef.current || !width) return;
-
-    const resumeDiv = containerRef.current.firstElementChild as HTMLElement;
-    if (resumeDiv && resumeDiv.tagName === "DIV") {
-      // Calculate A4 page height based on current width (Aspect Ratio 1:1.414)
-      const pageHeight = width * 1.414;
-
-      // Apply styles to force column layout
-      resumeDiv.style.height = `${pageHeight}px`;
-      resumeDiv.style.columnWidth = `${width}px`;
-      resumeDiv.style.columnGap = "20px"; // Gap between pages
-      resumeDiv.style.columnFill = "auto";
-
-      // Visual separation between pages
-      resumeDiv.style.columnRule = "1px dashed #d1d5db";
-
-      // Ensure content flows horizontally
-      resumeDiv.style.overflowX = "auto";
-
-      // Important: Ensure the inner content doesn't get clipped if it overflows
-      // We might need to adjust the wrapper width if we want to see all pages at once,
-      // but overflow-x: auto on the resumeDiv should allow scrolling within the preview area.
-    }
-  }, [width, resumeData, currentStyleId]);
+  // Calculate A4 page height based on current width (Aspect Ratio 1:1.414)
+  const pageHeight = width ? width * 1.414 : 0;
 
   return (
     <div
@@ -96,8 +72,17 @@ export default function ResumePreviewSection({
             onClick={() => setPreviewOpen(true)}
             className="relative w-full max-w-2xl cursor-pointer shadow-md"
             ref={containerRef}
+            style={{
+              "--page-height": `${pageHeight}px`,
+              "--page-width": `${width}px`,
+            } as React.CSSProperties}
           >
-            <ResumeStylePreview resumeData={resumeData} className="" />
+            <ResumeStylePreview
+              resumeData={resumeData}
+              className={cn(
+                width > 0 && "h-[var(--page-height)] [column-width:var(--page-width)] [column-gap:20px] [column-fill:auto] [column-rule:1px_dashed_#d1d5db] overflow-x-auto"
+              )}
+            />
           </div>
         ) : (
           <div className="text-center">You need to select a resume style</div>
