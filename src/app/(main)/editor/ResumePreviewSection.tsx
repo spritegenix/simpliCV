@@ -11,8 +11,9 @@ import { resumeStyles } from "@/components/ResumeStyles/Styles";
 import { useSearchParams } from "next/navigation";
 import { env } from "@/env";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import useDimensions from "@/hooks/useDimensions";
 
 interface ResumePreviewSectionProps {
   resumeData: ResumeValues;
@@ -34,6 +35,35 @@ export default function ResumePreviewSection({
   )?.component;
 
   const [previewOpen, setPreviewOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { width, height } = useDimensions(containerRef);
+
+  // Apply multi-column layout to simulate pages
+  useEffect(() => {
+    if (!containerRef.current || !width) return;
+
+    const resumeDiv = containerRef.current.firstElementChild as HTMLElement;
+    if (resumeDiv && resumeDiv.tagName === "DIV") {
+      // Calculate A4 page height based on current width (Aspect Ratio 1:1.414)
+      const pageHeight = width * 1.414;
+
+      // Apply styles to force column layout
+      resumeDiv.style.height = `${pageHeight}px`;
+      resumeDiv.style.columnWidth = `${width}px`;
+      resumeDiv.style.columnGap = "20px"; // Gap between pages
+      resumeDiv.style.columnFill = "auto";
+
+      // Visual separation between pages
+      resumeDiv.style.columnRule = "1px dashed #d1d5db";
+
+      // Ensure content flows horizontally
+      resumeDiv.style.overflowX = "auto";
+
+      // Important: Ensure the inner content doesn't get clipped if it overflows
+      // We might need to adjust the wrapper width if we want to see all pages at once,
+      // but overflow-x: auto on the resumeDiv should allow scrolling within the preview area.
+    }
+  }, [width, resumeData, currentStyleId]);
 
   return (
     <div
@@ -60,13 +90,14 @@ export default function ResumePreviewSection({
         />
         <ShareButton resumeData={resumeData} />
       </div>
-      <div className="relative flex w-full justify-center overflow-y-auto bg-secondary p-3">
+      <div className="relative flex w-full justify-center overflow-auto bg-secondary p-3">
         {ResumeStylePreview ? (
-          <div onClick={() => setPreviewOpen(true)} className="cursor-pointer">
-            <ResumeStylePreview
-              resumeData={resumeData}
-              className="max-w-2xl shadow-md"
-            />
+          <div
+            onClick={() => setPreviewOpen(true)}
+            className="relative w-full max-w-2xl cursor-pointer shadow-md"
+            ref={containerRef}
+          >
+            <ResumeStylePreview resumeData={resumeData} className="" />
           </div>
         ) : (
           <div className="text-center">You need to select a resume style</div>
