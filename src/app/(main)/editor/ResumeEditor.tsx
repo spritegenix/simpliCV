@@ -57,9 +57,11 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
               showSmResumePreview && "hidden",
             )}
           >
-            <div className="mb-4 flex justify-center items-center">
-                {/* <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} /> */}
+            <div className="mb-4">
+              <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
+              <div className="mt-4 px-3 flex items-center justify-end">
                 <AddContentModal onSelectSection={setStep} />
+              </div>
             </div>
             {FormComponent && (
               <FormComponent
