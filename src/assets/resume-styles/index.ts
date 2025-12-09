@@ -9,6 +9,12 @@ import a7 from "@/assets/resume-styles/ats/a7.webp";
 import a8 from "@/assets/resume-styles/ats/a8.jpg";
 import a9 from "@/assets/resume-styles/ats/a9.webp";
 import a10 from "@/assets/resume-styles/ats/a10.webp";
+import a12 from "@/assets/resume-styles/ats/a12.png";
+import a13 from "@/assets/resume-styles/ats/a13.png";
+import a14 from "@/assets/resume-styles/ats/a14.png";
+import a15 from "@/assets/resume-styles/ats/a15.png";
+import a16 from "@/assets/resume-styles/ats/a16.png";
+import a17 from "@/assets/resume-styles/ats/a17.png";
 // Creative
 
 // Stylish
@@ -23,7 +29,7 @@ import m2 from "@/assets/resume-styles/modern/m2.png"
 import m3 from "@/assets/resume-styles/modern/m3.jpg"
 // -------------------------------- //
 export {
-    a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+    a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a12, a13, a14, a15, a16, a17,
 
     st1, st2, st3,
 

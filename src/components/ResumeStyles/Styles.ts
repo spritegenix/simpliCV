@@ -5,13 +5,13 @@ import { ResumeValues } from "@/lib/validation";
 
 
 import {
-    Ats1, Ats2, Ats3, Ats4, Ats5, Ats6, Ats7, Ats8, Ats9, Ats10,
+    Ats1, Ats2, Ats3, Ats4, Ats5, Ats6, Ats7, Ats8, Ats9, Ats10, Ats11, Ats12, Ats13, Ats14, Ats15, Ats16, Ats17,
     Stylish1,
     Modern1, Modern2, Modern3,
     Stylish2,
     Stylish3
 } from "./index";
-import { a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, st1, m1, m2, st2, m3, st3 } from "@/assets/resume-styles";
+import { a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a12, a13, a14, a15, a16, a17, st1, m1, m2, st2, m3, st3 } from "@/assets/resume-styles";
 
 interface ResumePreviewProps {
     resumeData: ResumeValues;
@@ -158,6 +158,72 @@ const Ats: ResumeStyle[] = [
         tags: ["Multi Page"],
         price: "FREE",
         priority: 10
+    },
+    {
+        id: "ats12",
+        name: "Modern Clean ATS Resume",
+        component: Ats12,
+        desc: "A clean, modern ATS-friendly design with elegant typography and structured sections.",
+        samplePic: a12,
+        category: ["All", "ATS Friendly"],
+        tags: ["Multi Page"],
+        price: "FREE",
+        priority: 12
+    },
+    {
+        id: "ats13",
+        name: "Minimalist Tech Resume",
+        component: Ats13,
+        desc: "A minimalist, sans-serif template ideal for technical roles, featuring clean lines and ample whitespace.",
+        samplePic: a13,
+        category: ["All", "ATS Friendly"],
+        tags: ["Multi Page"],
+        price: "FREE",
+        priority: 13
+    },
+    {
+        id: "ats14",
+        name: "Corporate Banded Resume",
+        component: Ats14,
+        desc: "A professional design featuring distinct section bands for superior readability and structure.",
+        samplePic: a14,
+        category: ["All", "ATS Friendly"],
+        tags: ["Multi Page"],
+        price: "FREE",
+        priority: 14
+    },
+    {
+        id: "ats15",
+        name: "Classic Elegant Resume",
+        component: Ats15,
+        desc: "A timeless, serif-font design with a centered header and clean horizontal dividers. Perfect for executive or academic roles.",
+        samplePic: a15,
+        category: ["All", "ATS Friendly"],
+        tags: ["Multi Page"],
+        price: "FREE",
+        priority: 15
+    },
+    {
+        id: "ats16",
+        name: "Executive Academic Resume",
+        component: Ats16,
+        desc: "A prestigious, high-impact design featuring uppercase headers and bold typography. Ideal for experienced professionals and academics.",
+        samplePic: a16,
+        category: ["All", "ATS Friendly"],
+        tags: ["Multi Page"],
+        price: "FREE",
+        priority: 16
+    },
+    {
+        id: "ats17",
+        name: "Data Scientist Resume",
+        component: Ats17,
+        desc: "A dense, high-performance layout optimized for technical specialists. Features compact lists, skill categorization, and a professional blue accent.",
+        samplePic: a17,
+        category: ["All", "ATS Friendly"],
+        tags: ["Multi Page"],
+        price: "FREE",
+        priority: 17
     },
 ]
 const Creative: ResumeStyle[] = []

@@ -14,6 +14,8 @@ import Ats12 from "./Ats/Ats12";
 import Ats13 from "./Ats/Ats13";
 import Ats14 from "./Ats/Ats14";
 import Ats15 from "./Ats/Ats15";
+import Ats16 from "./Ats/Ats16";
+import Ats17 from "./Ats/Ats17";
 // Stylish 
 import Stylish1 from "./Stylish/Stylish1";
 import Stylish2 from "./Stylish/Stylish2";
@@ -29,7 +31,7 @@ import Modern3 from "./Modern/Modern3";
 
 // --------------------------------------------------------------- //
 export {
-    Ats1, Ats2, Ats3, Ats4, Ats5, Ats6, Ats7, Ats8, Ats9, Ats10, Ats11, Ats12, Ats13, Ats14, Ats15,
+    Ats1, Ats2, Ats3, Ats4, Ats5, Ats6, Ats7, Ats8, Ats9, Ats10, Ats11, Ats12, Ats13, Ats14, Ats15, Ats16, Ats17,
     Stylish1, Stylish2, Stylish3,
     Modern1, Modern2, Modern3,
 };
