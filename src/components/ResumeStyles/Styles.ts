@@ -5,13 +5,13 @@ import { ResumeValues } from "@/lib/validation";
 
 
 import {
-    Ats1, Ats2, Ats3, Ats4, Ats5, Ats6, Ats7, Ats8, Ats9, Ats10, Ats11, Ats12, Ats13, Ats14, Ats15, Ats16, Ats17,
+    Ats1, Ats2, Ats3, Ats4, Ats5, Ats6, Ats7, Ats8, Ats9, Ats10, Ats12, Ats13, Ats14, Ats15, Ats16,
     Stylish1,
     Modern1, Modern2, Modern3,
     Stylish2,
     Stylish3
 } from "./index";
-import { a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a12, a13, a14, a15, a16, a17, st1, m1, m2, st2, m3, st3 } from "@/assets/resume-styles";
+import { a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a12, a13, a14, a15, a16, st1, m1, m2, st2, m3, st3 } from "@/assets/resume-styles";
 
 interface ResumePreviewProps {
     resumeData: ResumeValues;
@@ -159,6 +159,7 @@ const Ats: ResumeStyle[] = [
         price: "FREE",
         priority: 10
     },
+
     {
         id: "ats12",
         name: "Modern Clean ATS Resume",
@@ -214,17 +215,7 @@ const Ats: ResumeStyle[] = [
         price: "FREE",
         priority: 16
     },
-    {
-        id: "ats17",
-        name: "Data Scientist Resume",
-        component: Ats17,
-        desc: "A dense, high-performance layout optimized for technical specialists. Features compact lists, skill categorization, and a professional blue accent.",
-        samplePic: a17,
-        category: ["All", "ATS Friendly"],
-        tags: ["Multi Page"],
-        price: "FREE",
-        priority: 17
-    },
+
 ]
 const Creative: ResumeStyle[] = []
 
@@ -262,7 +253,6 @@ const Modern: ResumeStyle[] = [
         price: "FREE",
         priority: 14,
     },
-
 ]
 const Simple: ResumeStyle[] = []
 const Stylish: ResumeStyle[] = [
