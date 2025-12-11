@@ -11,7 +11,7 @@ import { resumeStyles } from "@/components/ResumeStyles/Styles";
 import { useSearchParams } from "next/navigation";
 import { env } from "@/env";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import PaginatedResumePreview from "@/components/PaginatedResumePreview";
 
@@ -61,15 +61,13 @@ export default function ResumePreviewSection({
         />
         <ShareButton resumeData={resumeData} />
       </div>
-      <div 
-        className="relative flex w-full flex-col gap-6 overflow-auto bg-secondary p-6"
-      >
+      <div className="relative flex w-full flex-col gap-6 overflow-auto bg-secondary p-6">
         {ResumeStylePreview ? (
-            <PaginatedResumePreview 
-                resumeData={resumeData}
-                styleId={currentStyleId}
-                onPageClick={() => setPreviewOpen(true)}
-            />
+          <PaginatedResumePreview
+            resumeData={resumeData}
+            styleId={currentStyleId}
+            onPageClick={() => setPreviewOpen(true)}
+          />
         ) : (
           <div className="text-center">You need to select a resume style</div>
         )}
