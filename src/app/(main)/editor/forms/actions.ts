@@ -135,7 +135,7 @@ export async function generateWorkExperience(
 export async function generateProject(input: GenerateProjectInput) {
   const { userId } = await auth();
 
-  if (!userId) {  
+  if (!userId) {
     throw new Error("Unauthorized");
   }
 
@@ -173,5 +173,5 @@ export async function generateProject(input: GenerateProjectInput) {
   return {
     title: aiResponse.match(/Project title: (.*)/)?.[1] || "",
     description: (aiResponse.match(/Description:([\s\S]*)/)?.[1] || "").trim(),
-  } satisfies ProjectWork ;
+  } satisfies ProjectWork;
 }
