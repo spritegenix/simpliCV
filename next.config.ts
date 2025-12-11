@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "4mb",
     },
+    // Increase cache limit for static files (e.g. large images)
+    // Default is 2MB, increasing to 5MB
+    // @ts-ignore
+    maximumFileSizeToCacheInBytes: 5242880,
   },
   images: {
     remotePatterns: [
