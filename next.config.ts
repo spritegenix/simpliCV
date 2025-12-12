@@ -19,8 +19,10 @@ const nextConfig: NextConfig = {
     // Default is 2MB, increasing to 5MB
     // @ts-ignore
     maximumFileSizeToCacheInBytes: 5242880,
-    turbopack: {},
+
   },
+  // @ts-ignore
+  turbopack: {},
   images: {
     remotePatterns: [
       {
