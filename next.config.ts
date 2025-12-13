@@ -10,7 +10,7 @@ const pwaConfig = withPWA({
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  runtime: "nodejs",
+  turbopack: {},
   experimental: {
     serverActions: {
       bodySizeLimit: "4mb",
