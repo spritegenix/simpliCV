@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { chromium } from "playwright";
-import { env } from "@/env";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
