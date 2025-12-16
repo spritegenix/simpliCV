@@ -1,223 +1,427 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
-import { ResumeValues } from "@/lib/validation";
-import { cn } from "@/lib/utils";
-import useDimensions from "@/hooks/useDimensions";
-import { formatDate } from "date-fns";
-import Image from "next/image";
-import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
-import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
+import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
+
+// Types
+interface ResumeValues {
+  firstName?: string;
+  lastName?: string;
+  jobTitle?: string;
+  city?: string;
+  country?: string;
+  phone?: string;
+  email?: string;
+  photo?: string | File | null;
+  summary?: string;
+  workExperiences?: Array<{
+    position?: string;
+    company?: string;
+    startDate?: Date | string;
+    endDate?: Date | string | null;
+    description?: string;
+  }>;
+  educations?: Array<{
+    degree?: string;
+    school?: string;
+    stream?: string;
+    startDate?: Date | string;
+    endDate?: Date | string | null;
+    description?: string;
+  }>;
+  skills?: Array<{
+    title?: string;
+    skillName?: string[];
+  }>;
+  projectWorks?: Array<{
+    title?: string;
+    company?: string;
+    startDate?: Date | string;
+    endDate?: Date | string | null;
+    description?: string;
+    links?: string[];
+  }>;
+  certifications?: Array<{
+    title?: string;
+    description?: string;
+    link?: string;
+  }>;
+  others?: {
+    title?: string;
+    description?: string;
+  };
+  portfolioLink?: string;
+  socialLinks?: string[];
+  borderStyle?: "square" | "circle" | "rounded";
+}
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
 }
 
-export default function Modern5({ resumeData, className }: ResumePreviewProps) {
+// Helper function to format dates
+const formatDate = (date: Date | string, format: string): string => {
+  const d = new Date(date);
+  if (format === "yyyy") {
+    return d.getFullYear().toString();
+  }
+  return d.getFullYear().toString();
+};
+
+// Custom hook for dimensions
+const useDimensions = (ref: React.RefObject<HTMLElement>) => {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (ref.current) {
+        setWidth(ref.current.offsetWidth);
+      }
+    };
+
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, [ref]);
+
+  return { width };
+};
+
+// Define default section order
+const DEFAULT_SECTION_ORDER = [
+  "summary",
+  "workExperiences",
+  "projectWorks",
+  "educations",
+  "certifications",
+  "skills",
+  "others"
+] as const;
+
+// Helper to get section display order
+// Future: This can be extended to read from resumeData.sectionOrder when that field is added
+const getSectionOrder = (resumeData: ResumeValues): string[] => {
+  // TODO: When resumeData.sectionOrder is added to schema, use it here:
+  // if (resumeData.sectionOrder && resumeData.sectionOrder.length > 0) {
+  //   return resumeData.sectionOrder;
+  // }
+  
+  // For now, return default order
+  return [...DEFAULT_SECTION_ORDER];
+};
+
+// Helper to check if section has content
+const hasSectionContent = (resumeData: ResumeValues, sectionKey: string): boolean => {
+  switch (sectionKey) {
+    case "summary":
+      return !!resumeData.summary;
+    case "workExperiences":
+      return !!resumeData.workExperiences && resumeData.workExperiences.length > 0;
+    case "projectWorks":
+      return !!resumeData.projectWorks && resumeData.projectWorks.length > 0;
+    case "educations":
+      return !!resumeData.educations && resumeData.educations.length > 0;
+    case "certifications":
+      return !!resumeData.certifications && resumeData.certifications.length > 0;
+    case "skills":
+      return !!resumeData.skills && resumeData.skills.length > 0;
+    case "others":
+      return !!resumeData.others?.title && !!resumeData.others?.description;
+    default:
+      return false;
+  }
+};
+
+export default function ModernTimeline({ resumeData, className = "" }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
 
-  // Default accent color
-  const accentColor =
-    resumeData.colorHex === "#000000" || !resumeData.colorHex
-      ? "#0284c7" // Sky-600
-      : resumeData.colorHex;
-
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white font-sans text-slate-800 shadow-sm",
-        className,
-      )}
+      className={`aspect-[210/297] h-fit w-full bg-white font-sans text-slate-900 ${className}`}
       ref={containerRef}
     >
       <div
-        className={cn("h-full", !width && "invisible")}
+        id="resumePreviewContent"
+        className={`h-full ${!width ? "invisible" : ""}`}
         style={{
           zoom: (1 / 794) * width,
         }}
-        id="resumePreviewContent"
       >
-        {/* Full Width Header */}
-        <Header resumeData={resumeData} colorHex={accentColor} />
+        <div style={{ padding: "40px 50px 60px 50px" }}>
+          {/* Header */}
+          <Header resumeData={resumeData} />
 
-        {/* 3-Column Timeline Grid */}
-        <div className="p-10 pt-6">
-          {/* Contact Info Row (Top of body) */}
-          <div className="mb-8">
-            <ContactSection resumeData={resumeData} colorHex={accentColor} />
-          </div>
+          {/* Divider */}
+          <div style={{ margin: "30px 0", height: "1px", backgroundColor: "#000" }} />
 
-          {/* Main Grid: [Title] [Timeline] [Content] */}
-          <div className="grid grid-cols-[140px_40px_1fr] gap-y-8">
-            {/* PROFILE */}
-            {resumeData.summary && (
-              <>
-                <SectionTitle title="Profile" colorHex={accentColor} />
-                <TimelineColumn colorHex={accentColor} />
-                <div className="pb-2">
-                  <div className="text-justify text-sm leading-relaxed text-slate-600">
-                    {resumeData.summary}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* EXPERIENCE */}
-            {resumeData.workExperiences &&
-              resumeData.workExperiences.length > 0 && (
-                <>
-                  <SectionTitle title="Experience" colorHex={accentColor} />
-                  <TimelineColumn colorHex={accentColor} />
-                  <div className="space-y-6 pb-2">
-                    {resumeData.workExperiences.map((exp, idx) => (
-                      <div
-                        key={idx}
-                        className="group relative break-inside-avoid"
-                      >
-                        {/* Dot for item */}
-                        <div
-                          className="absolute -left-[30px] top-1.5 z-10 h-3 w-3 rounded-full border-2 border-white shadow-sm"
-                          style={{ backgroundColor: accentColor }}
-                        />
-
-                        <div className="mb-1 flex items-baseline justify-between">
-                          <h4 className="text-md font-bold text-slate-800">
-                            {exp.position}
-                          </h4>
-                          <span className="text-xs font-semibold italic text-slate-500">
-                            {exp.startDate &&
-                              formatDate(exp.startDate, "MMM yyyy")}{" "}
-                            -{" "}
-                            {exp.endDate
-                              ? formatDate(exp.endDate, "MMM yyyy")
-                              : "Present"}
-                          </span>
-                        </div>
-                        <div className="mb-2 text-sm font-semibold italic text-slate-600">
-                          {exp.company}{" "}
-                          {exp.jobLocation && `— ${exp.jobLocation}`}
-                        </div>
-                        <div
-                          className="prose prose-sm prose-li:text-slate-600 max-w-none text-sm text-slate-600"
-                          dangerouslySetInnerHTML={{
-                            __html: exp.description || "",
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-
-            {/* EDUCATION */}
-            {resumeData.educations && resumeData.educations.length > 0 && (
-              <>
-                <SectionTitle title="Education" colorHex={accentColor} />
-                <TimelineColumn colorHex={accentColor} />
-                <div className="space-y-5 pb-2">
-                  {resumeData.educations.map((edu, idx) => (
-                    <div key={idx} className="relative break-inside-avoid">
-                      <div
-                        className="absolute -left-[30px] top-1.5 z-10 h-3 w-3 rounded-full border-2 border-white shadow-sm"
-                        style={{ backgroundColor: accentColor }}
+          {/* Content Sections - Dynamic ordering */}
+          <div>
+            {getSectionOrder(resumeData)
+              .filter(sectionKey => hasSectionContent(resumeData, sectionKey))
+              .map((sectionKey, index) => {
+                const isFirst = index === 0;
+                
+                // Render section based on key
+                switch (sectionKey) {
+                  case "summary":
+                    return (
+                      <Section
+                        key="summary"
+                        label="PROFILE"
+                        isFirst={isFirst}
+                        content={
+                          <p style={{ color: "#0f172a", margin: 0, whiteSpace: "pre-line" }}>
+                            {resumeData.summary}
+                          </p>
+                        }
                       />
-
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-bold text-slate-800">
-                            {edu.school}
-                          </h4>
-                          <div className="text-sm text-slate-600">
-                            {edu.degree} {edu.stream}
-                          </div>
-                        </div>
-                        <div className="mt-0.5 text-xs italic text-slate-500">
-                          {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
-                          {edu.endDate
-                            ? formatDate(edu.endDate, "yyyy")
-                            : "Present"}
-                        </div>
-                      </div>
-                      {edu.description && (
-                        <div className="mt-1 whitespace-pre-line text-xs text-slate-500">
-                          {edu.description}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {/* SKILLS */}
-            {resumeData.skills && resumeData.skills.length > 0 && (
-              <>
-                <SectionTitle title="Skills" colorHex={accentColor} />
-                <TimelineColumn colorHex={accentColor} />
-                <div className="pb-2">
-                  <div className="grid grid-cols-1 gap-3">
-                    {resumeData.skills.map((skill, idx) => (
-                      <div key={idx} className="break-inside-avoid">
-                        <span className="mb-1 block text-sm font-bold text-slate-700">
-                          {skill.title}
-                        </span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {skill.skillName?.map((item, i) => (
-                            <span
-                              key={i}
-                              className="text-xs font-medium text-slate-600"
-                            >
-                              {item}
-                              {i < (skill.skillName?.length || 0) - 1
-                                ? ", "
-                                : ""}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* PROJECTS */}
-            {resumeData.projectWorks && resumeData.projectWorks.length > 0 && (
-              <>
-                <SectionTitle title="Projects" colorHex={accentColor} />
-                <TimelineColumn colorHex={accentColor} />
-                <div className="space-y-4 pb-2">
-                  {resumeData.projectWorks.map((project, idx) => (
-                    <div key={idx} className="relative break-inside-avoid">
-                      <div
-                        className="absolute -left-[30px] top-1.5 z-10 h-3 w-3 rounded-full border-2 border-white shadow-sm"
-                        style={{ backgroundColor: accentColor }}
+                    );
+                  
+                  case "workExperiences":
+                    return (
+                      <Section
+                        key="workExperiences"
+                        label="WORK EXPERIENCE"
+                        isFirst={isFirst}
+                        content={
+                          <>
+                            {resumeData.workExperiences!.map((exp, idx) => (
+                              <div key={idx} style={{ marginBottom: idx < resumeData.workExperiences!.length - 1 ? "30px" : 0 }}>
+                                <h3 style={{ 
+                                  fontSize: "14px", 
+                                  fontWeight: 600, 
+                                  textTransform: "uppercase",
+                                  margin: 0,
+                                  marginBottom: "4px"
+                                }}>
+                                  {exp.position}
+                                </h3>
+                                <span style={{ 
+                                  display: "block", 
+                                  fontSize: "12px", 
+                                  color: "#64748b",
+                                  marginBottom: "10px"
+                                }}>
+                                  {exp.company} / {exp.startDate && formatDate(exp.startDate, "yyyy")} -{" "}
+                                  {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
+                                </span>
+                                {exp.description && (
+                                  <div
+                                    className="richTextEditorStyle whitespace-pre-line text-[14px] leading-[1.7] pl-[18px]"
+                                    dangerouslySetInnerHTML={{
+                                      __html: exp.description || "",
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            ))}
+                          </>
+                        }
                       />
-                      <div className="mb-1 flex items-baseline justify-between">
-                        <h4 className="font-bold text-slate-800">
-                          {project.title}
-                        </h4>
-                        <span className="font-mono text-xs text-slate-400">
-                          {project.startDate &&
-                            new Date(project.startDate).getFullYear()}{" "}
-                          -{" "}
-                          {project.endDate
-                            ? new Date(project.endDate).getFullYear()
-                            : "Present"}
-                        </span>
-                      </div>
-                      <div
-                        className="text-sm text-slate-600"
-                        dangerouslySetInnerHTML={{
-                          __html: project.description || "",
-                        }}
+                    );
+                  
+                  case "projectWorks":
+                    return (
+                      <Section
+                        key="projectWorks"
+                        label="PROJECTS"
+                        isFirst={isFirst}
+                        content={
+                          <>
+                            {resumeData.projectWorks!.map((project, idx) => (
+                              <div key={idx} style={{ marginBottom: idx < resumeData.projectWorks!.length - 1 ? "30px" : 0 }}>
+                                <h3 style={{ 
+                                  fontSize: "14px", 
+                                  fontWeight: 600, 
+                                  textTransform: "uppercase",
+                                  margin: 0,
+                                  marginBottom: "4px"
+                                }}>
+                                  {project.title}
+                                </h3>
+                                <span style={{ 
+                                  display: "block", 
+                                  fontSize: "12px", 
+                                  color: "#64748b",
+                                  marginBottom: "10px"
+                                }}>
+                                  {project.company && `${project.company} / `}
+                                  {project.startDate && formatDate(project.startDate, "yyyy")} -{" "}
+                                  {project.endDate ? formatDate(project.endDate, "yyyy") : "PRESENT"}
+                                </span>
+                                {project.description && (
+                                  <div
+                                    className="richTextEditorStyle whitespace-pre-line text-[14px] leading-[1.7] pl-[18px]"
+                                    dangerouslySetInnerHTML={{
+                                      __html: project.description || "",
+                                    }}
+                                  />
+                                )}
+                                {project.links && project.links.length > 0 && (
+                                  <div style={{ marginTop: "8px", paddingLeft: "18px" }}>
+                                    {project.links.map((link, i) => (
+                                      <a
+                                        key={i}
+                                        href={link}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        style={{ 
+                                          display: "block", 
+                                          fontSize: "11px", 
+                                          color: "#3b82f6",
+                                          textDecoration: "underline",
+                                          marginBottom: "2px"
+                                        }}
+                                      >
+                                        {link.replace(/^https?:\/\/(www\.)?/, "")}
+                                      </a>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </>
+                        }
                       />
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+                    );
+                  
+                  case "educations":
+                    return (
+                      <Section
+                        key="educations"
+                        label="EDUCATION"
+                        isFirst={isFirst}
+                        content={
+                          <>
+                            {resumeData.educations!.map((edu, idx) => (
+                              <div key={idx} style={{ marginBottom: idx < resumeData.educations!.length - 1 ? "30px" : 0 }}>
+                                <h3 style={{ 
+                                  fontSize: "14px", 
+                                  fontWeight: 600, 
+                                  textTransform: "uppercase",
+                                  margin: 0,
+                                  marginBottom: "4px"
+                                }}>
+                                  {edu.degree} {edu.stream && `- ${edu.stream}`}
+                                </h3>
+                                <span style={{ 
+                                  display: "block", 
+                                  fontSize: "12px", 
+                                  color: "#64748b",
+                                  marginBottom: "10px"
+                                }}>
+                                  {edu.school} / {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
+                                  {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
+                                </span>
+                                {edu.description && (
+                                  <p style={{ color: "#0f172a", margin: 0, paddingLeft: "18px", whiteSpace: "pre-line" }}>
+                                    {edu.description}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </>
+                        }
+                      />
+                    );
+                  
+                  case "certifications":
+                    return (
+                      <Section
+                        key="certifications"
+                        label="CERTIFICATIONS"
+                        isFirst={isFirst}
+                        content={
+                          <>
+                            {resumeData.certifications!.map((cert, idx) => (
+                              <div key={idx} style={{ marginBottom: idx < resumeData.certifications!.length - 1 ? "20px" : 0 }}>
+                                <h3 style={{ 
+                                  fontSize: "14px", 
+                                  fontWeight: 600, 
+                                  textTransform: "uppercase",
+                                  margin: 0,
+                                  marginBottom: "4px"
+                                }}>
+                                  {cert.title}
+                                </h3>
+                                {cert.description && (
+                                  <p style={{ 
+                                    fontSize: "12px", 
+                                    color: "#64748b", 
+                                    margin: 0,
+                                    marginBottom: "4px",
+                                    paddingLeft: "18px"
+                                  }}>
+                                    {cert.description}
+                                  </p>
+                                )}
+                                {cert.link && (
+                                  <a
+                                    href={cert.link}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    style={{ 
+                                      display: "block", 
+                                      fontSize: "11px", 
+                                      color: "#3b82f6",
+                                      textDecoration: "underline",
+                                      paddingLeft: "18px"
+                                    }}
+                                  >
+                                    {cert.link.replace(/^https?:\/\/(www\.)?/, "")}
+                                  </a>
+                                )}
+                              </div>
+                            ))}
+                          </>
+                        }
+                      />
+                    );
+                  
+                  case "skills":
+                    return (
+                      <Section
+                        key="skills"
+                        label="SKILLS"
+                        isFirst={isFirst}
+                        content={
+                          <ul style={{ paddingLeft: "18px", margin: 0 }}>
+                            {resumeData.skills!.map((skill, idx) =>
+                              skill.skillName?.map((item, i) => (
+                                <li key={`${idx}-${i}`} style={{ marginBottom: "6px" }}>
+                                  {item}
+                                </li>
+                              ))
+                            )}
+                          </ul>
+                        }
+                      />
+                    );
+                  
+                  case "others":
+                    return (
+                      <Section
+                        key="others"
+                        label={resumeData.others!.title!}
+                        isFirst={isFirst}
+                        content={
+                          <div
+                            className="richTextEditorStyle whitespace-pre-line text-[14px] leading-[1.7] pl-[18px]"
+                            dangerouslySetInnerHTML={{
+                              __html: resumeData.others!.description || "",
+                            }}
+                          />
+                        }
+                      />
+                    );
+                  
+                  default:
+                    return null;
+                }
+              })
+            }
           </div>
         </div>
       </div>
@@ -229,14 +433,8 @@ export default function Modern5({ resumeData, className }: ResumePreviewProps) {
 // COMPONENTS
 // ----------------------------------------------------------------------
 
-const Header = ({
-  resumeData,
-  colorHex,
-}: {
-  resumeData: ResumeValues;
-  colorHex: string;
-}) => {
-  const { firstName, lastName, jobTitle, photo, borderStyle } = resumeData;
+const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
+  const { firstName, lastName, photo, borderStyle, phone, email, city, country, socialLinks, portfolioLink } = resumeData;
   const [photoSrc, setPhotoSrc] = useState<string>(
     photo instanceof File ? "" : photo || "",
   );
@@ -250,152 +448,162 @@ const Header = ({
     if (photo === null) setPhotoSrc("");
   }, [photo]);
 
+  const getBorderRadius = () => {
+    if (borderStyle === "square") return "0px";
+    if (borderStyle === "circle") return "50%";
+    return "10px";
+  };
+
   return (
-    <div className="relative flex w-full items-center justify-between overflow-hidden border-b border-slate-200 bg-slate-50 p-10 py-12">
-      {/* Decorative Background Element */}
-      <div className="absolute right-0 top-0 h-full w-64 skew-x-12 bg-gradient-to-l from-slate-100 to-transparent opacity-50" />
-
-      <div className="z-10">
-        <h1 className="text-5xl font-extrabold uppercase tracking-tight text-slate-900">
-          {firstName} <span style={{ color: colorHex }}>{lastName}</span>
-        </h1>
-        {jobTitle && (
-          <p className="mt-2 pl-1 text-xl font-medium uppercase tracking-widest text-slate-500">
-            {jobTitle}
-          </p>
-        )}
-      </div>
-
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "30px" }}>
+      {/* Profile Image */}
       {photoSrc && (
-        <div className="z-10">
-          <Image
+        <div>
+          <img
             src={photoSrc}
-            width={130}
-            height={130}
             alt="Profile"
-            className="object-cover"
             style={{
-              width: "130px",
-              height: "130px",
-              borderRadius:
-                borderStyle === BorderStyles.SQUARE
-                  ? "0px"
-                  : borderStyle === BorderStyles.CIRCLE
-                    ? "50%"
-                    : "10px",
-              border: `4px solid white`,
-              boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+              width: "110px",
+              height: "110px",
+              objectFit: "cover",
+              borderRadius: getBorderRadius(),
             }}
           />
         </div>
       )}
+
+      {/* Header Right */}
+      <div>
+        <h1 style={{ 
+          fontSize: "42px", 
+          fontWeight: 600, 
+          textTransform: "uppercase", 
+          letterSpacing: "3px",
+          margin: 0 
+        }}>
+          {firstName} {lastName}
+        </h1>
+        <div style={{ 
+          marginTop: "12px", 
+          display: "flex", 
+          flexWrap: "wrap", 
+          gap: "20px", 
+          fontSize: "15px",
+          color: "#334155" 
+        }}>
+          {phone && (
+            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <Phone size={14} />
+              {phone}
+            </span>
+          )}
+          {email && (
+            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <Mail size={14} />
+              {email}
+            </span>
+          )}
+          {(city || country) && (
+            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <MapPin size={14} />
+              {[city, country].filter(Boolean).join(", ")}
+            </span>
+          )}
+          {socialLinks && socialLinks.length > 0 && socialLinks.map((link, index) => (
+            <a
+              key={index}
+              href={link}
+              target="_blank"
+              rel="noreferrer"
+              style={{ display: "flex", alignItems: "center", gap: "6px", textDecoration: "none", color: "#334155" }}
+            >
+              <SocialMediaIconFinder url={link} />
+              <span style={{ fontSize: "13px" }}>{link.split("://")?.[1]?.split("/")[0]}</span>
+            </a>
+          ))}
+          {portfolioLink && (
+            <a
+              href={portfolioLink}
+              target="_blank"
+              rel="noreferrer"
+              style={{ display: "flex", alignItems: "center", gap: "6px", textDecoration: "none", color: "#334155" }}
+            >
+              <span style={{ fontSize: "13px" }}>Portfolio</span>
+            </a>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
-const SectionTitle = ({
-  title,
-  colorHex,
-}: {
-  title: string;
-  colorHex: string;
-}) => (
-  <div className="pt-0.5 text-right">
-    <h3
-      className="text-sm font-bold uppercase tracking-wider"
-      style={{ color: colorHex }}
-    >
-      {title}
-    </h3>
-  </div>
-);
-
-const TimelineColumn = ({
-  colorHex,
-  //   isList,
-}: {
-  colorHex: string;
-  //   isList?: boolean;
-}) => (
-  <div className="relative flex h-full justify-center">
-    {/* Main Vertical Line */}
-    <div className="absolute bottom-0 top-2 h-full w-[2px] bg-slate-200" />
-
-    {/* Header Dot */}
-    <div
-      className="relative z-10 h-4 w-4 rounded-full border-[3px] border-white shadow-sm"
-      style={{ backgroundColor: colorHex }}
-    />
-  </div>
-);
-
-const ContactSection = ({
-  resumeData,
-  colorHex,
-}: {
-  resumeData: ResumeValues;
-  colorHex: string;
-}) => {
-  const { city, country, phone, email, socialLinks, portfolioLink } =
-    resumeData;
-  const iconStyle = { color: colorHex };
-
+// Section Component - Each section is a row with label, timeline dot, and content
+const Section = ({ label, content, isFirst = false }: { label: string; content: React.ReactNode; isFirst?: boolean }) => {
   return (
-    <div className="mx-10 flex flex-wrap justify-center gap-6 border-b border-slate-100 pb-8 text-sm text-slate-600">
-      {(city || country) && (
-        <div className="flex items-center gap-2">
-          <MapPin size={16} style={iconStyle} />
-          <span>{[city, country].filter(Boolean).join(", ")}</span>
-        </div>
-      )}
-      {phone && (
-        <div className="flex items-center gap-2">
-          <Phone size={16} style={iconStyle} />
-          <a
-            href={`tel:${phone}`}
-            className="transition-colors hover:text-slate-900"
-          >
-            {phone}
-          </a>
-        </div>
-      )}
-      {email && (
-        <div className="flex items-center gap-2">
-          <Mail size={16} style={iconStyle} />
-          <a
-            href={`mailto:${email}`}
-            className="transition-colors hover:text-slate-900"
-          >
-            {email}
-          </a>
-        </div>
-      )}
-      {portfolioLink && (
-        <div className="flex items-center gap-2">
-          <Globe size={16} style={iconStyle} />
-          <a
-            href={portfolioLink}
-            target="_blank"
-            rel="noreferrer"
-            className="transition-colors hover:text-slate-900"
-          >
-            Portfolio
-          </a>
-        </div>
-      )}
-      {socialLinks?.map((link, index) => (
-        <div key={index} className="flex items-center gap-2">
-          <LinkIcon size={16} style={iconStyle} />
-          <a
-            href={link}
-            target="_blank"
-            rel="noreferrer"
-            className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap transition-colors hover:text-slate-900"
-          >
-            {link.replace(/^https?:\/\/(www\.)?/, "")}
-          </a>
-        </div>
-      ))}
+    <div style={{ 
+      display: "grid", 
+      gridTemplateColumns: "160px 40px 1fr", 
+      columnGap: "20px",
+      marginBottom: "40px",
+      position: "relative"
+    }}>
+      {/* Label */}
+      <div style={{ 
+        fontSize: "14px", 
+        fontWeight: 600, 
+        textTransform: "uppercase", 
+        letterSpacing: "2px",
+        paddingTop: "10px"
+      }}>
+        {label}
+      </div>
+
+      {/* Timeline Column with Line and Dot */}
+      <div style={{ 
+        display: "flex", 
+        justifyContent: "center",
+        position: "relative"
+      }}>
+        {/* Vertical line segment */}
+        {!isFirst && (
+          <div style={{
+            position: "absolute",
+            top: "-40px",
+            left: "50%",
+            width: "2px",
+            height: "50px",
+            backgroundColor: "#000",
+            transform: "translateX(-50%)"
+          }} />
+        )}
+        
+        {/* Dot */}
+        <div style={{
+          marginTop: "10px",
+          height: "12px",
+          width: "12px",
+          borderRadius: "50%",
+          backgroundColor: "#000",
+          position: "relative",
+          zIndex: 2
+        }} />
+        
+        {/* Line continuing down */}
+        <div style={{
+          position: "absolute",
+          top: "22px",
+          left: "50%",
+          width: "2px",
+          height: "100%",
+          backgroundColor: "#000",
+          transform: "translateX(-50%)"
+        }} />
+      </div>
+
+      {/* Content */}
+      <div style={{ fontSize: "14px", lineHeight: "1.7" }}>
+        {content}
+      </div>
     </div>
   );
 };

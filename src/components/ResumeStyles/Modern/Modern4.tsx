@@ -137,6 +137,24 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
 
       {/* Skills Section */}
       <SkillsSection resumeData={resumeData} colorHex={colorHex} />
+
+      {/* Others/Custom Section */}
+      {resumeData.others?.title && resumeData.others?.description && (
+        <>
+          {/* Horizontal Divider */}
+          <div className="h-px bg-gray-300" />
+          
+          <div>
+            <SectionTitle title={resumeData.others.title} colorHex={colorHex} />
+            <div
+              className="text-xs leading-relaxed text-gray-600 richTextEditorStyle whitespace-pre-line"
+              dangerouslySetInnerHTML={{
+                __html: resumeData.others.description || "",
+              }}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
