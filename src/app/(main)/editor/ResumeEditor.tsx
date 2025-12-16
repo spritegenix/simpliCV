@@ -12,6 +12,9 @@ import ResumePreviewSection from "./ResumePreviewSection";
 import { steps } from "./steps";
 import useAutoSaveResume from "./useAutoSaveResume";
 import AddContentModal from "@/components/AddContentModal";
+import CustomizationPanel from "./CustomizationPanel";
+import { Button } from "@/components/ui/button";
+import { Settings2, FileEdit } from "lucide-react";
 
 interface ResumeEditorProps {
   resumeToEdit: ResumeServerData | null;
@@ -25,6 +28,7 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
   );
 
   const [showSmResumePreview, setShowSmResumePreview] = useState(false);
+  const [showCustomization, setShowCustomization] = useState(false);
 
   const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData);
   // const { isSaving: isSavingP, hasUnsavedChanges: hasUnsavedChangesP } =
@@ -59,15 +63,42 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
           >
             <div className="mb-4">
               <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
-              <div className="mt-4 px-3 flex items-center justify-end">
-                <AddContentModal onSelectSection={setStep} />
+              <div className="mt-4 flex items-center justify-between px-3">
+                <Button
+                  variant={showCustomization ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowCustomization(!showCustomization)}
+                  className="gap-2"
+                >
+                  {showCustomization ? (
+                    <>
+                      <FileEdit className="h-4 w-4" />
+                      <span className="hidden sm:inline">Editorial</span>
+                    </>
+                  ) : (
+                    <>
+                      <Settings2 className="h-4 w-4" />
+                      <span className="hidden sm:inline">Customize</span>
+                    </>
+                  )}
+                </Button>
+                {!showCustomization && (
+                  <AddContentModal onSelectSection={setStep} />
+                )}
               </div>
             </div>
-            {FormComponent && (
-              <FormComponent
+            {showCustomization ? (
+              <CustomizationPanel
                 resumeData={resumeData}
                 setResumeData={setResumeData}
               />
+            ) : (
+              FormComponent && (
+                <FormComponent
+                  resumeData={resumeData}
+                  setResumeData={setResumeData}
+                />
+              )
             )}
           </div>
           <div className="grow md:border-r" />
