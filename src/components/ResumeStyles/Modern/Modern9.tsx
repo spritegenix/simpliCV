@@ -1,315 +1,131 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
-import { ResumeValues } from "@/lib/validation";
-import { cn } from "@/lib/utils";
-import useDimensions from "@/hooks/useDimensions";
-import { formatDate } from "date-fns";
-import Image from "next/image";
-import { MapPin, Phone, Mail, Globe } from "lucide-react";
+import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
+
+// Types
+interface ResumeValues {
+  firstName?: string;
+  lastName?: string;
+  jobTitle?: string;
+  city?: string;
+  country?: string;
+  phone?: string;
+  email?: string;
+  photo?: string | File | null;
+  summary?: string;
+  portfolioLink?: string;
+  socialLinks?: string[];
+  workExperiences?: Array<{
+    position?: string;
+    company?: string;
+    startDate?: Date | string;
+    endDate?: Date | string | null;
+    description?: string;
+  }>;
+  educations?: Array<{
+    degree?: string;
+    school?: string;
+    stream?: string;
+    startDate?: Date | string;
+    endDate?: Date | string | null;
+    description?: string;
+  }>;
+  projectWorks?: Array<{
+    title?: string;
+    company?: string;
+    startDate?: Date | string;
+    endDate?: Date | string | null;
+    description?: string;
+    links?: string[];
+  }>;
+  skills?: Array<{
+    title?: string;
+    skillName?: string[];
+  }>;
+  certifications?: Array<{
+    title?: string;
+    description?: string;
+    link?: string;
+  }>;
+  others?: {
+    title?: string;
+    description?: string;
+  };
+  colorHex?: string;
+  borderStyle?: "square" | "circle" | "rounded";
+}
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
 }
 
-export default function Modern9({ resumeData, className }: ResumePreviewProps) {
+// Helper function to format dates
+const formatDate = (date: Date | string, format: string): string => {
+  const d = new Date(date);
+  if (format === "yyyy") {
+    return d.getFullYear().toString();
+  }
+  return d.getFullYear().toString();
+};
+
+// Custom hook for dimensions
+const useDimensions = (ref: React.RefObject<HTMLElement>) => {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (ref.current) {
+        setWidth(ref.current.offsetWidth);
+      }
+    };
+
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, [ref]);
+
+  return { width };
+};
+
+export default function ModernSidebar({ resumeData, className = "" }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
 
-  // Default colors
-  // Red Accent from description description
+  // Default red accent color
   const primaryColor =
     resumeData.colorHex === "#000000" || !resumeData.colorHex
-      ? "#DC2626" // Red-600
+      ? "#d83a3a"
       : resumeData.colorHex;
 
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white text-slate-800 shadow-sm",
-        className,
-      )}
+      className={`aspect-[210/297] h-fit w-full bg-white text-slate-800 ${className}`}
       ref={containerRef}
     >
-      {/* Montserrat Font Injection */}
+      {/* Poppins Font */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
-        `,
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+          `,
         }}
       />
 
       <div
-        className={cn(
-          "relative h-full font-['Montserrat',sans-serif]",
-          !width && "invisible",
-        )}
+        id="resumePreviewContent"
+        className={`h-full ${!width ? "invisible" : ""}`}
         style={{
           zoom: (1 / 794) * width,
+          fontFamily: "'Poppins', sans-serif",
         }}
-        id="resumePreviewContent"
       >
-        <div className="flex h-full">
-          {/* LEFT COLUMN - Fixed Width Sidebar with Grey Background */}
-          <div className="flex w-[300px] shrink-0 flex-col bg-slate-100 pt-12 text-slate-700">
-            {/* Profile Image */}
-            <div className="mb-10 flex justify-center px-6">
-              <PhotoSection resumeData={resumeData} colorHex={primaryColor} />
-            </div>
+        <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", height: "100%", background: "#f5f5f5" }}>
+          {/* LEFT SIDEBAR */}
+          <Sidebar resumeData={resumeData} colorHex={primaryColor} />
 
-            {/* Contact Section */}
-            <div className="mb-10 space-y-5 px-8">
-              <h3 className="mb-4 border-b-2 border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest text-slate-800">
-                Contact
-              </h3>
-              <ContactSection resumeData={resumeData} colorHex={primaryColor} />
-            </div>
-
-            {/* References */}
-            {resumeData.certifications &&
-              resumeData.certifications.length > 0 && (
-                <div className="mb-10 px-8">
-                  <SectionHeaderSide
-                    title="References"
-                    colorHex={primaryColor}
-                  />
-                  <div className="space-y-6">
-                    {resumeData.certifications.map((item, idx) => (
-                      <div key={idx}>
-                        <h4 className="text-xs font-bold uppercase text-slate-900">
-                          {item.title}
-                        </h4>
-                        {item.description && (
-                          <p className="mt-1 text-[10px] text-slate-600">
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-            {/* Awards (Using Others as placeholder or if explicit awards exist) */}
-            {/* Assuming "Others" might be used for Awards if specifically labelled, or we leave space. 
-                     The prompt asks for "Awards section". If no specific separate schema, we map from others if title matches, or just generic.
-                 */}
-            {resumeData.others &&
-              (resumeData.others.title?.toLowerCase().includes("award") ||
-                resumeData.others.title?.toLowerCase().includes("achieve")) && (
-                <div className="mb-10 px-8">
-                  <SectionHeaderSide
-                    title={resumeData.others.title}
-                    colorHex={primaryColor}
-                  />
-                  <div
-                    className="text-[11px] leading-relaxed text-slate-600"
-                    dangerouslySetInnerHTML={{
-                      __html: resumeData.others.description || "",
-                    }}
-                  />
-                </div>
-              )}
-          </div>
-
-          {/* RIGHT COLUMN - Main Content */}
-          <div className="flex-1 bg-white px-10 py-12">
-            {/* Header Name (Top of Right Column) */}
-            <div className="mb-12 border-b-2 border-slate-100 pb-8">
-              <h1 className="mb-2 text-5xl font-black uppercase leading-none tracking-tight text-slate-900">
-                {resumeData.firstName}{" "}
-                <span style={{ color: primaryColor }}>
-                  {resumeData.lastName}
-                </span>
-              </h1>
-              {resumeData.jobTitle && (
-                <p className="text-xl font-bold uppercase tracking-[0.3em] text-slate-400">
-                  {resumeData.jobTitle}
-                </p>
-              )}
-            </div>
-
-            {/* ABOUT ME */}
-            {resumeData.summary && (
-              <div className="mb-10">
-                <SectionHeaderMain title="About Me" colorHex={primaryColor} />
-                <p className="text-justify text-sm font-medium leading-relaxed text-slate-600">
-                  {resumeData.summary}
-                </p>
-              </div>
-            )}
-
-            {/* JOB EXPERIENCE - 2 Column Grid Subsection */}
-            {resumeData.workExperiences &&
-              resumeData.workExperiences.length > 0 && (
-                <div className="mb-10">
-                  <SectionHeaderMain
-                    title="Job Experience"
-                    colorHex={primaryColor}
-                  />
-                  <div className="grid grid-cols-1 gap-x-8 gap-y-8">
-                    {/* Note: Prompt asked for "Two-column subsections". 
-                                 However, long descriptions in 2 cols can look bad. 
-                                 I'll stick to 1 col for readability unless strictly needed small items. 
-                                 Actually, widely used "Job Experience" in resume templates often is 1 col.
-                                 But if user insists on 2-col subsections, I will try a grid for the *Items* if they are short, or maybe internal layout.
-                                 Let's allow 2 cols for items if there are enough.
-                             */}
-                    <div className="grid grid-cols-1 gap-6">
-                      {resumeData.workExperiences.map((exp, idx) => (
-                        <div key={idx} className="relative break-inside-avoid">
-                          <div className="mb-1 flex items-baseline justify-between">
-                            <h4 className="text-md font-bold uppercase text-slate-800">
-                              {exp.position}
-                            </h4>
-                            <span className="text-xs font-bold text-slate-400">
-                              {exp.startDate &&
-                                formatDate(exp.startDate, "yyyy")}{" "}
-                              -{" "}
-                              {exp.endDate
-                                ? formatDate(exp.endDate, "yyyy")
-                                : "Present"}
-                            </span>
-                          </div>
-                          <div
-                            className="mb-2 text-xs font-bold uppercase tracking-wide"
-                            style={{ color: primaryColor }}
-                          >
-                            {exp.company}
-                          </div>
-                          <div
-                            className="text-justify text-xs leading-relaxed text-slate-600"
-                            dangerouslySetInnerHTML={{
-                              __html: exp.description || "",
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-            {/* EDUCATION - 2 Column Grid for items? */}
-            {resumeData.educations && resumeData.educations.length > 0 && (
-              <div className="mb-10">
-                <SectionHeaderMain title="Education" colorHex={primaryColor} />
-                <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-                  {resumeData.educations.map((edu, idx) => (
-                    <div key={idx} className="break-inside-avoid">
-                      <h4 className="mb-0.5 text-sm font-bold uppercase text-slate-800">
-                        {edu.degree}
-                      </h4>
-                      <div
-                        className="mb-1 text-xs font-bold uppercase text-slate-400"
-                        style={{ color: primaryColor }}
-                      >
-                        {edu.school}
-                      </div>
-                      <span className="mb-1 block text-[10px] font-bold text-slate-400">
-                        {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
-                        {edu.endDate
-                          ? formatDate(edu.endDate, "yyyy")
-                          : "Present"}
-                      </span>
-                      {edu.description && (
-                        <div className="text-[11px] text-slate-600">
-                          {edu.description}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* BOTTOM ROW: SKILLS (Left) | HOBBIES/LANGUAGES (Right) or Stacked */}
-            {/* Prompt says: Skills, Hobbies, Languages in order. Vertical stack? "Two-column subsections (Skills)". */}
-
-            {/* SKILLS - 2 Column Grid */}
-            {resumeData.skills && resumeData.skills.length > 0 && (
-              <div className="mb-10">
-                <SectionHeaderMain title="Skills" colorHex={primaryColor} />
-                <div className="grid grid-cols-2 gap-x-12 gap-y-4">
-                  {resumeData.skills.map((skill, idx) => (
-                    <div key={idx}>
-                      <div className="mb-1 flex justify-between">
-                        <h4 className="text-xs font-bold uppercase text-slate-700">
-                          {skill.title}
-                        </h4>
-                      </div>
-                      <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-                        {/* Randomized percent for visual if skillName is plain strings, or use skill items count */}
-                        <div
-                          className="h-full rounded-full"
-                          style={{
-                            width: "85%",
-                            backgroundColor: primaryColor,
-                          }}
-                        />
-                      </div>
-                      <div className="mt-1 flex flex-wrap gap-x-2">
-                        {skill.skillName?.map((item, i) => (
-                          <span key={i} className="text-[10px] text-slate-500">
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* HOBBIES & LANGUAGES - Side by Side or Stacked? Main content flows vertically. */}
-            <div className="grid grid-cols-2 gap-10">
-              {/* HOBBIES (From Others typically) */}
-              {resumeData.others && (
-                <div>
-                  <SectionHeaderMain
-                    title={resumeData.others.title || "Hobbies"}
-                    colorHex={primaryColor}
-                  />
-                  <div
-                    className="border-l-4 pl-3 text-xs leading-relaxed text-slate-600"
-                    style={{ borderColor: primaryColor }}
-                    dangerouslySetInnerHTML={{
-                      __html: resumeData.others.description || "",
-                    }}
-                  />
-                </div>
-              )}
-
-              {/* LANGUAGES (Mock) - "Languages with percentage bars" */}
-              {/* Using a static mock or repurposing data if available. Since strict "Languages section" demanded. */}
-              <div>
-                <SectionHeaderMain title="Languages" colorHex={primaryColor} />
-                <div className="space-y-3">
-                  {["English", "Spanish", "French"].map((lang, idx) => (
-                    <div key={idx}>
-                      <div className="mb-1 flex justify-between text-[10px] font-bold text-slate-600">
-                        <span>{lang}</span>
-                        <span>
-                          {idx === 0 ? "100%" : idx === 1 ? "80%" : "60%"}
-                        </span>
-                      </div>
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                        <div
-                          className="h-full rounded-full"
-                          style={{
-                            width:
-                              idx === 0 ? "100%" : idx === 1 ? "80%" : "60%",
-                            backgroundColor: primaryColor,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* MAIN CONTENT */}
+          <MainContent resumeData={resumeData} colorHex={primaryColor} />
         </div>
       </div>
     </div>
@@ -320,13 +136,8 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
 // COMPONENTS
 // ----------------------------------------------------------------------
 
-const PhotoSection = ({
-  resumeData,
-}: {
-  resumeData: ResumeValues;
-  colorHex: string;
-}) => {
-  const { photo } = resumeData;
+const Sidebar = ({ resumeData, colorHex }: { resumeData: ResumeValues; colorHex: string }) => {
+  const { photo, borderStyle, phone, email, portfolioLink, socialLinks, city, country, certifications, others } = resumeData;
   const [photoSrc, setPhotoSrc] = useState<string>(
     photo instanceof File ? "" : photo || "",
   );
@@ -340,110 +151,374 @@ const PhotoSection = ({
     if (photo === null) setPhotoSrc("");
   }, [photo]);
 
-  if (!photoSrc) return null;
+  const getBorderRadius = () => {
+    if (borderStyle === "square") return "0px";
+    if (borderStyle === "circle") return "50%";
+    return "10px";
+  };
 
   return (
-    <div className="relative h-[180px] w-[180px]">
-      <Image
-        src={photoSrc}
-        fill
-        alt="Profile"
-        className="rounded-full border-[8px] border-white object-cover shadow-sm"
-      />
-    </div>
+    <aside style={{ background: "#e6e6e6", padding: "30px 20px" }}>
+      {/* Profile Photo */}
+      {photoSrc && (
+        <div style={{ 
+          width: "160px", 
+          height: "160px", 
+          margin: "0 auto 30px", 
+          border: "6px solid #ddd", 
+          overflow: "hidden",
+          borderRadius: getBorderRadius()
+        }}>
+          <img 
+            src={photoSrc} 
+            alt="Profile" 
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </div>
+      )}
+
+      {/* Contact Section */}
+      <div style={{ 
+        background: colorHex, 
+        color: "white", 
+        textAlign: "center", 
+        padding: "8px", 
+        fontSize: "14px",
+        fontWeight: 600,
+        margin: "25px 0 10px"
+      }}>
+        CONTACT ME
+      </div>
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        {phone && (
+          <li style={{ fontSize: "13px", margin: "8px 0", display: "flex", alignItems: "center", gap: "8px" }}>
+            <Phone size={14} /> {phone}
+          </li>
+        )}
+        {email && (
+          <li style={{ fontSize: "13px", margin: "8px 0", display: "flex", alignItems: "center", gap: "8px" }}>
+            <Mail size={14} /> {email}
+          </li>
+        )}
+        {portfolioLink && (
+          <li style={{ fontSize: "13px", margin: "8px 0", display: "flex", alignItems: "center", gap: "8px" }}>
+            <Globe size={14} /> {portfolioLink.replace(/^https?:\/\/(www\.)?/, "")}
+          </li>
+        )}
+        {(city || country) && (
+          <li style={{ fontSize: "13px", margin: "8px 0", display: "flex", alignItems: "start", gap: "8px" }}>
+            <MapPin size={14} style={{ marginTop: "2px" }} /> 
+            <span>{[city, country].filter(Boolean).join(", ")}</span>
+          </li>
+        )}
+        {socialLinks && socialLinks.map((link, idx) => (
+          <li key={idx} style={{ fontSize: "13px", margin: "8px 0", display: "flex", alignItems: "center", gap: "8px" }}>
+            <LinkIcon size={14} /> 
+            <a href={link} target="_blank" rel="noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
+              {link.replace(/^https?:\/\/(www\.)?/, "")}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      {/* Divider */}
+      <div style={{ 
+        height: "6px", 
+        background: "#ccc", 
+        margin: "20px 0", 
+        borderRadius: "5px" 
+      }} />
+
+      {/* References */}
+      {certifications && certifications.length > 0 && (
+        <>
+          <div style={{ 
+            background: colorHex, 
+            color: "white", 
+            textAlign: "center", 
+            padding: "8px", 
+            fontSize: "14px",
+            fontWeight: 600,
+            margin: "25px 0 10px"
+          }}>
+            REFERENCES
+          </div>
+          {certifications.map((ref, idx) => (
+            <div key={idx} style={{ marginBottom: "15px", fontSize: "12px" }}>
+              <h4 style={{ fontSize: "12px", fontWeight: 600, margin: "0 0 4px 0" }}>
+                {ref.title}
+              </h4>
+              {ref.description && (
+                <p style={{ margin: 0, fontSize: "11px", color: "#555" }}>
+                  {ref.description}
+                </p>
+              )}
+              {ref.link && (
+                <a href={ref.link} target="_blank" rel="noreferrer" style={{ fontSize: "11px", color: "#3b82f6", textDecoration: "underline" }}>
+                  {ref.link.replace(/^https?:\/\/(www\.)?/, "")}
+                </a>
+              )}
+            </div>
+          ))}
+          <div style={{ 
+            height: "6px", 
+            background: "#ccc", 
+            margin: "20px 0", 
+            borderRadius: "5px" 
+          }} />
+        </>
+      )}
+
+      {/* Awards */}
+      {others && (
+        <>
+          <div style={{ 
+            background: colorHex, 
+            color: "white", 
+            textAlign: "center", 
+            padding: "8px", 
+            fontSize: "14px",
+            fontWeight: 600,
+            margin: "25px 0 10px"
+          }}>
+            {others.title || "AWARDS"}
+          </div>
+          <div 
+            className="richTextEditorStyle whitespace-pre-line"
+            style={{ fontSize: "12px", color: "#555" }}
+            dangerouslySetInnerHTML={{ __html: others.description || "" }}
+          />
+        </>
+      )}
+    </aside>
   );
 };
 
-// Red Label Header for Main Content
-const SectionHeaderMain = ({
-  title,
-  colorHex,
-}: {
-  title: string;
-  colorHex: string;
-}) => (
-  <div className="mb-6 border-b border-slate-200 pb-2">
-    <span
-      className="inline-block px-4 py-1.5 text-sm font-extrabold uppercase tracking-widest text-white"
-      style={{ backgroundColor: colorHex }}
-    >
-      {title}
-    </span>
-  </div>
-);
-
-// Sidebar Header (Red Text)
-const SectionHeaderSide = ({
-  title,
-  colorHex,
-}: {
-  title: string;
-  colorHex: string;
-}) => (
-  <h3
-    className="mb-4 border-b-2 border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest"
-    style={{ color: colorHex }}
-  >
-    {title}
-  </h3>
-);
-
-const ContactSection = ({
-  resumeData,
-  colorHex,
-}: {
-  resumeData: ResumeValues;
-  colorHex: string;
-}) => {
-  const { city, country, phone, email, portfolioLink } = resumeData;
-
-  // Icon circle
-  const Wrapper = ({
-    icon: Icon,
-    text,
-    href,
-  }: {
-    icon: React.ElementType; // Fixed: Changed from any to React.ElementType
-    text: string;
-    href?: string;
-  }) => (
-    <div className="flex items-start gap-4">
-      <div
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white"
-        style={{ backgroundColor: colorHex }}
-      >
-        <Icon size={14} />
-      </div>
-      <div className="flex-1 pt-1.5">
-        {href ? (
-          <a
-            href={href}
-            className="block break-all text-[11px] font-bold text-slate-600 hover:text-slate-900"
-          >
-            {text}
-          </a>
-        ) : (
-          <span className="block text-[11px] font-bold text-slate-600">
-            {text}
-          </span>
-        )}
-      </div>
-    </div>
-  );
+const MainContent = ({ resumeData, colorHex }: { resumeData: ResumeValues; colorHex: string }) => {
+  const { firstName, lastName, jobTitle, summary, workExperiences, educations, projectWorks, skills, others } = resumeData;
 
   return (
-    <div className="space-y-4">
-      {phone && <Wrapper icon={Phone} text={phone} href={`tel:${phone}`} />}
-      {email && <Wrapper icon={Mail} text={email} href={`mailto:${email}`} />}
-      {(city || country) && (
-        <Wrapper
-          icon={MapPin}
-          text={[city, country].filter(Boolean).join(", ")}
-        />
+    <main style={{ padding: "40px" }}>
+      {/* Header */}
+      <header style={{ marginBottom: "20px" }}>
+        <h1 style={{ fontSize: "42px", fontWeight: 700, margin: 0 }}>
+          <span style={{ color: colorHex }}>{firstName}</span> {lastName}
+        </h1>
+        {jobTitle && (
+          <h2 style={{ 
+            fontSize: "14px", 
+            letterSpacing: "3px", 
+            color: "#666", 
+            margin: "8px 0 0 0",
+            fontWeight: 400,
+            textTransform: "uppercase"
+          }}>
+            {jobTitle}
+          </h2>
+        )}
+      </header>
+
+      {/* About Me */}
+      {summary && (
+        <>
+          <div style={{ 
+            display: "inline-block", 
+            background: colorHex, 
+            color: "white", 
+            padding: "6px 16px", 
+            margin: "20px 0 10px", 
+            fontSize: "13px",
+            fontWeight: 600
+          }}>
+            ABOUT ME
+          </div>
+          <p style={{ fontSize: "13px", color: "#555", margin: "0 0 20px 0" }}>
+            {summary}
+          </p>
+        </>
       )}
-      {portfolioLink && (
-        <Wrapper icon={Globe} text="Portfolio" href={portfolioLink} />
+
+      {/* Experience & Education - Two Columns */}
+      <div style={{ 
+        display: "grid", 
+        gridTemplateColumns: "1fr 1fr", 
+        gap: "30px",
+        marginBottom: "20px"
+      }}>
+        {/* Job Experience */}
+        <section>
+          {workExperiences && workExperiences.length > 0 && (
+            <>
+              <div style={{ 
+                display: "inline-block", 
+                background: colorHex, 
+                color: "white", 
+                padding: "6px 16px", 
+                margin: "20px 0 10px", 
+                fontSize: "13px",
+                fontWeight: 600
+              }}>
+                JOB EXPERIENCE
+              </div>
+              {workExperiences.map((exp, idx) => (
+                <div key={idx} style={{ marginBottom: "20px" }}>
+                  <h3 style={{ fontSize: "14px", margin: "0 0 4px 0", fontWeight: 600 }}>
+                    {exp.position}
+                  </h3>
+                  <span style={{ fontSize: "12px", color: "#777", display: "block", marginBottom: "4px" }}>
+                    {exp.company}
+                  </span>
+                  <div 
+                    className="richTextEditorStyle whitespace-pre-line"
+                    style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}
+                    dangerouslySetInnerHTML={{ __html: exp.description || "" }}
+                  />
+                  <small style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}>
+                    {exp.startDate && formatDate(exp.startDate, "yyyy")} – {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
+                  </small>
+                </div>
+              ))}
+            </>
+          )}
+        </section>
+
+        {/* Education */}
+        <section>
+          {educations && educations.length > 0 && (
+            <>
+              <div style={{ 
+                display: "inline-block", 
+                background: colorHex, 
+                color: "white", 
+                padding: "6px 16px", 
+                margin: "20px 0 10px", 
+                fontSize: "13px",
+                fontWeight: 600
+              }}>
+                EDUCATION
+              </div>
+              {educations.map((edu, idx) => (
+                <div key={idx} style={{ marginBottom: "20px" }}>
+                  <h3 style={{ fontSize: "14px", margin: "0 0 4px 0", fontWeight: 600 }}>
+                    {edu.degree} {edu.stream}
+                  </h3>
+                  <span style={{ fontSize: "12px", color: "#777", display: "block", marginBottom: "4px" }}>
+                    {edu.school}
+                  </span>
+                  {edu.description && (
+                    <p style={{ fontSize: "12px", color: "#555", margin: "0 0 4px 0" }}>
+                      {edu.description}
+                    </p>
+                  )}
+                  <small style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}>
+                    {edu.startDate && formatDate(edu.startDate, "yyyy")} – {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
+                  </small>
+                </div>
+              ))}
+            </>
+          )}
+        </section>
+      </div>
+
+      {/* Projects Section - Full Width */}
+      {projectWorks && projectWorks.length > 0 && (
+        <>
+          <div style={{ 
+            display: "inline-block", 
+            background: colorHex, 
+            color: "white", 
+            padding: "6px 16px", 
+            margin: "20px 0 10px", 
+            fontSize: "13px",
+            fontWeight: 600
+          }}>
+            PROJECTS
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            {projectWorks.map((proj, idx) => (
+              <div key={idx} style={{ marginBottom: "20px" }}>
+                <h3 style={{ fontSize: "14px", margin: "0 0 4px 0", fontWeight: 600 }}>
+                  {proj.title}
+                </h3>
+                {proj.company && (
+                  <span style={{ fontSize: "12px", color: "#777", display: "block", marginBottom: "4px" }}>
+                    {proj.company}
+                  </span>
+                )}
+                {proj.description && (
+                  <div 
+                    className="richTextEditorStyle whitespace-pre-line"
+                    style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}
+                    dangerouslySetInnerHTML={{ __html: proj.description || "" }}
+                  />
+                )}
+                {proj.links && proj.links.length > 0 && (
+                  <div style={{ marginTop: "6px" }}>
+                    {proj.links.map((link, i) => (
+                      <a
+                        key={i}
+                        href={link}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ 
+                          display: "block", 
+                          fontSize: "11px", 
+                          color: "#3b82f6",
+                          textDecoration: "underline",
+                          marginBottom: "2px"
+                        }}
+                      >
+                        {link.replace(/^https?:\/\/(www\.)?/, "")}
+                      </a>
+                    ))}
+                  </div>
+                )}
+                <small style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}>
+                  {proj.startDate && formatDate(proj.startDate, "yyyy")} – {proj.endDate ? formatDate(proj.endDate, "yyyy") : "PRESENT"}
+                </small>
+              </div>
+            ))}
+          </div>
+        </>
       )}
-    </div>
+
+      {/* Skills */}
+      {skills && skills.length > 0 && (
+        <>
+          <div style={{ 
+            display: "inline-block", 
+            background: colorHex, 
+            color: "white", 
+            padding: "6px 16px", 
+            margin: "20px 0 10px", 
+            fontSize: "13px",
+            fontWeight: 600
+          }}>
+            SKILLS
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            {skills.map((skill, idx) => (
+              <div key={idx} style={{ marginBottom: "15px" }}>
+                <span style={{ fontSize: "13px", fontWeight: 600, display: "block", marginBottom: "4px" }}>
+                  {skill.title}
+                </span>
+                <div style={{ 
+                  background: "#ccc", 
+                  height: "6px", 
+                  borderRadius: "5px", 
+                  overflow: "hidden" 
+                }}>
+                  <div style={{ 
+                    height: "100%", 
+                    background: colorHex, 
+                    width: "75%"
+                  }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </main>
   );
 };
