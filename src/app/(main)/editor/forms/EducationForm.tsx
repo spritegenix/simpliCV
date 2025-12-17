@@ -185,6 +185,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
             <FormControl>
               <Input
                 {...field}
+                value={field.value || ""}
                 placeholder="B.Tech, MBA, Polytechnic, ..."
                 autoFocus
               />
@@ -203,6 +204,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
             <FormControl>
               <Input
                 {...field}
+                value={field.value || ""}
                 placeholder="ABC College, XYZ University, ..."
               />
             </FormControl>
@@ -218,7 +220,11 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
           <FormItem>
             <FormLabel>Location</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="City, State, Country" />
+              <Input
+                {...field}
+                value={field.value || ""}
+                placeholder="City, State, Country"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -232,7 +238,11 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
           <FormItem>
             <FormLabel>Marks</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Percentage, CGPA, etc." />
+              <Input
+                {...field}
+                value={field.value || ""}
+                placeholder="Percentage, CGPA, etc."
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -248,6 +258,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
             <FormControl>
               <Input
                 {...field}
+                value={field.value || ""}
                 placeholder="Computer Science, Electronics, ..."
               />
             </FormControl>
@@ -265,6 +276,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
             <FormControl>
               <Textarea
                 {...field}
+                value={field.value || ""}
                 placeholder="Write something about your education"
               />
             </FormControl>
@@ -283,7 +295,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
                 <Input
                   {...field}
                   type="date"
-                  value={field.value?.slice(0, 10)}
+                  value={field.value?.slice(0, 10) || ""}
                 />
               </FormControl>
               <FormMessage />
@@ -300,7 +312,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
                 <Input
                   {...field}
                   type="date"
-                  value={field.value?.slice(0, 10)}
+                  value={field.value?.slice(0, 10) || ""}
                 />
               </FormControl>
               <FormMessage />

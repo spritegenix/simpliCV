@@ -53,17 +53,18 @@ export default function SkillsForm({
     const { unsubscribe } = form.watch(async (values) => {
       const isValid = await form.trigger();
       if (!isValid) return;
-      
-      const skills = values.skills
-      ?.filter((skill) => skill !== undefined)
-      ?.map((skill) => ({
-        title: skill.title,
-        skillName: skill.skillName
+
+      const skills =
+        values.skills
           ?.filter((skill) => skill !== undefined)
-          .map((skill) => skill.trim())
-          .filter((skill) => skill !== ""),
-      })) || []
-      
+          ?.map((skill) => ({
+            title: skill.title,
+            skillName: skill.skillName
+              ?.filter((skill) => skill !== undefined)
+              .map((skill) => skill.trim())
+              .filter((skill) => skill !== ""),
+          })) || [];
+
       setResumeData({
         ...resumeData,
         skills: skills,
@@ -186,7 +187,11 @@ function SkillsItem({ id, form, index, remove }: SkillsItemProps) {
           <FormItem>
             <FormLabel>Title</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="e.g. Frontend, Tech Tools" />
+              <Input
+                {...field}
+                value={field.value || ""}
+                placeholder="e.g. Frontend, Tech Tools"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -201,6 +206,7 @@ function SkillsItem({ id, form, index, remove }: SkillsItemProps) {
             <FormControl>
               <Textarea
                 {...field}
+                value={field.value || ""}
                 placeholder="e.g. React.js, Node.js, Graphic design, ..."
                 onChange={(e) => {
                   const ski = e.target.value.split(",");

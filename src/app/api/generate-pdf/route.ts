@@ -22,10 +22,10 @@ export async function POST(req: NextRequest) {
     await page.goto(url, { waitUntil: "networkidle" });
     
     // Wait for the resume content to be visible
-    await page.waitForSelector('#resumePreviewContent', { timeout: 10000 });
+    await page.waitForSelector('#resumePreviewContent', { timeout: 30000 });
     
     // Additional wait for fonts and dynamic content to load
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(800);
 
     const pdfBuffer = await page.pdf({
       format: "A4",
