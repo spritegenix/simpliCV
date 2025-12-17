@@ -75,19 +75,22 @@ export async function POST(req: NextRequest) {
       Your task is to extract the information and structure it into a JSON format that matches the following interface:
 
       interface ResumeValues {
-        generalInfo?: { title?: string; description?: string };
-        personalInfo?: {
-          firstName?: string;
-          lastName?: string;
-          jobTitle?: string;
-          city?: string;
-          country?: string;
-          phone?: string;
-          email?: string;
-          socialLinks?: string[];
-          portfolioLink?: string;
-        };
-         workExperiences?: {
+        // General Info
+        title?: string; 
+        description?: string;
+
+        // Personal Info
+        firstName?: string;
+        lastName?: string;
+        jobTitle?: string;
+        city?: string;
+        country?: string;
+        phone?: string;
+        email?: string;
+        socialLinks?: string[];
+        portfolioLink?: string;
+
+        workExperiences?: {
           position?: string;
           company?: string;
           jobLocation?: string;
@@ -130,6 +133,10 @@ export async function POST(req: NextRequest) {
             title?: string;
             description?: string;
         }[];
+        others?: {
+            title?: string;
+            description?: string;
+        };
         summary?: string;
       }
 
