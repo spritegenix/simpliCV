@@ -25,9 +25,9 @@ export default function CustomizationPanel({
   resumeData,
   setResumeData,
 }: CustomizationPanelProps) {
-  const [language, setLanguage] = useState("Italian");
+  const [language, setLanguage] = useState("English");
   const [dateFormat, setDateFormat] = useState("MM/DD/YYYY");
-  const [pageFormat, setPageFormat] = useState("US Letter");
+  const [pageFormat, setPageFormat] = useState("A4");
   const [sectionOrder, setSectionOrder] = useState(
     steps.map((step) => ({ key: step.key, title: step.title })),
   );
@@ -104,6 +104,9 @@ export default function CustomizationPanel({
 
   return (
     <div className="w-full space-y-6 overflow-y-auto px-3 pb-5">
+      {/* Apply a Design Template */}
+      <DesignTemplate />
+
       {/* Language & Region */}
       <LanguageRegion
         language={language}
@@ -113,9 +116,6 @@ export default function CustomizationPanel({
         pageFormat={pageFormat}
         setPageFormat={setPageFormat}
       />
-
-      {/* Apply a Design Template */}
-      <DesignTemplate />
 
       {/* Change Section Order */}
       <SectionOrder

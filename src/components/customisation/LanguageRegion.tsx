@@ -42,11 +42,6 @@ export default function LanguageRegion({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="English">English</SelectItem>
-                <SelectItem value="Italian">Italian</SelectItem>
-                <SelectItem value="Spanish">Spanish</SelectItem>
-                <SelectItem value="French">French</SelectItem>
-                <SelectItem value="German">German</SelectItem>
-                <SelectItem value="Portuguese">Portuguese</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -75,9 +70,7 @@ export default function LanguageRegion({
                 <SelectValue placeholder="Select page format" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="US Letter">US Letter</SelectItem>
                 <SelectItem value="A4">A4</SelectItem>
-                <SelectItem value="Legal">Legal</SelectItem>
               </SelectContent>
             </Select>
           </div>

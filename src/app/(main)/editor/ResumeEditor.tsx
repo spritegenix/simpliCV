@@ -63,12 +63,14 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
           >
             <div className="mb-4">
               <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
-              <div className="mt-4 flex items-center justify-between px-3">
+              <div className="mt-4 flex items-center gap-2 px-3">
+                {!showCustomization && (
+                  <AddContentModal onSelectSection={setStep} />
+                )}
                 <Button
-                  variant={showCustomization ? "default" : "outline"}
-                  size="sm"
+                  variant="outline"
                   onClick={() => setShowCustomization(!showCustomization)}
-                  className="gap-2"
+                  className="gap-2 py-4 text-base"
                 >
                   {showCustomization ? (
                     <>
@@ -82,9 +84,6 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
                     </>
                   )}
                 </Button>
-                {!showCustomization && (
-                  <AddContentModal onSelectSection={setStep} />
-                )}
               </div>
             </div>
             {showCustomization ? (
