@@ -1,92 +1,14 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
 import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
-
-// Types
-interface ResumeValues {
-  firstName?: string;
-  lastName?: string;
-  jobTitle?: string;
-  city?: string;
-  country?: string;
-  phone?: string;
-  email?: string;
-  photo?: string | File | null;
-  summary?: string;
-  portfolioLink?: string;
-  socialLinks?: string[];
-  workExperiences?: Array<{
-    position?: string;
-    company?: string;
-    startDate?: Date | string;
-    endDate?: Date | string | null;
-    description?: string;
-  }>;
-  educations?: Array<{
-    degree?: string;
-    school?: string;
-    stream?: string;
-    startDate?: Date | string;
-    endDate?: Date | string | null;
-    description?: string;
-  }>;
-  projectWorks?: Array<{
-    title?: string;
-    company?: string;
-    startDate?: Date | string;
-    endDate?: Date | string | null;
-    description?: string;
-    links?: string[];
-  }>;
-  skills?: Array<{
-    title?: string;
-    skillName?: string[];
-  }>;
-  certifications?: Array<{
-    title?: string;
-    description?: string;
-    link?: string;
-  }>;
-  others?: {
-    title?: string;
-    description?: string;
-  };
-  colorHex?: string;
-  borderStyle?: "square" | "circle" | "rounded";
-}
+import { ResumeValues } from "@/lib/validation";
+import useDimensions from "@/hooks/useDimensions";
+import { formatDate } from "date-fns";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
 }
-
-// Helper function to format dates
-const formatDate = (date: Date | string, format: string): string => {
-  const d = new Date(date);
-  if (format === "yyyy") {
-    return d.getFullYear().toString();
-  }
-  return d.getFullYear().toString();
-};
-
-// Custom hook for dimensions
-const useDimensions = (ref: React.RefObject<HTMLElement>) => {
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (ref.current) {
-        setWidth(ref.current.offsetWidth);
-      }
-    };
-
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, [ref]);
-
-  return { width };
-};
 
 export default function ModernSidebar({ resumeData, className = "" }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -103,14 +25,7 @@ export default function ModernSidebar({ resumeData, className = "" }: ResumePrev
       className={`aspect-[210/297] h-fit w-full bg-white text-slate-800 ${className}`}
       ref={containerRef}
     >
-      {/* Poppins Font */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-          `,
-        }}
-      />
+
 
       <div
         id="resumePreviewContent"
@@ -402,17 +317,20 @@ const MainContent = ({ resumeData, colorHex }: { resumeData: ResumeValues; color
                   <h3 style={{ fontSize: "14px", margin: "0 0 4px 0", fontWeight: 600 }}>
                     {edu.degree} {edu.stream}
                   </h3>
-                  <span style={{ fontSize: "12px", color: "#777", display: "block", marginBottom: "4px" }}>
-                    {edu.school}
-                  </span>
-                  {edu.description && (
-                    <p style={{ fontSize: "12px", color: "#555", margin: "0 0 4px 0" }}>
-                      {edu.description}
-                    </p>
-                  )}
-                  <small style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}>
-                    {edu.startDate && formatDate(edu.startDate, "yyyy")} – {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
-                  </small>
+                   <span style={{ fontSize: "12px", color: "#777", display: "block", marginBottom: "4px" }}>
+                     {edu.school}
+                     {edu.marks && ` | ${edu.marks}`}
+                   </span>
+                   {edu.description && (
+                     <div 
+                       className="richTextEditorStyle whitespace-pre-line"
+                       style={{ fontSize: "12px", color: "#555", margin: "0 0 4px 0" }}
+                       dangerouslySetInnerHTML={{ __html: edu.description }}
+                     />
+                   )}
+                   <small style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}>
+                     {edu.startDate && formatDate(edu.startDate, "yyyy")} – {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
+                   </small>
                 </div>
               ))}
             </>

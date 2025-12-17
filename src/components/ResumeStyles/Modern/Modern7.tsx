@@ -2,79 +2,14 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import { MapPin, Phone, Mail, Globe, Link2, Briefcase, GraduationCap, Edit3, Settings } from "lucide-react";
-
-// Types
-interface ResumeValues {
-  firstName?: string;
-  lastName?: string;
-  jobTitle?: string;
-  city?: string;
-  country?: string;
-  phone?: string;
-  email?: string;
-  photo?: string | File | null;
-  summary?: string;
-  portfolioLink?: string;
-  socialLinks?: string[];
-  workExperiences?: Array<{
-    position?: string;
-    company?: string;
-    startDate?: Date | string;
-    endDate?: Date | string | null;
-    description?: string;
-  }>;
-  educations?: Array<{
-    degree?: string;
-    school?: string;
-    stream?: string;
-    startDate?: Date | string;
-    endDate?: Date | string | null;
-    description?: string;
-  }>;
-  skills?: Array<{
-    title?: string;
-    skillName?: string[];
-  }>;
-  others?: {
-    title?: string;
-    description?: string;
-  };
-  colorHex?: string;
-  borderStyle?: "square" | "circle" | "rounded";
-}
+import { ResumeValues } from "@/lib/validation";
+import useDimensions from "@/hooks/useDimensions";
+import { formatDate } from "date-fns";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
 }
-
-// Helper function to format dates
-const formatDate = (date: Date | string, format: string): string => {
-  const d = new Date(date);
-  if (format === "yyyy") {
-    return d.getFullYear().toString();
-  }
-  return d.getFullYear().toString();
-};
-
-// Custom hook for dimensions
-const useDimensions = (ref: React.RefObject<HTMLElement>) => {
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (ref.current) {
-        setWidth(ref.current.offsetWidth);
-      }
-    };
-
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, [ref]);
-
-  return { width };
-};
 
 export default function PurpleModern({ resumeData, className = "" }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -93,14 +28,7 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
       className={`aspect-[210/297] h-fit w-full bg-white text-slate-800 ${className}`}
       ref={containerRef}
     >
-      {/* Poppins Font */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-          `,
-        }}
-      />
+
 
       <div
         className={`h-full ${!width ? "invisible" : ""}`}
@@ -419,14 +347,16 @@ const RightColumn = ({
                       {edu.startDate && formatDate(edu.startDate, "yyyy")} – {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
                     </span>
                   </h4>
-                  <strong style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>
-                    {edu.degree} {edu.stream}
-                  </strong>
-                  {edu.description && (
-                    <p style={{ fontSize: "12px", color: "#555", margin: 0 }}>
-                      {edu.description}
-                    </p>
-                  )}
+                   <strong style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>
+                     {edu.degree} {edu.stream}
+                     {edu.marks && ` | ${edu.marks}`}
+                   </strong>
+                   {edu.description && (
+                     <div 
+                       style={{ fontSize: "12px", color: "#555", margin: 0 }}
+                       dangerouslySetInnerHTML={{ __html: edu.description }}
+                     />
+                   )}
                 </div>
               </div>
             ))}

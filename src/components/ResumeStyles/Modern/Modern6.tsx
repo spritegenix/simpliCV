@@ -236,11 +236,15 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                       </div>
                       <div className="text-sm font-medium text-slate-600">
                         {edu.school}
+                        {edu.marks && ` | ${edu.marks}`}
                       </div>
                       {edu.description && (
-                        <p className="mt-1 text-sm leading-snug text-slate-600">
-                          {edu.description}
-                        </p>
+                        <div
+                          className="richTextEditorStyle mt-1 text-sm leading-snug text-slate-600"
+                          dangerouslySetInnerHTML={{
+                            __html: edu.description,
+                          }}
+                        />
                       )}
                     </div>
                   ))}

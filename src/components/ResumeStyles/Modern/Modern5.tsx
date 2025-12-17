@@ -2,91 +2,14 @@
 import React, { useRef, useState, useEffect } from "react";
 import { MapPin, Phone, Mail } from "lucide-react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
-
-// Types
-interface ResumeValues {
-  firstName?: string;
-  lastName?: string;
-  jobTitle?: string;
-  city?: string;
-  country?: string;
-  phone?: string;
-  email?: string;
-  photo?: string | File | null;
-  summary?: string;
-  workExperiences?: Array<{
-    position?: string;
-    company?: string;
-    startDate?: Date | string;
-    endDate?: Date | string | null;
-    description?: string;
-  }>;
-  educations?: Array<{
-    degree?: string;
-    school?: string;
-    stream?: string;
-    startDate?: Date | string;
-    endDate?: Date | string | null;
-    description?: string;
-  }>;
-  skills?: Array<{
-    title?: string;
-    skillName?: string[];
-  }>;
-  projectWorks?: Array<{
-    title?: string;
-    company?: string;
-    startDate?: Date | string;
-    endDate?: Date | string | null;
-    description?: string;
-    links?: string[];
-  }>;
-  certifications?: Array<{
-    title?: string;
-    description?: string;
-    link?: string;
-  }>;
-  others?: {
-    title?: string;
-    description?: string;
-  };
-  portfolioLink?: string;
-  socialLinks?: string[];
-  borderStyle?: "square" | "circle" | "rounded";
-}
+import { ResumeValues } from "@/lib/validation";
+import useDimensions from "@/hooks/useDimensions";
+import { formatDate } from "date-fns";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
 }
-
-// Helper function to format dates
-const formatDate = (date: Date | string, format: string): string => {
-  const d = new Date(date);
-  if (format === "yyyy") {
-    return d.getFullYear().toString();
-  }
-  return d.getFullYear().toString();
-};
-
-// Custom hook for dimensions
-const useDimensions = (ref: React.RefObject<HTMLElement>) => {
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (ref.current) {
-        setWidth(ref.current.offsetWidth);
-      }
-    };
-
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, [ref]);
-
-  return { width };
-};
 
 // Define default section order
 const DEFAULT_SECTION_ORDER = [
@@ -306,20 +229,24 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                                 }}>
                                   {edu.degree} {edu.stream && `- ${edu.stream}`}
                                 </h3>
-                                <span style={{ 
-                                  display: "block", 
-                                  fontSize: "12px", 
-                                  color: "#64748b",
-                                  marginBottom: "10px"
-                                }}>
-                                  {edu.school} / {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
-                                  {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
-                                </span>
-                                {edu.description && (
-                                  <p style={{ color: "#0f172a", margin: 0, paddingLeft: "18px", whiteSpace: "pre-line" }}>
-                                    {edu.description}
-                                  </p>
-                                )}
+                                 <span style={{ 
+                                   display: "block", 
+                                   fontSize: "12px", 
+                                   color: "#64748b",
+                                   marginBottom: "10px"
+                                 }}>
+                                   {edu.school} / {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
+                                   {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
+                                   {edu.marks && ` | ${edu.marks}`}
+                                 </span>
+                                 {edu.description && (
+                                   <div
+                                     className="richTextEditorStyle whitespace-pre-line text-[14px] leading-[1.7] pl-[18px]"
+                                     dangerouslySetInnerHTML={{
+                                       __html: edu.description || "",
+                                     }}
+                                   />
+                                 )}
                               </div>
                             ))}
                           </>
