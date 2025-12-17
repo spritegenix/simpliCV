@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { ResumeValues } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import useDimensions from "@/hooks/useDimensions";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
@@ -134,10 +134,11 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                             {exp.position}
                           </h4>
                           <span className="text-sm font-semibold text-slate-500">
-                            {exp.startDate && formatDate(exp.startDate, "yyyy")}{" "}
+                            {exp.startDate &&
+                              safeFormatDate(exp.startDate, "yyyy")}{" "}
                             -{" "}
                             {exp.endDate
-                              ? formatDate(exp.endDate, "yyyy")
+                              ? safeFormatDate(exp.endDate, "yyyy")
                               : "Present"}
                           </span>
                         </div>
@@ -171,9 +172,11 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                           {edu.degree}
                         </h4>
                         <span className="text-sm font-semibold text-slate-500">
-                          {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
+                          {edu.startDate &&
+                            safeFormatDate(edu.startDate, "yyyy")}{" "}
+                          -{" "}
                           {edu.endDate
-                            ? formatDate(edu.endDate, "yyyy")
+                            ? safeFormatDate(edu.endDate, "yyyy")
                             : "Present"}
                         </span>
                       </div>

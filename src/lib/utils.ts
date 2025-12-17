@@ -3,9 +3,25 @@ import { twMerge } from "tailwind-merge";
 import { ResumeServerData } from "./types";
 import { ResumeValues } from "./validation";
 
+import { formatDate } from "date-fns";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const safeFormatDate = (
+  dateString: string | undefined | null,
+  formatStr: string,
+) => {
+  if (!dateString) return "";
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // Return original string if parsing fails
+    return formatDate(date, formatStr);
+  } catch (error) {
+    return dateString; // Fallback to original string
+  }
+};
 
 export function fileReplacer(key: unknown, value: unknown) {
   return value instanceof File

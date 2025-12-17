@@ -2,7 +2,7 @@
 import useDimensions from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
@@ -78,9 +78,9 @@ export default function ATSStyle3({
 
                         {exp.startDate && (
                           <span>
-                            {formatDate(exp.startDate, "MM/yyyy")} -{" "}
+                            {safeFormatDate(exp.startDate, "MM/yyyy")} -{" "}
                             {exp.endDate
-                              ? formatDate(exp.endDate, "MM/yyyy")
+                              ? safeFormatDate(exp.endDate, "MM/yyyy")
                               : "Present"}
                           </span>
                         )}
@@ -144,9 +144,9 @@ export default function ATSStyle3({
                           {item.startDate && (
                             <span>
                               {item.startDate &&
-                                `${formatDate(item.startDate, "MMM yyyy")} - `}
+                                `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
                               {item.endDate
-                                ? formatDate(item.endDate, "MMM yyyy")
+                                ? safeFormatDate(item.endDate, "MMM yyyy")
                                 : "Present"}
                             </span>
                           )}
@@ -196,9 +196,9 @@ export default function ATSStyle3({
                       <p className="!m-0 flex w-full gap-x-4">
                         <span>
                           {edu.startDate &&
-                            `${formatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                            `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
                           {edu.endDate
-                            ? formatDate(edu.endDate, "MMM yyyy")
+                            ? safeFormatDate(edu.endDate, "MMM yyyy")
                             : "Present"}
                         </span>
                         <span> {edu.location}</span>

@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { ResumeValues } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import useDimensions from "@/hooks/useDimensions";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
 
@@ -194,11 +194,12 @@ export default function Modern8({ resumeData, className }: ResumePreviewProps) {
                         <div className="pt-0.5 text-right">
                           <span className="block text-xs font-bold uppercase text-slate-500">
                             {exp.endDate
-                              ? formatDate(exp.endDate, "yyyy")
+                              ? safeFormatDate(exp.endDate, "yyyy")
                               : "Present"}
                           </span>
                           <span className="block text-[10px] font-semibold uppercase text-slate-400">
-                            {exp.startDate && formatDate(exp.startDate, "MMM")}
+                            {exp.startDate &&
+                              safeFormatDate(exp.startDate, "MMM")}
                           </span>
                         </div>
 
@@ -246,7 +247,7 @@ export default function Modern8({ resumeData, className }: ResumePreviewProps) {
                       <div className="pt-0.5 text-right">
                         <span className="block text-xs font-bold uppercase text-slate-500">
                           {edu.endDate
-                            ? formatDate(edu.endDate, "yyyy")
+                            ? safeFormatDate(edu.endDate, "yyyy")
                             : "Present"}
                         </span>
                       </div>

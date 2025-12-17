@@ -199,7 +199,7 @@ async function Templates() {
         Choose a Template, and Let’s Create \n Your Resume in Minutes
       </Title>
       <div className="flex w-full grid-cols-2 flex-col gap-5 sm:grid md:grid-cols-3 lg:grid-cols-3">
-        {resumeStyles.map((style) => (
+        {resumeStyles.slice(0, 6).map((style) => (
           <TemplateCard
             key={style.id}
             style={style}

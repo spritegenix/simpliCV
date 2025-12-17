@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { ResumeValues } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import useDimensions from "@/hooks/useDimensions";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
@@ -87,10 +87,10 @@ export default function Modern5({ resumeData, className }: ResumePreviewProps) {
                           </h4>
                           <span className="text-xs font-semibold italic text-slate-500">
                             {exp.startDate &&
-                              formatDate(exp.startDate, "MMM yyyy")}{" "}
+                              safeFormatDate(exp.startDate, "MMM yyyy")}{" "}
                             -{" "}
                             {exp.endDate
-                              ? formatDate(exp.endDate, "MMM yyyy")
+                              ? safeFormatDate(exp.endDate, "MMM yyyy")
                               : "Present"}
                           </span>
                         </div>
@@ -133,9 +133,11 @@ export default function Modern5({ resumeData, className }: ResumePreviewProps) {
                           </div>
                         </div>
                         <div className="mt-0.5 text-xs italic text-slate-500">
-                          {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
+                          {edu.startDate &&
+                            safeFormatDate(edu.startDate, "yyyy")}{" "}
+                          -{" "}
                           {edu.endDate
-                            ? formatDate(edu.endDate, "yyyy")
+                            ? safeFormatDate(edu.endDate, "yyyy")
                             : "Present"}
                         </div>
                       </div>

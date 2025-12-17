@@ -3,7 +3,7 @@ import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import useDimensions from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
@@ -95,9 +95,9 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                           </span>
                           {exp.startDate && (
                             <span>
-                              {formatDate(exp.startDate, "MMM yyyy")} -{" "}
+                              {safeFormatDate(exp.startDate, "MMM yyyy")} -{" "}
                               {exp.endDate
-                                ? formatDate(exp.endDate, "MMM yyyy")
+                                ? safeFormatDate(exp.endDate, "MMM yyyy")
                                 : "Present"}
                             </span>
                           )}
@@ -161,9 +161,9 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                             {item.startDate && (
                               <span>
                                 {item.startDate &&
-                                  `${formatDate(item.startDate, "MMM yyyy")} - `}
+                                  `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
                                 {item.endDate
-                                  ? formatDate(item.endDate, "MMM yyyy")
+                                  ? safeFormatDate(item.endDate, "MMM yyyy")
                                   : "Present"}
                               </span>
                             )}
@@ -227,7 +227,12 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
             {/* Skills  */}
             {!!resumeData.skills && resumeData.skills?.length > 0 && (
               <>
-                <Heading isBorder={!resumeData.photo ? false : true} colorHex={colorHex}>Skills</Heading>
+                <Heading
+                  isBorder={!resumeData.photo ? false : true}
+                  colorHex={colorHex}
+                >
+                  Skills
+                </Heading>
                 {resumeData.skills?.map((skill, index) => (
                   <div key={index} className="!m-0 break-inside-avoid">
                     <div className="!m-0 flex items-center justify-between">
@@ -259,9 +264,9 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                     <div className="!m-0">
                       <p>
                         {edu.startDate &&
-                          `${formatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                          `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
                         {edu.endDate
-                          ? formatDate(edu.endDate, "MMM yyyy")
+                          ? safeFormatDate(edu.endDate, "MMM yyyy")
                           : "Present"}
                       </p>
                       <p className="font-semibold">
@@ -371,7 +376,12 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         </div>
       </div>
       {/* Social Links or Photo */}
-      <div className={cn("col-span-4 my-auto flex h-full flex-col", photoSrc && "items-center")}>
+      <div
+        className={cn(
+          "col-span-4 my-auto flex h-full flex-col",
+          photoSrc && "items-center",
+        )}
+      >
         {photoSrc ? (
           <Image
             src={photoSrc}
