@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     // 3. (Removed Truncation as per user request)
     const finalInput = cleanedText;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
     const prompt = `
       You are an expert resume parser. I will provide you with the text content of a resume.
@@ -139,7 +139,34 @@ export async function POST(req: NextRequest) {
       ${finalInput}
     `;
 
-    const result = await model.generateContent(prompt);
+    // Retry logic for 503 (Service Unavailable) and 429 (Too Many Requests) errors
+    let retryCount = 0;
+    const maxRetries = 5;
+    let result;
+
+    while (retryCount <= maxRetries) {
+      try {
+        result = await model.generateContent(prompt);
+        break; // Success, exit loop
+      } catch (error: any) {
+        const isOverloaded = error.response?.status === 503 || error.message?.includes("503") || error.message?.includes("overloaded");
+        const isRateLimited = error.response?.status === 429 || error.message?.includes("429") || error.message?.includes("quota");
+
+        if ((isOverloaded || isRateLimited) && retryCount < maxRetries) {
+          retryCount++;
+          const delay = 1000 * Math.pow(2, retryCount); // 2s, 4s, 8s, 16s, 32s
+          console.warn(`Gemini error (${isOverloaded ? "503" : "429"}). Retrying in ${delay/1000}s... (${retryCount}/${maxRetries})`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        } else {
+          throw error; // Not a retryable error or max retries reached
+        }
+      }
+    }
+    
+    if (!result) {
+        throw new Error("Failed to generate content after retries");
+    }
+
     const response = await result.response;
     const jsonString = response.text().replace(/```json|```/g, "").trim();
 
