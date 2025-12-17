@@ -106,7 +106,7 @@ export default function PersonalInfoForm({
                 <FormItem>
                   <FormLabel>First name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} value={field.value || ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -119,7 +119,7 @@ export default function PersonalInfoForm({
                 <FormItem>
                   <FormLabel>Last name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} value={field.value || ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -133,7 +133,11 @@ export default function PersonalInfoForm({
               <FormItem>
                 <FormLabel>Resume Profile</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="eg. Full Stack Developer" />
+                  <Input
+                    {...field}
+                    value={field.value || ""}
+                    placeholder="eg. Full Stack Developer"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -147,7 +151,11 @@ export default function PersonalInfoForm({
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="eg. New York" />
+                    <Input
+                      {...field}
+                      value={field.value || ""}
+                      placeholder="eg. New York"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -160,7 +168,11 @@ export default function PersonalInfoForm({
                 <FormItem>
                   <FormLabel>Country</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="eg. United States" />
+                    <Input
+                      {...field}
+                      value={field.value || ""}
+                      placeholder="eg. United States"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -174,7 +186,12 @@ export default function PersonalInfoForm({
               <FormItem>
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
-                  <Input {...field} type="tel" placeholder="eg. +(12)3-456-7890" />
+                  <Input
+                    {...field}
+                    value={field.value || ""}
+                    type="tel"
+                    placeholder="eg. +(12)3-456-7890"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -187,7 +204,12 @@ export default function PersonalInfoForm({
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input {...field} type="email" placeholder="eg. 6M0l0@example.com" />
+                  <Input
+                    {...field}
+                    value={field.value || ""}
+                    type="email"
+                    placeholder="eg. 6M0l0@example.com"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -203,6 +225,7 @@ export default function PersonalInfoForm({
                 <FormControl>
                   <Textarea
                     {...field}
+                    value={field.value || ""}
                     placeholder="e.g. Linkedin, GitHub, Twitter, profile links.."
                     onChange={(e) => {
                       const socials = e.target.value.split(",");
@@ -225,7 +248,11 @@ export default function PersonalInfoForm({
               <FormItem>
                 <FormLabel>Portfolio Link</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="eg. https://example.com" />
+                  <Input
+                    {...field}
+                    value={field.value || ""}
+                    placeholder="eg. https://example.com"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

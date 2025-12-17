@@ -55,6 +55,7 @@ export default function InterestForm({
                 <FormControl>
                   <Input
                     {...field}
+                    value={field.value || ""}
                     placeholder="Resume Purpose Title"
                     autoFocus
                   />

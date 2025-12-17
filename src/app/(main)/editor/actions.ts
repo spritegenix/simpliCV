@@ -111,11 +111,32 @@ export async function saveResume(values: ResumeValues) {
     newPhotoUrl = null;
   }
 
+  // Sanitize resumeValues to remove nulls or undefined where not allowed
+  const sanitizedResumeValues = {
+    ...resumeValues,
+    colorHex: resumeValues.colorHex || undefined, // Required in DB, default provided by DB if undefined, but if null we must use undefined
+    borderStyle: resumeValues.borderStyle || undefined,
+    // For other optional string fields that might be null from Zod, ensure they are compatible
+    title: resumeValues.title || undefined,
+    description: resumeValues.description || undefined,
+    summary: resumeValues.summary || undefined,
+    firstName: resumeValues.firstName || undefined,
+    lastName: resumeValues.lastName || undefined,
+    jobTitle: resumeValues.jobTitle || undefined,
+    city: resumeValues.city || undefined,
+    country: resumeValues.country || undefined,
+    phone: resumeValues.phone || undefined,
+    email: resumeValues.email || undefined,
+    portfolioLink: resumeValues.portfolioLink || undefined,
+    styleId: resumeValues.styleId || undefined,
+    baseFontSize: resumeValues.baseFontSize || undefined,
+  };
+
   if (id) {
     return prisma.resume.update({
       where: { id },
       data: {
-        ...resumeValues,
+        ...sanitizedResumeValues,
         photoUrl: newPhotoUrl,
         workExperiences: {
           deleteMany: {},
@@ -164,7 +185,7 @@ export async function saveResume(values: ResumeValues) {
   } else {
     return prisma.resume.create({
       data: {
-        ...resumeValues,
+        ...sanitizedResumeValues,
         userId,
         photoUrl: newPhotoUrl,
         workExperiences: {

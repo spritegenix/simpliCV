@@ -54,6 +54,7 @@ export default function SummaryForm({
                 <FormControl>
                   <Textarea
                     {...field}
+                    value={field.value || ""}
                     placeholder="A brief, engaging text about yourself"
                   />
                 </FormControl>

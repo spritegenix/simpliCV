@@ -197,7 +197,12 @@ function WorkExperienceItem({
           <FormItem>
             <FormLabel>Job Role</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="eg. Software Engineer" autoFocus />
+              <Input
+                {...field}
+                value={field.value || ""}
+                placeholder="eg. Software Engineer"
+                autoFocus
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -210,7 +215,11 @@ function WorkExperienceItem({
           <FormItem>
             <FormLabel>Company Name</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="ABC Company Pvt. Ltd...." />
+              <Input
+                {...field}
+                value={field.value || ""}
+                placeholder="ABC Company Pvt. Ltd...."
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -223,7 +232,11 @@ function WorkExperienceItem({
           <FormItem>
             <FormLabel>Job Location</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="City, Country" />
+              <Input
+                {...field}
+                value={field.value || ""}
+                placeholder="City, Country"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -240,7 +253,7 @@ function WorkExperienceItem({
                 <Input
                   {...field}
                   type="date"
-                  value={field.value?.slice(0, 10)}
+                  value={field.value?.slice(0, 10) || ""}
                 />
               </FormControl>
               <FormMessage />
@@ -257,7 +270,7 @@ function WorkExperienceItem({
                 <Input
                   {...field}
                   type="date"
-                  value={field.value?.slice(0, 10)}
+                  value={field.value?.slice(0, 10) || ""}
                 />
               </FormControl>
               <FormMessage />
