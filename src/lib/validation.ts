@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const optionalString = z.string().trim().optional().or(z.literal("")).or(z.null());
+export const optionalString = z.string().trim().optional().or(z.literal("")).or(z.null()).transform(val => val === null ? undefined : val);
 export const optionalStringArray = z.array(z.string().trim()).optional();
 
 export const generalInfoSchema = z.object({

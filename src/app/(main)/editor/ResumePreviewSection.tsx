@@ -42,13 +42,15 @@ export default function ResumePreviewSection({
     >
       <div className="absolute left-1 top-1 z-10 flex flex-none flex-col gap-3 opacity-50 transition-opacity group-hover:opacity-100 lg:left-1 lg:top-3 xl:opacity-100">
         <ColorPicker
-          color={resumeData.colorHex}
+          color={resumeData.colorHex || undefined}
           onChange={(color) =>
             setResumeData({ ...resumeData, colorHex: color.hex })
           }
         />
         <BorderStyleButton
-          borderStyle={resumeData.borderStyle}
+          borderStyle={
+            resumeData.borderStyle === null ? undefined : resumeData.borderStyle
+          }
           onChange={(borderStyle) =>
             setResumeData({ ...resumeData, borderStyle })
           }
