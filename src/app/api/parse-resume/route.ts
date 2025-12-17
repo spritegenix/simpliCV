@@ -54,6 +54,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Optimization: Clean text to reduce token usage
+    // 1. Remove excessive whitespace and newlines
+    const cleanedText = text
+      .replace(/\s+/g, " ") // Replace multiple spaces/newlines with single space
+      .trim();
+
+    // 2. Log raw text for debugging (as requested)
+    // console.log("--- Extracted Resume Text (First 500 chars) ---");
+    // console.log(cleanedText);
+    // console.log("--- Total Length:", cleanedText.length, "---");
+
+    // 3. (Removed Truncation as per user request)
+    const finalInput = cleanedText;
+
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
     const prompt = `
@@ -122,7 +136,7 @@ export async function POST(req: NextRequest) {
       Strictly return ONLY the JSON object. Do not include markdown formatting or backticks.
       
       Here is the resume text:
-      ${text}
+      ${finalInput}
     `;
 
     const result = await model.generateContent(prompt);
