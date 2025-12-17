@@ -65,7 +65,10 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
               <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
               <div className="mt-4 flex items-center gap-2 px-3">
                 {!showCustomization && (
-                  <AddContentModal onSelectSection={setStep} />
+                  <AddContentModal
+                  onSelectSection={setStep}
+                  setResumeData={setResumeData}
+                />
                 )}
                 <Button
                   variant="outline"

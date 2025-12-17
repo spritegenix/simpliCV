@@ -3,7 +3,8 @@ import React, { useRef, useState, useEffect } from "react";
 import { MapPin, Phone, Mail, Globe, Link2 } from "lucide-react";
 import { ResumeValues } from "@/lib/validation";
 import useDimensions from "@/hooks/useDimensions";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
+import { format as formatDate } from "date-fns";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -61,7 +62,135 @@ export default function TealModern({ resumeData, className = "" }: ResumePreview
             <LeftColumn resumeData={resumeData} accentColor={accentColor} greenColor={greenColor} />
 
             {/* RIGHT COLUMN */}
-            <RightColumn resumeData={resumeData} accentColor={accentColor} greenColor={greenColor} />
+            <div className="px-10 pb-10 pt-12">
+            {/* NAME BLOCK */}
+            <div className="mb-12">
+              <div
+                className="-ml-10 inline-block rounded-r-full px-10 py-5 shadow-sm"
+                style={{ backgroundColor: accentColor }}
+              >
+                <h1 className="text-4xl font-extrabold uppercase tracking-wide text-white">
+                  {resumeData.firstName} {resumeData.lastName}
+                </h1>
+                {resumeData.jobTitle && (
+                  <p className="mt-1 text-sm font-bold uppercase tracking-[0.2em] text-white opacity-90">
+                    {resumeData.jobTitle}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* ABOUT ME */}
+            {resumeData.summary && (
+              <div className="mb-10">
+                <SectionTitleMain title="About Me" colorHex={accentColor} />
+                <p className="text-justify text-sm leading-relaxed text-slate-600">
+                  {resumeData.summary}
+                </p>
+              </div>
+            )}
+
+            {/* EXPERIENCE */}
+            {resumeData.workExperiences &&
+              resumeData.workExperiences.length > 0 && (
+                <div className="mb-10">
+                  <SectionTitleMain
+                    title="Job Experience"
+                    colorHex={accentColor}
+                  />
+                  <div className="space-y-8">
+                    {resumeData.workExperiences.map((exp, idx) => (
+                      <div
+                        key={idx}
+                        className="grid break-inside-avoid grid-cols-[100px_1fr] gap-4"
+                      >
+                        {/* Date */}
+                        <div className="pt-0.5 text-right">
+                          <span className="block text-xs font-bold uppercase text-slate-500">
+                            {exp.endDate
+                              ? safeFormatDate(exp.endDate, "yyyy")
+                              : "Present"}
+                          </span>
+                          <span className="block text-[10px] font-semibold uppercase text-slate-400">
+                            {exp.startDate &&
+                              safeFormatDate(exp.startDate, "MMM")}
+                          </span>
+                        </div>
+
+                        {/* Content */}
+                        <div className="relative border-l-2 border-slate-200 pl-6">
+                          {/* Dot */}
+                          <div
+                            className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full ring-2 ring-white"
+                            style={{ backgroundColor: accentColor }}
+                          />
+
+                          <h4 className="text-md font-bold uppercase tracking-tight text-slate-800">
+                            {exp.position}
+                          </h4>
+                          <div
+                            className="mb-2 text-xs font-bold uppercase text-slate-500"
+                            style={{ color: accentColor }}
+                          >
+                            {exp.company}
+                          </div>
+
+                          <div
+                            className="text-justify text-xs leading-relaxed text-slate-600"
+                            dangerouslySetInnerHTML={{
+                              __html: exp.description || "",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            {/* EDUCATION */}
+            {resumeData.educations && resumeData.educations.length > 0 && (
+              <div>
+                <SectionTitleMain title="Education" colorHex={accentColor} />
+                <div className="space-y-6">
+                  {resumeData.educations.map((edu, idx) => (
+                    <div
+                      key={idx}
+                      className="grid break-inside-avoid grid-cols-[100px_1fr] gap-4"
+                    >
+                      <div className="pt-0.5 text-right">
+                        <span className="block text-xs font-bold uppercase text-slate-500">
+                          {edu.endDate
+                            ? safeFormatDate(edu.endDate, "yyyy")
+                            : "Present"}
+                        </span>
+                      </div>
+                      <div className="relative border-l-2 border-slate-200 pl-6">
+                        <div
+                          className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full ring-2 ring-white"
+                          style={{ backgroundColor: accentColor }}
+                        />
+                        <h4 className="text-md font-bold uppercase text-slate-800">
+                          {edu.degree}
+                        </h4>
+                        <div
+                          className="mb-1 text-xs font-bold uppercase text-slate-500"
+                          style={{ color: accentColor }}
+                        >
+                          {edu.school}
+                        </div>
+                        {edu.description && (
+                          <div className="text-xs text-slate-600">
+                            {edu.description}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            </div>
           </div>
 
           {/* FOOTER */}
@@ -142,6 +271,20 @@ const Header = ({ resumeData, accentColor, greenColor }: { resumeData: ResumeVal
         )}
       </div>
     </header>
+  );
+};
+
+const SectionTitleMain = ({ title, colorHex }: { title: string; colorHex: string }) => {
+  return (
+    <h3 style={{
+      fontSize: "16px",
+      color: colorHex,
+      marginBottom: "15px",
+      fontWeight: 600,
+      textTransform: "uppercase"
+    }}>
+      {title}
+    </h3>
   );
 };
 

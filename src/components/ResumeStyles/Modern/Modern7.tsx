@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { MapPin, Phone, Mail, Globe, Link2, Briefcase, GraduationCap, Edit3, Settings } from "lucide-react";
 import { ResumeValues } from "@/lib/validation";
 import useDimensions from "@/hooks/useDimensions";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -34,19 +34,218 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
         className={`h-full ${!width ? "invisible" : ""}`}
         style={{
           zoom: (1 / 794) * width,
-          fontFamily: "'Poppins', sans-serif",
         }}
+        id="resumePreviewContent"
       >
-        {/* HEADER */}
-        <Header resumeData={resumeData} primaryColor={primaryColor} darkPurple={darkPurple} />
+        {/* HEADER SECTION */}
+        <div className="relative h-[220px] w-full overflow-hidden">
+          {/* Diagonal Background Shape */}
+          <div
+            className="absolute inset-0 z-0 h-full w-full"
+            style={{
+              background: `linear-gradient(135deg, ${accentColor} 0%, #4c1d95 100%)`, // Gradient to dark purple
+              clipPath: "polygon(0 0, 100% 0, 100% 75%, 0% 100%)",
+            }}
+          />
 
-        {/* CONTENT */}
-        <div style={{ display: "grid", gridTemplateColumns: "260px 1fr" }}>
-          {/* LEFT COLUMN */}
-          <LeftColumn resumeData={resumeData} primaryColor={primaryColor} darkPurple={darkPurple} />
+          {/* Name & Title Content */}
+          <div className="relative z-10 flex h-full flex-col items-end justify-center px-12 pb-10 text-white">
+            <h1 className="mb-1 text-right text-3xl font-extrabold uppercase tracking-widest">
+              {resumeData.firstName}{" "}
+              <span className="font-light">{resumeData.lastName}</span>
+            </h1>
+            {resumeData.jobTitle && (
+              <p className="text-right text-sm font-medium uppercase tracking-[0.2em] opacity-90">
+                {resumeData.jobTitle}
+              </p>
+            )}
+          </div>
 
-          {/* RIGHT COLUMN */}
-          <RightColumn resumeData={resumeData} primaryColor={primaryColor} darkPurple={darkPurple} />
+          {/* Photo Circle - Overlapping */}
+          <div className="absolute left-[40px] top-[40px] z-20">
+            <PhotoSection resumeData={resumeData} />
+          </div>
+        </div>
+
+        {/* MAIN 2-COLUMN LAYOUT */}
+        <div className="grid h-full min-h-[850px] grid-cols-[300px_1fr] items-stretch">
+          {/* LEFT COLUMN - Sidebar */}
+          <div className="space-y-10 bg-white py-10 pl-10 pr-6 pt-20">
+            {/* ABOUT ME */}
+            {resumeData.summary && (
+              <div className="relative">
+                <SectionTitleSide title="About Me" colorHex={accentColor} />
+                <p className="text-justify text-xs font-medium leading-relaxed text-slate-600">
+                  {resumeData.summary}
+                </p>
+              </div>
+            )}
+
+            {/* CONTACT */}
+            <div>
+              <SectionTitleSide title="Contact" colorHex={accentColor} />
+              <ContactSection resumeData={resumeData} colorHex={accentColor} />
+            </div>
+
+            {/* EXPERTISE/SKILLS (Sidebar Style) */}
+            {resumeData.skills && resumeData.skills.length > 0 && (
+              <div>
+                <SectionTitleSide title="Skills" colorHex={accentColor} />
+                <div className="space-y-4">
+                  {resumeData.skills.map((skill, idx) => (
+                    <div key={idx}>
+                      <h4 className="mb-1 text-xs font-bold uppercase text-slate-800">
+                        {skill.title}
+                      </h4>
+                      <div className="flex flex-wrap gap-1">
+                        {skill.skillName?.map((item, i) => (
+                          <span
+                            key={i}
+                            className="rounded-sm bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-600"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* REFERENCES (Mapping Certs as placeholder if needed, or explicitly References) */}
+            {resumeData.certifications &&
+              resumeData.certifications.length > 0 && (
+                <div>
+                  <SectionTitleSide title="References" colorHex={accentColor} />
+                  <div className="space-y-4">
+                    {resumeData.certifications.map((cert, idx) => (
+                      <div key={idx}>
+                        <h4 className="text-[11px] font-bold uppercase text-slate-800">
+                          {cert.title}
+                        </h4>
+                        {cert.description && (
+                          <p className="text-[10px] text-slate-500">
+                            {cert.description}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+          </div>
+
+          {/* RIGHT COLUMN - Main Content */}
+          <div className="space-y-10 bg-slate-50 px-10 py-10">
+            {/* WORK EXPERIENCE */}
+            {resumeData.workExperiences &&
+              resumeData.workExperiences.length > 0 && (
+                <div>
+                  <SectionTitleMain
+                    title="Work Experience"
+                    colorHex={accentColor}
+                  />
+                  <div className="ml-1 space-y-8 border-l-2 border-slate-200 pl-2">
+                    {resumeData.workExperiences.map((exp, idx) => (
+                      <div
+                        key={idx}
+                        className="relative break-inside-avoid pl-6"
+                      >
+                        {/* Timeline Dot */}
+                        <div
+                          className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full border-2 border-white shadow-sm"
+                          style={{ backgroundColor: accentColor }}
+                        />
+
+                        <div className="mb-1 flex items-baseline justify-between">
+                          <h4 className="text-md font-bold uppercase tracking-tight text-slate-800">
+                            {exp.position}
+                          </h4>
+                          <span
+                            className="rounded-full px-2 py-0.5 text-xs font-semibold text-white"
+                            style={{ backgroundColor: accentColor }}
+                          >
+                            {exp.startDate &&
+                              safeFormatDate(exp.startDate, "yyyy")}{" "}
+                            -{" "}
+                            {exp.endDate
+                              ? safeFormatDate(exp.endDate, "yyyy")
+                              : "Present"}
+                          </span>
+                        </div>
+                        <div className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                          {exp.company}
+                        </div>
+
+                        <div
+                          className="text-justify text-xs leading-relaxed text-slate-600"
+                          dangerouslySetInnerHTML={{
+                            __html: exp.description || "",
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            {/* EDUCATION */}
+            {resumeData.educations && resumeData.educations.length > 0 && (
+              <div>
+                <SectionTitleMain title="Education" colorHex={accentColor} />
+                <div className="ml-1 space-y-6 border-l-2 border-slate-200 pl-2">
+                  {resumeData.educations.map((edu, idx) => (
+                    <div key={idx} className="relative break-inside-avoid pl-6">
+                      <div
+                        className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full border-2 border-white shadow-sm"
+                        style={{ backgroundColor: accentColor }}
+                      />
+
+                      <div className="mb-1 flex items-baseline justify-between">
+                        <h4 className="text-md font-bold uppercase text-slate-800">
+                          {edu.degree}
+                        </h4>
+                        <span className="text-[10px] font-bold text-slate-500">
+                          {edu.startDate &&
+                            safeFormatDate(edu.startDate, "yyyy")}{" "}
+                          -{" "}
+                          {edu.endDate
+                            ? safeFormatDate(edu.endDate, "yyyy")
+                            : "Present"}
+                        </span>
+                      </div>
+                      <div className="mb-1 text-xs font-bold uppercase tracking-widest text-slate-500">
+                        {edu.school}
+                      </div>
+                      {edu.description && (
+                        <div className="text-xs text-slate-600">
+                          {edu.description}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* SOFTWARE / OTHERS (Using 'Others' for Software list if needed) */}
+            {resumeData.others &&
+              (resumeData.others.title || resumeData.others.description) && (
+                <div>
+                  <SectionTitleMain
+                    title={resumeData.others.title || "Software"}
+                    colorHex={accentColor}
+                  />
+                  <div
+                    className="whitespace-pre-line text-xs leading-relaxed text-slate-600"
+                    dangerouslySetInnerHTML={{
+                      __html: resumeData.others.description || "",
+                    }}
+                  />
+                </div>
+              )}
+          </div>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { ResumeValues } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import useDimensions from "@/hooks/useDimensions";
-import { format } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
 
@@ -131,14 +131,17 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                   <SectionTitle title="Experience" colorHex={accentColor} />
                   <div className="space-y-4">
                     {resumeData.workExperiences.map((exp, idx) => (
-                      <div key={idx}>
-                        <div className="flex justify-between text-sm text-slate-700">
-                          <span className="font-semibold">
+                      <div key={idx} className="break-inside-avoid">
+                        <div className="mb-1 flex items-baseline justify-between">
+                          <h4 className="text-lg font-bold uppercase text-slate-800">
+                            {exp.position}
+                          </h4>
+                          <span className="text-sm font-semibold text-slate-500">
                             {exp.startDate &&
-                              format(new Date(exp.startDate), "yyyy")}{" "}
+                              safeFormatDate(exp.startDate, "yyyy")}{" "}
                             -{" "}
                             {exp.endDate
-                              ? format(new Date(exp.endDate), "yyyy")
+                              ? safeFormatDate(exp.endDate, "yyyy")
                               : "Present"}
                           </span>
                           <span className="font-semibold text-slate-800">
@@ -172,10 +175,10 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                       <div className="flex justify-between text-sm text-slate-700">
                         <span className="font-semibold">
                           {proj.startDate &&
-                            format(new Date(proj.startDate), "yyyy")}{" "}
+                            safeFormatDate(proj.startDate, "yyyy")}{" "}
                           -{" "}
                           {proj.endDate
-                            ? format(new Date(proj.endDate), "yyyy")
+                            ? safeFormatDate(proj.endDate, "yyyy")
                             : "Present"}
                         </span>
                         <span className="font-semibold text-slate-800">
@@ -220,14 +223,17 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                 <SectionTitle title="Education" colorHex={accentColor} />
                 <div className="space-y-4">
                   {resumeData.educations.map((edu, idx) => (
-                    <div key={idx}>
-                      <div className="flex justify-between text-sm text-slate-700">
-                        <span className="font-semibold">
+                    <div key={idx} className="break-inside-avoid">
+                      <div className="mb-1 flex items-baseline justify-between">
+                        <h4 className="text-lg font-bold uppercase text-slate-800">
+                          {edu.degree}
+                        </h4>
+                        <span className="text-sm font-semibold text-slate-500">
                           {edu.startDate &&
-                            format(new Date(edu.startDate), "yyyy")}{" "}
+                            safeFormatDate(edu.startDate, "yyyy")}{" "}
                           -{" "}
                           {edu.endDate
-                            ? format(new Date(edu.endDate), "yyyy")
+                            ? safeFormatDate(edu.endDate, "yyyy")
                             : "Present"}
                         </span>
                         <span className="font-semibold text-slate-800">

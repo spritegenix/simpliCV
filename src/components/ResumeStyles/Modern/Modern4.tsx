@@ -3,10 +3,10 @@ import React, { useRef, useState, useEffect } from "react";
 import { ResumeValues } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import useDimensions from "@/hooks/useDimensions";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
-import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -85,7 +85,9 @@ interface SectionProps {
 
 const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
   const { photo, borderStyle } = resumeData;
-  const [photoSrc, setPhotoSrc] = useState<string>(photo instanceof File ? "" : (photo || ""));
+  const [photoSrc, setPhotoSrc] = useState<string>(
+    photo instanceof File ? "" : photo || "",
+  );
 
   useEffect(() => {
     if (photo instanceof File) {
@@ -93,6 +95,7 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       setPhotoSrc(objectUrl);
       return () => URL.revokeObjectURL(objectUrl);
     }
+    if (photo === null) setPhotoSrc("");
     if (photo === null) setPhotoSrc("");
   }, [photo]);
 
@@ -320,7 +323,10 @@ const EducationSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
   );
 };
 
-const ExperienceSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
+const ExperienceSection: React.FC<SectionProps> = ({
+  resumeData,
+  colorHex,
+}) => {
   const { workExperiences } = resumeData;
   if (!workExperiences || workExperiences.length === 0) return null;
 

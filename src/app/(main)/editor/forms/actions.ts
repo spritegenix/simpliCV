@@ -69,7 +69,7 @@ export async function generateSummary(input: GenerateSummaryInput) {
   // console.log("systemMessage", systemMessage);
   // console.log("userMessage", userMessage);
 
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = genAI.getGenerativeModel({model: "gemini-2.5-pro"});
   const response = await model.generateContent([systemMessage, userMessage]);
   const aiResponse = response?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
 
@@ -113,7 +113,7 @@ export async function generateWorkExperience(
     ${description}
   `;
 
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
   const response = await model.generateContent([systemMessage, userMessage]);
   const aiResponse = response?.response?.candidates?.[0]?.content?.parts[0]?.text;
 
@@ -160,7 +160,7 @@ export async function generateProject(input: GenerateProjectInput) {
     ${description}
   `;
 
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
   const response = await model.generateContent([systemMessage, userMessage]);
   const aiResponse = response?.response?.candidates?.[0]?.content?.parts[0]?.text;
 

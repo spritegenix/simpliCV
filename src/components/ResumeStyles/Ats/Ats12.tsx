@@ -2,7 +2,7 @@
 import useDimensions from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Link from "next/link";
 import React, { useRef } from "react";
 import { BiSolidMap } from "react-icons/bi";
@@ -119,9 +119,11 @@ export default function Ats12({ resumeData, className }: ResumePreviewProps) {
                   </div>
                   <div className="text-right">
                     <p className="font-semibold">
-                      {edu.startDate && formatDate(edu.startDate, "MMM yyyy")} -{" "}
+                      {edu.startDate &&
+                        safeFormatDate(edu.startDate, "MMM yyyy")}{" "}
+                      -{" "}
                       {edu.endDate
-                        ? formatDate(edu.endDate, "MMM yyyy")
+                        ? safeFormatDate(edu.endDate, "MMM yyyy")
                         : "Present"}
                     </p>
                     {edu.location && (
@@ -150,10 +152,11 @@ export default function Ats12({ resumeData, className }: ResumePreviewProps) {
                         {exp.company}
                       </h3>
                       <span className="text-sm font-medium">
-                        {exp.startDate && formatDate(exp.startDate, "MMM yyyy")}{" "}
+                        {exp.startDate &&
+                          safeFormatDate(exp.startDate, "MMM yyyy")}{" "}
                         -{" "}
                         {exp.endDate
-                          ? formatDate(exp.endDate, "MMM yyyy")
+                          ? safeFormatDate(exp.endDate, "MMM yyyy")
                           : "Present"}
                       </span>
                     </div>
@@ -187,10 +190,10 @@ export default function Ats12({ resumeData, className }: ResumePreviewProps) {
                   <h3 className="font-bold">{project.title}</h3>
                   <span className="text-sm">
                     {project.startDate &&
-                      formatDate(project.startDate, "MMM yyyy")}{" "}
+                      safeFormatDate(project.startDate, "MMM yyyy")}{" "}
                     -{" "}
                     {project.endDate
-                      ? formatDate(project.endDate, "MMM yyyy")
+                      ? safeFormatDate(project.endDate, "MMM yyyy")
                       : "Present"}
                   </span>
                 </div>

@@ -1,9 +1,8 @@
 "use client";
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import useDimensions from "@/hooks/useDimensions";
-import { cn } from "@/lib/utils";
+import { cn, safeFormatDate } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { formatDate } from "date-fns";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -81,9 +80,9 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
                     </span>
                     {exp.startDate && (
                       <span>
-                        {formatDate(exp.startDate, "MMM yyyy")} -{" "}
+                        {safeFormatDate(exp.startDate, "MMM yyyy")} -{" "}
                         {exp.endDate
-                          ? formatDate(exp.endDate, "MMM yyyy")
+                          ? safeFormatDate(exp.endDate, "MMM yyyy")
                           : "Present"}
                       </span>
                     )}
@@ -130,9 +129,9 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
                     {item.startDate && (
                       <span>
                         {item.startDate &&
-                          `${formatDate(item.startDate, "MMM yyyy")} - `}
+                          `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
                         {item.endDate
-                          ? formatDate(item.endDate, "MMM yyyy")
+                          ? safeFormatDate(item.endDate, "MMM yyyy")
                           : "Present"}
                       </span>
                     )}
@@ -177,9 +176,9 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
                   </span>{" "}
                   <span>
                     {edu.startDate &&
-                      `${formatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                      `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
                     {edu.endDate
-                      ? formatDate(edu.endDate, "MMM yyyy")
+                      ? safeFormatDate(edu.endDate, "MMM yyyy")
                       : "Present"}
                   </span>
                 </p>
@@ -345,7 +344,7 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
     email,
   } = resumeData;
   const colorHex =
-  resumeData.colorHex === "#000000" ? "#fcb400" : resumeData.colorHex;
+    resumeData.colorHex === "#000000" ? "#fcb400" : resumeData.colorHex;
 
   return (
     <div className="mb-2">
