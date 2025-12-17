@@ -3,7 +3,7 @@ import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import useDimensions from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
@@ -15,10 +15,7 @@ interface ResumePreviewProps {
   className?: string;
 }
 
-export default function Ats2({
-  resumeData,
-  className,
-}: ResumePreviewProps) {
+export default function Ats2({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
@@ -27,7 +24,7 @@ export default function Ats2({
     ? `text-[${resumeData.baseFontSize}px]`
     : "text-[10px]";
 
-    const colorHex =
+  const colorHex =
     resumeData.colorHex === "#000000" ? "#000000" : resumeData.colorHex;
   return (
     <div
@@ -56,9 +53,7 @@ export default function Ats2({
         {/* Summary */}
         {resumeData.summary && (
           <>
-            <Heading colorHex={colorHex}>
-              Professional Summary
-            </Heading>
+            <Heading colorHex={colorHex}>Professional Summary</Heading>
             <Text>{resumeData.summary}</Text>
           </>
         )}
@@ -66,9 +61,7 @@ export default function Ats2({
         {!!resumeData?.workExperiences &&
           resumeData?.workExperiences?.length > 0 && (
             <>
-              <Heading colorHex={colorHex}>
-                Professional Experience
-              </Heading>
+              <Heading colorHex={colorHex}>Professional Experience</Heading>
               {resumeData.workExperiences?.map((exp, index) => (
                 <div
                   key={index}
@@ -77,9 +70,9 @@ export default function Ats2({
                   <div className="flex flex-col gap-y-1">
                     {exp.startDate && (
                       <span>
-                        {formatDate(exp.startDate, "MMM yyyy")} -{" "}
+                        {safeFormatDate(exp.startDate, "MMM yyyy")} -{" "}
                         {exp.endDate
-                          ? formatDate(exp.endDate, "MMM yyyy")
+                          ? safeFormatDate(exp.endDate, "MMM yyyy")
                           : "Present"}
                       </span>
                     )}
@@ -152,9 +145,9 @@ export default function Ats2({
                     {item.startDate && (
                       <span>
                         {item.startDate &&
-                          `${formatDate(item.startDate, "MMM yyyy")} - `}
+                          `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
                         {item.endDate
-                          ? formatDate(item.endDate, "MMM yyyy")
+                          ? safeFormatDate(item.endDate, "MMM yyyy")
                           : "Present"}
                       </span>
                     )}
@@ -203,9 +196,9 @@ export default function Ats2({
                   <p className="!m-0 flex w-full flex-col justify-between">
                     <span>
                       {edu.startDate &&
-                        `${formatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                        `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
                       {edu.endDate
-                        ? formatDate(edu.endDate, "MMM yyyy")
+                        ? safeFormatDate(edu.endDate, "MMM yyyy")
                         : "Present"}
                     </span>
                     <span> {edu.location}</span>
@@ -252,9 +245,7 @@ export default function Ats2({
         {/* Interest  */}
         {!!resumeData.others?.title && (
           <div className="break-inside-avoid">
-            <Heading colorHex={colorHex}>
-              {resumeData.others.title}
-            </Heading>
+            <Heading colorHex={colorHex}>{resumeData.others.title}</Heading>
             <div
               dangerouslySetInnerHTML={{
                 __html: resumeData.others.description || "",
@@ -282,7 +273,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
     email,
     borderStyle,
   } = resumeData;
-      const colorHex =
+  const colorHex =
     resumeData.colorHex === "#000000" ? "#000000" : resumeData.colorHex;
 
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
@@ -377,7 +368,7 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
     phone,
     email,
   } = resumeData;
-      const colorHex =
+  const colorHex =
     resumeData.colorHex === "#000000" ? "#000000" : resumeData.colorHex;
 
   return (

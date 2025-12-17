@@ -3,7 +3,7 @@ import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import useDimensions from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
@@ -82,9 +82,9 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
                     <div className="flex flex-col gap-y-1">
                       {exp.startDate && (
                         <span>
-                          {formatDate(exp.startDate, "MMM yyyy")} -{" "}
+                          {safeFormatDate(exp.startDate, "MMM yyyy")} -{" "}
                           {exp.endDate
-                            ? formatDate(exp.endDate, "MMM yyyy")
+                            ? safeFormatDate(exp.endDate, "MMM yyyy")
                             : "Present"}
                         </span>
                       )}
@@ -158,9 +158,9 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
                     {item.startDate && (
                       <span>
                         {item.startDate &&
-                          `${formatDate(item.startDate, "MMM yyyy")} - `}
+                          `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
                         {item.endDate
-                          ? formatDate(item.endDate, "MMM yyyy")
+                          ? safeFormatDate(item.endDate, "MMM yyyy")
                           : "Present"}
                       </span>
                     )}
@@ -220,9 +220,9 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
                   <div className="">
                     <p>
                       {edu.startDate &&
-                        `${formatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                        `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
                       {edu.endDate
-                        ? formatDate(edu.endDate, "MMM yyyy")
+                        ? safeFormatDate(edu.endDate, "MMM yyyy")
                         : "Present"}
                     </p>
                     <p> {edu.location}</p>

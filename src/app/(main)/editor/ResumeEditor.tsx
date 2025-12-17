@@ -60,7 +60,10 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
             <div className="mb-4">
               <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
               <div className="mt-4 px-3 flex items-center justify-end">
-                <AddContentModal onSelectSection={setStep} />
+                <AddContentModal
+                  onSelectSection={setStep}
+                  setResumeData={setResumeData}
+                />
               </div>
             </div>
             {FormComponent && (

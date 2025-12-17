@@ -3,7 +3,7 @@ import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import useDimensions from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
@@ -97,9 +97,9 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     <div className="!m-0">
                       <p>
                         {edu.startDate &&
-                          `${formatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                          `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
                         {edu.endDate
-                          ? formatDate(edu.endDate, "MMM yyyy")
+                          ? safeFormatDate(edu.endDate, "MMM yyyy")
                           : "Present"}
                       </p>
                       <p className="font-semibold">
@@ -205,12 +205,12 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                           {exp.startDate && (
                             <div className="mx-auto flex flex-col justify-center text-center">
                               <span>
-                                {formatDate(exp.startDate, "MMM yyyy")}
+                                {safeFormatDate(exp.startDate, "MMM yyyy")}
                               </span>{" "}
                               <span>-</span>
                               <span>
                                 {exp.endDate
-                                  ? formatDate(exp.endDate, "MMM yyyy")
+                                  ? safeFormatDate(exp.endDate, "MMM yyyy")
                                   : "Present"}
                               </span>
                             </div>
@@ -268,12 +268,12 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                         <div>
                           <p>
                             {item.startDate &&
-                              formatDate(item.startDate, "MMM yyyy")}
+                              safeFormatDate(item.startDate, "MMM yyyy")}
                           </p>
                           <p>-</p>
                           <p>
                             {item.endDate
-                              ? formatDate(item.endDate, "MMM yyyy")
+                              ? safeFormatDate(item.endDate, "MMM yyyy")
                               : "Present"}
                           </p>
                         </div>

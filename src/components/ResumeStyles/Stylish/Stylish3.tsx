@@ -3,7 +3,7 @@ import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import useDimensions from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
@@ -95,9 +95,9 @@ export default function Stylish3({
                         </p>
                         <p className="h-min w-max text-nowrap rounded-full bg-[#555e50] px-2 pt-0.5 text-[#f8f7f3]">
                           {edu.startDate &&
-                            `${formatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                            `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
                           {edu.endDate
-                            ? formatDate(edu.endDate, "MMM yyyy")
+                            ? safeFormatDate(edu.endDate, "MMM yyyy")
                             : "Present"}
                         </p>
                       </div>
@@ -205,9 +205,9 @@ export default function Stylish3({
                           </span>
                           {exp.startDate && (
                             <span className="h-min w-max text-nowrap rounded-full bg-[#555e50] px-2 pt-0.5 text-[#f8f7f3]">
-                              {formatDate(exp.startDate, "MMM yyyy")} -{" "}
+                              {safeFormatDate(exp.startDate, "MMM yyyy")} -{" "}
                               {exp.endDate
-                                ? formatDate(exp.endDate, "MMM yyyy")
+                                ? safeFormatDate(exp.endDate, "MMM yyyy")
                                 : "Present"}
                             </span>
                           )}
@@ -262,9 +262,9 @@ export default function Stylish3({
                             {item.startDate && (
                               <span className="h-min w-max text-nowrap rounded-full bg-[#555e50] px-2 pt-0.5 text-[#f8f7f3]">
                                 {item.startDate &&
-                                  `${formatDate(item.startDate, "MMM yyyy")} - `}
+                                  `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
                                 {item.endDate
-                                  ? formatDate(item.endDate, "MMM yyyy")
+                                  ? safeFormatDate(item.endDate, "MMM yyyy")
                                   : "Present"}
                               </span>
                             )}

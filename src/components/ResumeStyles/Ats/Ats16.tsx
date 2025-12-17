@@ -2,7 +2,7 @@
 import useDimensions from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 import Link from "next/link";
 import React, { useRef } from "react";
 import { BiEnvelope, BiGlobe, BiPhone, BiSolidMap } from "react-icons/bi";
@@ -141,9 +141,10 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
                       </span>
                     </span>
                     <span className="whitespace-nowrap text-sm font-medium text-gray-700">
-                      {edu.startDate && formatDate(edu.startDate, "MMM yyyy")}
+                      {edu.startDate &&
+                        safeFormatDate(edu.startDate, "MMM yyyy")}
                       {edu.endDate
-                        ? ` - ${formatDate(edu.endDate, "MMM yyyy")}`
+                        ? ` - ${safeFormatDate(edu.endDate, "MMM yyyy")}`
                         : ""}
                     </span>
                   </div>
@@ -168,10 +169,11 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
                         {exp.company}
                       </h4>
                       <span className="whitespace-nowrap text-sm font-medium text-gray-600">
-                        {exp.startDate && formatDate(exp.startDate, "MMM yyyy")}{" "}
+                        {exp.startDate &&
+                          safeFormatDate(exp.startDate, "MMM yyyy")}{" "}
                         –{" "}
                         {exp.endDate
-                          ? formatDate(exp.endDate, "MMM yyyy")
+                          ? safeFormatDate(exp.endDate, "MMM yyyy")
                           : "Present"}
                         {exp.jobLocation && (
                           <span className="hidden sm:inline">
@@ -231,7 +233,7 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
                     </h4>
                     <span className="text-sm text-gray-600">
                       {project.startDate &&
-                        formatDate(project.startDate, "MMM yyyy")}
+                        safeFormatDate(project.startDate, "MMM yyyy")}
                     </span>
                   </div>
                   {project.links && project.links.length > 0 && (
