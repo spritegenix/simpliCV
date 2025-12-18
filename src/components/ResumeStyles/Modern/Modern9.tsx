@@ -33,7 +33,6 @@ export default function ModernSidebar({ resumeData, className = "" }: ResumePrev
         style={{
           zoom: (1 / 794) * width,
         }}
-        id="resumePreviewContent"
       >
         <div className="flex h-full">
           {/* LEFT COLUMN - Fixed Width Sidebar with Grey Background */}
@@ -306,6 +305,109 @@ export default function ModernSidebar({ resumeData, className = "" }: ResumePrev
 // COMPONENTS
 // ----------------------------------------------------------------------
 
+// Photo Section Component
+const PhotoSection = ({ resumeData, colorHex }: { resumeData: ResumeValues; colorHex: string }) => {
+  const [photoSrc, setPhotoSrc] = useState<string>(
+    resumeData.photo instanceof File ? "" : resumeData.photo || "",
+  );
+
+  useEffect(() => {
+    if (resumeData.photo instanceof File) {
+      const objectUrl = URL.createObjectURL(resumeData.photo);
+      setPhotoSrc(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+    if (resumeData.photo === null) setPhotoSrc("");
+  }, [resumeData.photo]);
+
+  const getBorderRadius = () => {
+    if (resumeData.borderStyle === "square") return "0px";
+    if (resumeData.borderStyle === "circle") return "50%";
+    return "10px";
+  };
+
+  if (!photoSrc) return null;
+
+  return (
+    <div
+      className="h-36 w-36 overflow-hidden border-4 shadow-lg"
+      style={{ borderRadius: getBorderRadius(), borderColor: colorHex }}
+    >
+      <img
+        src={photoSrc}
+        alt="Profile"
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
+};
+
+// Contact Section Component
+const ContactSection = ({ resumeData, colorHex }: { resumeData: ResumeValues; colorHex: string }) => {
+  const { phone, email, city, country, portfolioLink, socialLinks } = resumeData;
+
+  return (
+    <div className="space-y-3 text-xs text-slate-700">
+      {phone && (
+        <div className="flex items-center gap-2">
+          <Phone size={14} style={{ color: colorHex }} />
+          <span>{phone}</span>
+        </div>
+      )}
+      {email && (
+        <div className="flex items-center gap-2">
+          <Mail size={14} style={{ color: colorHex }} />
+          <span className="break-all">{email}</span>
+        </div>
+      )}
+      {(city || country) && (
+        <div className="flex items-center gap-2">
+          <MapPin size={14} style={{ color: colorHex }} />
+          <span>{[city, country].filter(Boolean).join(", ")}</span>
+        </div>
+      )}
+      {portfolioLink && (
+        <div className="flex items-center gap-2">
+          <Globe size={14} style={{ color: colorHex }} />
+          <span className="break-all">{portfolioLink}</span>
+        </div>
+      )}
+      {socialLinks?.map((link, idx) => (
+        <div key={idx} className="flex items-center gap-2">
+          <LinkIcon size={14} style={{ color: colorHex }} />
+          <span className="break-all">
+            {link.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Section Header for Sidebar
+const SectionHeaderSide = ({ title, colorHex }: { title: string; colorHex: string }) => {
+  return (
+    <h3
+      className="mb-4 border-b-2 border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest text-slate-800"
+    >
+      {title}
+    </h3>
+  );
+};
+
+// Section Header for Main Content
+const SectionHeaderMain = ({ title, colorHex }: { title: string; colorHex: string }) => {
+  return (
+    <h3
+      className="mb-6 border-b-2 pb-2 text-lg font-bold uppercase tracking-wide"
+      style={{ borderColor: colorHex, color: colorHex }}
+    >
+      {title}
+    </h3>
+  );
+};
+
+
 const Sidebar = ({ resumeData, colorHex }: { resumeData: ResumeValues; colorHex: string }) => {
   const { photo, borderStyle, phone, email, portfolioLink, socialLinks, city, country, certifications, others } = resumeData;
   const [photoSrc, setPhotoSrc] = useState<string>(
@@ -544,7 +646,7 @@ const MainContent = ({ resumeData, colorHex }: { resumeData: ResumeValues; color
                     dangerouslySetInnerHTML={{ __html: exp.description || "" }}
                   />
                   <small style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}>
-                    {exp.startDate && formatDate(exp.startDate, "yyyy")} – {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
+                    {exp.startDate && safeFormatDate(exp.startDate, "yyyy")} – {exp.endDate ? safeFormatDate(exp.endDate, "yyyy") : "PRESENT"}
                   </small>
                 </div>
               ))}
@@ -584,7 +686,7 @@ const MainContent = ({ resumeData, colorHex }: { resumeData: ResumeValues; color
                      />
                    )}
                    <small style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}>
-                     {edu.startDate && formatDate(edu.startDate, "yyyy")} – {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
+                     {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} – {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "PRESENT"}
                    </small>
                 </div>
               ))}
@@ -647,7 +749,7 @@ const MainContent = ({ resumeData, colorHex }: { resumeData: ResumeValues; color
                   </div>
                 )}
                 <small style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}>
-                  {proj.startDate && formatDate(proj.startDate, "yyyy")} – {proj.endDate ? formatDate(proj.endDate, "yyyy") : "PRESENT"}
+                  {proj.startDate && safeFormatDate(proj.startDate, "yyyy")} – {proj.endDate ? safeFormatDate(proj.endDate, "yyyy") : "PRESENT"}
                 </small>
               </div>
             ))}

@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     // Wait for the resume content to be visible
     await page.waitForSelector('#resumePreviewContent', { timeout: 30000 });
-    
+
     // Additional wait for fonts and dynamic content to load
     await page.waitForTimeout(800);
 
