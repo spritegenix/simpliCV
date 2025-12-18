@@ -104,8 +104,8 @@ export default function ProjectsForm({
       <div className="space-y-1.5 text-center">
         <h2 className="text-2xl font-semibold">Your Project Work</h2>
         <p className="text-sm text-muted-foreground">
-          Add your Projects to your resume. You can leave any field blank, if you
-          do&apos;nt want to add in yor resume.
+          Add your Projects to your resume. You can leave any field blank, if
+          you do&apos;nt want to add in yor resume.
         </p>
       </div>
       <Form {...form}>
@@ -205,7 +205,7 @@ function ProjectItem({ id, form, index, remove }: ProjectItemProps) {
           <FormItem>
             <FormLabel>Project title</FormLabel>
             <FormControl>
-              <Input {...field} autoFocus />
+              <Input {...field} value={field.value || ""} autoFocus />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -220,6 +220,7 @@ function ProjectItem({ id, form, index, remove }: ProjectItemProps) {
             <FormControl>
               <Textarea
                 {...field}
+                value={field.value || ""}
                 placeholder="e.g. Deployed Link, Github Link,..."
                 onChange={(e) => {
                   const l = e.target.value.split(",");
@@ -242,7 +243,7 @@ function ProjectItem({ id, form, index, remove }: ProjectItemProps) {
           <FormItem>
             <FormLabel>Company</FormLabel>
             <FormControl>
-              <Input {...field} />
+              <Input {...field} value={field.value || ""} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -259,7 +260,7 @@ function ProjectItem({ id, form, index, remove }: ProjectItemProps) {
                 <Input
                   {...field}
                   type="date"
-                  value={field.value?.slice(0, 10)}
+                  value={field.value?.slice(0, 10) || ""}
                 />
               </FormControl>
               <FormMessage />
@@ -276,7 +277,7 @@ function ProjectItem({ id, form, index, remove }: ProjectItemProps) {
                 <Input
                   {...field}
                   type="date"
-                  value={field.value?.slice(0, 10)}
+                  value={field.value?.slice(0, 10) || ""}
                 />
               </FormControl>
               <FormMessage />

@@ -54,6 +54,7 @@ export default function GeneralInfoForm({
                 <FormControl>
                   <Input
                     {...field}
+                    value={field.value || ""}
                     placeholder="Resume Purpose Title"
                     autoFocus
                   />
@@ -71,6 +72,7 @@ export default function GeneralInfoForm({
                 <FormControl>
                   <Input
                     {...field}
+                    value={field.value || ""}
                     placeholder="Short description about your resume"
                   />
                 </FormControl>

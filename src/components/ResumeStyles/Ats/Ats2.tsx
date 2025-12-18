@@ -25,7 +25,9 @@ export default function Ats2({ resumeData, className }: ResumePreviewProps) {
     : "text-[10px]";
 
   const colorHex =
-    resumeData.colorHex === "#000000" ? "#000000" : resumeData.colorHex;
+    resumeData.colorHex === "#000000"
+      ? "#000000"
+      : resumeData.colorHex || undefined;
   return (
     <div
       className={cn(
@@ -369,7 +371,9 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
     email,
   } = resumeData;
   const colorHex =
-    resumeData.colorHex === "#000000" ? "#000000" : resumeData.colorHex;
+    resumeData.colorHex === "#000000"
+      ? "#000000"
+      : resumeData.colorHex || undefined;
 
   return (
     <div className="mb-2 space-y-1">

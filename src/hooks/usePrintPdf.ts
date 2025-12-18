@@ -22,7 +22,6 @@ export function usePrintPdf() {
         body: JSON.stringify({ url }),
         signal: controller.signal,
       });
-
       // Abort may have been called while waiting for the response
       if (controller.signal.aborted) return;
 
