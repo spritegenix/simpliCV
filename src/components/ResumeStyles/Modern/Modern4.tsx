@@ -7,6 +7,7 @@ import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
+import { formatDate } from "date-fns";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;

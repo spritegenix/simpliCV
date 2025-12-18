@@ -43,7 +43,7 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
           <div
             className="absolute inset-0 z-0 h-full w-full"
             style={{
-              background: `linear-gradient(135deg, ${accentColor} 0%, #4c1d95 100%)`, // Gradient to dark purple
+              background: `linear-gradient(135deg, ${primaryColor} 0%, #4c1d95 100%)`, // Gradient to dark purple
               clipPath: "polygon(0 0, 100% 0, 100% 75%, 0% 100%)",
             }}
           />
@@ -74,7 +74,7 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
             {/* ABOUT ME */}
             {resumeData.summary && (
               <div className="relative">
-                <SectionTitleSide title="About Me" colorHex={accentColor} />
+                <SectionTitleSide title="About Me" colorHex={primaryColor} />
                 <p className="text-justify text-xs font-medium leading-relaxed text-slate-600">
                   {resumeData.summary}
                 </p>
@@ -83,14 +83,14 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
 
             {/* CONTACT */}
             <div>
-              <SectionTitleSide title="Contact" colorHex={accentColor} />
-              <ContactSection resumeData={resumeData} colorHex={accentColor} />
+              <SectionTitleSide title="Contact" colorHex={primaryColor} />
+              <ContactSection resumeData={resumeData} colorHex={primaryColor} />
             </div>
 
             {/* EXPERTISE/SKILLS (Sidebar Style) */}
             {resumeData.skills && resumeData.skills.length > 0 && (
               <div>
-                <SectionTitleSide title="Skills" colorHex={accentColor} />
+                <SectionTitleSide title="Skills" colorHex={primaryColor} />
                 <div className="space-y-4">
                   {resumeData.skills.map((skill, idx) => (
                     <div key={idx}>
@@ -117,7 +117,7 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
             {resumeData.certifications &&
               resumeData.certifications.length > 0 && (
                 <div>
-                  <SectionTitleSide title="References" colorHex={accentColor} />
+                  <SectionTitleSide title="References" colorHex={primaryColor} />
                   <div className="space-y-4">
                     {resumeData.certifications.map((cert, idx) => (
                       <div key={idx}>
@@ -144,7 +144,7 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
                 <div>
                   <SectionTitleMain
                     title="Work Experience"
-                    colorHex={accentColor}
+                    colorHex={primaryColor}
                   />
                   <div className="ml-1 space-y-8 border-l-2 border-slate-200 pl-2">
                     {resumeData.workExperiences.map((exp, idx) => (
@@ -155,7 +155,7 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
                         {/* Timeline Dot */}
                         <div
                           className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full border-2 border-white shadow-sm"
-                          style={{ backgroundColor: accentColor }}
+                          style={{ backgroundColor: primaryColor }}
                         />
 
                         <div className="mb-1 flex items-baseline justify-between">
@@ -164,7 +164,7 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
                           </h4>
                           <span
                             className="rounded-full px-2 py-0.5 text-xs font-semibold text-white"
-                            style={{ backgroundColor: accentColor }}
+                            style={{ backgroundColor: primaryColor }}
                           >
                             {exp.startDate &&
                               safeFormatDate(exp.startDate, "yyyy")}{" "}
@@ -193,13 +193,13 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
             {/* EDUCATION */}
             {resumeData.educations && resumeData.educations.length > 0 && (
               <div>
-                <SectionTitleMain title="Education" colorHex={accentColor} />
+                <SectionTitleMain title="Education" colorHex={primaryColor} />
                 <div className="ml-1 space-y-6 border-l-2 border-slate-200 pl-2">
                   {resumeData.educations.map((edu, idx) => (
                     <div key={idx} className="relative break-inside-avoid pl-6">
                       <div
                         className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full border-2 border-white shadow-sm"
-                        style={{ backgroundColor: accentColor }}
+                        style={{ backgroundColor: primaryColor }}
                       />
 
                       <div className="mb-1 flex items-baseline justify-between">
@@ -235,7 +235,7 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
                 <div>
                   <SectionTitleMain
                     title={resumeData.others.title || "Software"}
-                    colorHex={accentColor}
+                    colorHex={primaryColor}
                   />
                   <div
                     className="whitespace-pre-line text-xs leading-relaxed text-slate-600"
@@ -255,6 +255,112 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
 // ----------------------------------------------------------------------
 // COMPONENTS
 // ----------------------------------------------------------------------
+
+// Photo Section Component
+const PhotoSection = ({ resumeData }: { resumeData: ResumeValues }) => {
+  const [photoSrc, setPhotoSrc] = useState<string>(
+    resumeData.photo instanceof File ? "" : resumeData.photo || "",
+  );
+
+  useEffect(() => {
+    if (resumeData.photo instanceof File) {
+      const objectUrl = URL.createObjectURL(resumeData.photo);
+      setPhotoSrc(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+    if (resumeData.photo === null) setPhotoSrc("");
+  }, [resumeData.photo]);
+
+  const getBorderRadius = () => {
+    if (resumeData.borderStyle === "square") return "0px";
+    if (resumeData.borderStyle === "circle") return "50%";
+    return "10px";
+  };
+
+  if (!photoSrc) return null;
+
+  return (
+    <div
+      className="h-32 w-32 overflow-hidden border-4 border-white shadow-lg"
+      style={{ borderRadius: getBorderRadius() }}
+    >
+      <img
+        src={photoSrc}
+        alt="Profile"
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
+};
+
+// Section Title for Sidebar
+const SectionTitleSide = ({ title, colorHex }: { title: string; colorHex: string }) => {
+  return (
+    <h3
+      className="mb-3 border-b-2 pb-1 text-sm font-bold uppercase tracking-wide"
+      style={{ borderColor: colorHex, color: colorHex }}
+    >
+      {title}
+    </h3>
+  );
+};
+
+// Section Title for Main Content
+const SectionTitleMain = ({ title, colorHex }: { title: string; colorHex: string }) => {
+  return (
+    <h3
+      className="mb-6 text-lg font-bold uppercase tracking-wide"
+      style={{ color: colorHex }}
+    >
+      {title}
+    </h3>
+  );
+};
+
+// Contact Section Component
+const ContactSection = ({ resumeData, colorHex }: { resumeData: ResumeValues; colorHex: string }) => {
+  const { phone, email, city, country, portfolioLink, socialLinks } = resumeData;
+
+  return (
+    <div className="space-y-2 text-xs">
+      {phone && (
+        <div className="flex items-center gap-2">
+          <Phone size={12} style={{ color: colorHex }} />
+          <span className="text-slate-700">{phone}</span>
+        </div>
+      )}
+      {email && (
+        <div className="flex items-center gap-2">
+          <Mail size={12} style={{ color: colorHex }} />
+          <span className="break-all text-slate-700">{email}</span>
+        </div>
+      )}
+      {(city || country) && (
+        <div className="flex items-center gap-2">
+          <MapPin size={12} style={{ color: colorHex }} />
+          <span className="text-slate-700">
+            {[city, country].filter(Boolean).join(", ")}
+          </span>
+        </div>
+      )}
+      {portfolioLink && (
+        <div className="flex items-center gap-2">
+          <Globe size={12} style={{ color: colorHex }} />
+          <span className="break-all text-slate-700">{portfolioLink}</span>
+        </div>
+      )}
+      {socialLinks?.map((link, idx) => (
+        <div key={idx} className="flex items-center gap-2">
+          <Link2 size={12} style={{ color: colorHex }} />
+          <span className="break-all text-slate-700">
+            {link.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 
 const Header = ({ 
   resumeData, 
@@ -486,7 +592,7 @@ const RightColumn = ({
                   <h4 style={{ fontSize: "13px", fontWeight: 600, margin: "0 0 4px 0" }}>
                     {exp.company}{" "}
                     <span style={{ fontWeight: 400, color: "#777", marginLeft: "10px" }}>
-                      {exp.startDate && formatDate(exp.startDate, "yyyy")} – {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
+                      {exp.startDate && safeFormatDate(exp.startDate, "yyyy")} – {exp.endDate ? safeFormatDate(exp.endDate, "yyyy") : "PRESENT"}
                     </span>
                   </h4>
                   <strong style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>
@@ -543,7 +649,7 @@ const RightColumn = ({
                   <h4 style={{ fontSize: "13px", fontWeight: 600, margin: "0 0 4px 0" }}>
                     {edu.school}{" "}
                     <span style={{ fontWeight: 400, color: "#777", marginLeft: "10px" }}>
-                      {edu.startDate && formatDate(edu.startDate, "yyyy")} – {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
+                      {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} – {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "PRESENT"}
                     </span>
                   </h4>
                    <strong style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>
