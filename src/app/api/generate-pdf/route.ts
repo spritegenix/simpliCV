@@ -22,31 +22,10 @@ export async function POST(req: NextRequest) {
     await page.goto(url, { waitUntil: "networkidle" });
 
     // Wait for the resume content to be visible
-    await page.waitForSelector('#resumePreviewContent', { timeout: 10000 });
+    await page.waitForSelector('#resumePreviewContent', { timeout: 30000 });
 
     // Additional wait for fonts and dynamic content to load
-    await page.waitForTimeout(500);
-
-    // Use JavaScript to extract only the resume content and remove all wrapper divs
-    await page.evaluate(() => {
-      const resumeContent = document.querySelector('#resumePreviewContent');
-
-      if (resumeContent) {
-        // Clone the resume content to preserve it
-        const clonedContent = resumeContent.cloneNode(true) as HTMLElement;
-
-        // Clear the entire body
-        document.body.innerHTML = '';
-
-        // Reset body styles
-        document.body.style.margin = '0';
-        document.body.style.padding = '0';
-        document.body.style.background = 'white';
-
-        // Append only the resume content
-        document.body.appendChild(clonedContent);
-      }
-    });
+    await page.waitForTimeout(800);
 
     const pdfBuffer = await page.pdf({
       format: "A4",

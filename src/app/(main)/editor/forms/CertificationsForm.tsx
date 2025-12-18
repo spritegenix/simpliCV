@@ -10,10 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { EditorFormProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import {
-  certificationSchema,
-  CertificationValues,
-} from "@/lib/validation";
+import { certificationSchema, CertificationValues } from "@/lib/validation";
 
 import {
   closestCenter,
@@ -58,7 +55,8 @@ export default function CertificationsForm({
 
       setResumeData({
         ...resumeData,
-        certifications: values.certifications?.filter((cer) => cer !== undefined) || [],
+        certifications:
+          values.certifications?.filter((cer) => cer !== undefined) || [],
       });
     });
     return unsubscribe;
@@ -145,7 +143,12 @@ interface CertificationItemProps {
   remove: (index: number) => void;
 }
 
-function CertificationItem({ id, form, index, remove }: CertificationItemProps) {
+function CertificationItem({
+  id,
+  form,
+  index,
+  remove,
+}: CertificationItemProps) {
   const {
     attributes,
     listeners,
@@ -182,7 +185,7 @@ function CertificationItem({ id, form, index, remove }: CertificationItemProps) 
           <FormItem>
             <FormLabel>Certificate Name</FormLabel>
             <FormControl>
-              <Input {...field} autoFocus />
+              <Input {...field} value={field.value || ""} autoFocus />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -197,6 +200,7 @@ function CertificationItem({ id, form, index, remove }: CertificationItemProps) 
             <FormControl>
               <Input
                 {...field}
+                value={field.value || ""}
                 placeholder="e.g. https://example.com/documentId..."
               />
             </FormControl>
@@ -212,7 +216,11 @@ function CertificationItem({ id, form, index, remove }: CertificationItemProps) 
             <FormLabel>What did you Learn?</FormLabel>
             <FormControl>
               <div className="overflow-hidden rounded-md border">
-                <Textarea {...field} placeholder="Write something about what you Learn" />
+                <Textarea
+                  {...field}
+                  value={field.value || ""}
+                  placeholder="Write something about what you Learn"
+                />
               </div>
             </FormControl>
             <FormMessage />
