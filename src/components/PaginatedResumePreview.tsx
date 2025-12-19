@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ResumeValues } from "@/lib/validation";
-import { resumeStyles } from "@/components/ResumeStyles/Styles";
+import { resumeStyles } from "@/components/ResumeStyles/Styles.client";
 import useDimensions from "@/hooks/useDimensions";
 import React, { useEffect, useRef, useState } from "react";
+import { ResumeDocument } from "@/types/resumeDocument";
 
 interface PaginatedResumePreviewProps {
-  resumeData: ResumeValues;
+  resumeData: ResumeDocument;
   styleId: string;
   className?: string;
   onPageClick?: () => void;
@@ -32,16 +32,16 @@ export default function PaginatedResumePreview({
 
   useEffect(() => {
     if (!containerRef.current || !width) return;
-    
+
     const element = containerRef.current;
-    
+
     const updatePageCount = () => {
-        if (element) {
-            const scrollWidth = element.scrollWidth;
-            // We use a slightly larger buffer or just ceil
-            const pages = Math.ceil(scrollWidth / width);
-            setTotalPages(Math.max(1, pages));
-        }
+      if (element) {
+        const scrollWidth = element.scrollWidth;
+        // We use a slightly larger buffer or just ceil
+        const pages = Math.ceil(scrollWidth / width);
+        setTotalPages(Math.max(1, pages));
+      }
     };
 
     // Initial check
@@ -52,50 +52,63 @@ export default function PaginatedResumePreview({
   }, [width, resumeData, styleId]);
 
   if (!ResumeStylePreview) {
-      return null;
+    return null;
   }
 
   return (
-    <div 
-        className={cn("relative flex w-full flex-col gap-6 items-center", className)}
+    <div
+      className={cn(
+        "relative flex w-full flex-col items-center gap-6",
+        className,
+      )}
+      data-resume-preview="paginated"
     >
-        {Array.from({ length: totalPages }).map((_, pageIndex) => (
-            <div
-            key={pageIndex}
-            className={cn(
-                "relative w-full max-w-2xl bg-white shadow-md shrink-0",
-                pageIndex === 0 && onPageClick ? "cursor-pointer" : "pointer-events-none" 
-            )}
-            style={{
-                height: width ? `${pageHeight}px` : 'auto',
-                minHeight: width ? 'unset' : '297mm',
-                overflow: "hidden",
-                border: '1px solid #e5e7eb'
-            }}
-            onClick={() => pageIndex === 0 && onPageClick?.()}
-            ref={pageIndex === 0 ? containerRef : null}
-            >
-            <div
-                style={{
-                    "--page-height": `${pageHeight}px`,
-                    "--page-width": `${width}px`,
-                    transform: width ? `translateX(-${pageIndex * width}px)` : 'none',
-                    width: width ? `${width}px` : '100%',
-                    position: width ? 'absolute' : 'relative',
-                    top: width ? '20px' : 0,
-                    left: 0,
-                } as React.CSSProperties}
-            >
-                <ResumeStylePreview
-                resumeData={resumeData}
-                className={cn(
-                    width > 0 && "h-[calc(var(--page-height)-40px)] [column-width:var(--page-width)] [column-gap:0px] [column-fill:auto] [column-rule:none]",
-                    "!p-0 [&>#resumePreviewContent]:p-6"
-                )}
-                />
-            </div>
-            </div>
-        ))}
+      {Array.from({ length: totalPages }).map((_, pageIndex) => (
+        <div
+          key={pageIndex}
+          className={cn(
+            "relative w-full max-w-2xl shrink-0 bg-white shadow-md",
+            pageIndex === 0 && onPageClick
+              ? "cursor-pointer"
+              : "pointer-events-none",
+          )}
+          data-resume-preview-page
+          style={{
+            height: width ? `${pageHeight}px` : "auto",
+            minHeight: width ? "unset" : "297mm",
+            overflow: "hidden",
+            border: "1px solid #e5e7eb",
+          }}
+          onClick={() => pageIndex === 0 && onPageClick?.()}
+          ref={pageIndex === 0 ? containerRef : null}
+        >
+          <div
+            data-resume-preview-page-inner
+            style={
+              {
+                "--page-height": `${pageHeight}px`,
+                "--page-width": `${width}px`,
+                transform: width
+                  ? `translateX(-${pageIndex * width}px)`
+                  : "none",
+                width: width ? `${width}px` : "100%",
+                position: width ? "absolute" : "relative",
+                top: width ? "20px" : 0,
+                left: 0,
+              } as React.CSSProperties
+            }
+          >
+            <ResumeStylePreview
+              resumeData={resumeData}
+              className={cn(
+                width > 0 &&
+                  "h-[calc(var(--page-height)-40px)] [column-fill:auto] [column-gap:0px] [column-rule:none] [column-width:var(--page-width)]",
+                "!p-0 [&>#resumePreviewContent]:p-6",
+              )}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

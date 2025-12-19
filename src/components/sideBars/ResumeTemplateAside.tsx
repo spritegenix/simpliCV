@@ -1,6 +1,9 @@
 "use client";
-import { useStyleAsideState } from "@/app/(main)/editor/Footer";
-import React, { useState } from "react";
+import {
+  useResumeTemplateCategoryState,
+  useStyleAsideState,
+} from "@/app/(main)/editor/styleAsideState";
+import React from "react";
 import { Sidebar } from "./SideBar";
 import {
   resumeCategories,
@@ -8,50 +11,30 @@ import {
   resumeStyles,
 } from "../ResumeStyles/Styles";
 import { Card } from "@/app/(resumeSample)/templates/TemplateCard";
-import { ResumeValues } from "@/lib/validation";
-import { cn, mapToResumeValues } from "@/lib/utils";
-import { ResumeServerData } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
-import useAutoSaveResume from "@/app/(main)/editor/useAutoSaveResume";
-import useUnloadWarning from "@/hooks/useUnloadWarning";
 import { CircleX, Loader2 } from "lucide-react";
 import TabsScroll from "../TabsScroll";
+import { ResumeDocument } from "@/types/resumeDocument";
 
-interface ResumeEditorProps {
-  resumeToEdit: ResumeServerData | null;
+interface ResumeTemplateAsideProps {
+  resumeData: ResumeDocument;
+  setResumeData: React.Dispatch<React.SetStateAction<ResumeDocument>>;
+  isSaving: boolean;
 }
 
 export default function ResumeTemplateAside({
-  resumeToEdit,
-}: ResumeEditorProps) {
+  resumeData,
+  setResumeData,
+  isSaving,
+}: ResumeTemplateAsideProps) {
   const { open, setOpen } = useStyleAsideState();
-  const [resumeData, setResumeData] = useState<ResumeValues>(
-    resumeToEdit ? mapToResumeValues(resumeToEdit) : {},
-  );
-  const [selectedCat, setSelectedCat] = useState<ResumeCategory>(
-    resumeCategories[0],
-  );
-
-  const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData);
-
-  // useEffectAfterFirst(() => {
-  //   if (!isSaving) {
-  //     window.location.reload();
-  //   }
-  // }, [isSaving]);
-
-  // useEffect(() => {
-  //   console.log(isSaving, "isA");
-  //   if (!isSaving) {
-  //     window.location.reload();
-  //   }
-  // }, [isSaving]);
-
-  useUnloadWarning(hasUnsavedChanges);
+  const { selectedCategory, setSelectedCategory } =
+    useResumeTemplateCategoryState();
   const router = useRouter();
   const searchParams = useSearchParams();
   async function handleSelectResumeTemplate(styleId: string) {
-    setResumeData({ ...resumeData, styleId });
+    setResumeData((prev) => ({ ...prev, styleId }));
     // Update styleId in URL without losing other query params
     const params = new URLSearchParams(searchParams.toString());
     params.set("styleId", styleId);
@@ -80,8 +63,8 @@ export default function ResumeTemplateAside({
         {resumeCategories.map((category, index) => (
           <Tabs
             key={index}
-            onClick={() => setSelectedCat(category)}
-            isActive={selectedCat === category}
+            onClick={() => setSelectedCategory(category)}
+            isActive={selectedCategory === category}
           >
             {category}
           </Tabs>
@@ -91,7 +74,7 @@ export default function ResumeTemplateAside({
       {/* Templates  */}
       <div className="grid grid-cols-2 items-start gap-4 overflow-y-auto md:h-[calc(100vh-7.2rem)]">
         {resumeStyles
-          .filter((style) => style.category?.includes(selectedCat))
+          .filter((style) => style.category?.includes(selectedCategory))
           .map((style) => (
             <div
               key={style.id}

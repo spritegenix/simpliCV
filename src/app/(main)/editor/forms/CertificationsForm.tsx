@@ -44,7 +44,7 @@ export default function CertificationsForm({
   const form = useForm<CertificationValues>({
     resolver: zodResolver(certificationSchema),
     defaultValues: {
-      certifications: resumeData.certifications || [],
+      certifications: resumeData.content.certifications || [],
     },
   });
 
@@ -55,8 +55,11 @@ export default function CertificationsForm({
 
       setResumeData({
         ...resumeData,
-        certifications:
-          values.certifications?.filter((cer) => cer !== undefined) || [],
+        content: {
+          ...resumeData.content,
+          certifications:
+            values.certifications?.filter((cer) => cer !== undefined) || [],
+        },
       });
     });
     return unsubscribe;

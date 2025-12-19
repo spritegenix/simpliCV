@@ -1,8 +1,7 @@
 "use client";
 import useDimensions from "@/hooks/useDimensions";
-import { cn } from "@/lib/utils";
+import { cn, getResumeDateFormat, safeFormatDate } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { safeFormatDate } from "@/lib/utils";
 import Link from "next/link";
 import React, { useRef } from "react";
 import { BiSolidMap } from "react-icons/bi";
@@ -22,6 +21,8 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
 
   const colorHex =
     resumeData.colorHex === "#000000" ? "#000000" : resumeData.colorHex;
+
+  const dateFormat = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
 
   return (
     <div
@@ -127,10 +128,10 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
                       </h4>
                       <span className="rounded bg-gray-50 px-2 py-1 text-xs font-medium text-gray-500">
                         {exp.startDate &&
-                          safeFormatDate(exp.startDate, "MMM yyyy")}{" "}
+                          safeFormatDate(exp.startDate, dateFormat)}{" "}
                         -{" "}
                         {exp.endDate
-                          ? safeFormatDate(exp.endDate, "MMM yyyy")
+                          ? safeFormatDate(exp.endDate, dateFormat)
                           : "Present"}
                       </span>
                     </div>
@@ -171,9 +172,11 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium text-gray-500">
-                      {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} -{" "}
+                      {edu.startDate &&
+                        safeFormatDate(edu.startDate, dateFormat)}{" "}
+                      -{" "}
                       {edu.endDate
-                        ? safeFormatDate(edu.endDate, "yyyy")
+                        ? safeFormatDate(edu.endDate, dateFormat)
                         : "Present"}
                     </p>
                     {edu.location && (
@@ -199,10 +202,10 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
                     <h4 className="font-bold">{project.title}</h4>
                     <span className="text-xs text-gray-400">
                       {project.startDate &&
-                        safeFormatDate(project.startDate, "MMM yyyy")}{" "}
+                        safeFormatDate(project.startDate, dateFormat)}{" "}
                       -{" "}
                       {project.endDate
-                        ? safeFormatDate(project.endDate, "MMM yyyy")
+                        ? safeFormatDate(project.endDate, dateFormat)
                         : "Present"}
                     </span>
                   </div>

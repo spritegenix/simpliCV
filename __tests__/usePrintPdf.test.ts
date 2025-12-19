@@ -24,7 +24,6 @@ jest.mock('@/hooks/use-toast', () => ({
 describe('usePrintPdf', () => {
   beforeEach(() => {
     global.fetch = jest.fn()
-    window.open = openMock
     global.URL.createObjectURL = createObjectURLMock
     global.URL.revokeObjectURL = revokeObjectURLMock
   })
@@ -34,6 +33,10 @@ describe('usePrintPdf', () => {
   })
 
   it('should handle successful PDF generation', async () => {
+    const clickSpy = jest
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {})
+
     const mockBlob = new Blob(['PDF content'], { type: 'application/pdf' })
     ;(global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
@@ -47,13 +50,19 @@ describe('usePrintPdf', () => {
     })
 
     expect(setOpenMock).toHaveBeenCalledWith(true)
-    expect(global.fetch).toHaveBeenCalledWith('/api/generate-pdf', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: 'https://simplicv.com/' }),
-    })
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/generate-pdf',
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: 'https://simplicv.com/' }),
+        signal: expect.any(Object),
+      }),
+    )
     expect(createObjectURLMock).toHaveBeenCalledWith(mockBlob)
-    expect(openMock).toHaveBeenCalledWith('mock-url', '_self')
+    expect(clickSpy).toHaveBeenCalled()
     expect(setOpenMock).toHaveBeenCalledWith(false)
+
+    clickSpy.mockRestore()
   })
 })

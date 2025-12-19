@@ -1,20 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { env } from "@/env";
-import { ResumeValues } from "@/lib/validation";
 import { Share2 } from "lucide-react";
 import React from "react";
 import { RWebShare } from "react-web-share";
+import { ResumeDocument } from "@/types/resumeDocument";
 
 export default function ShareButton({
   resumeData,
 }: {
-  resumeData: ResumeValues;
+  resumeData: ResumeDocument;
 }) {
-  const url = `${env.NEXT_PUBLIC_BASE_URL}/resume/${resumeData.id}?styleId=${resumeData.styleId}`;
+  const url = `${env.NEXT_PUBLIC_BASE_URL}/resume/${resumeData.content.id}?styleId=${resumeData.styleId}`;
   return (
     <RWebShare
       data={{
-        title: resumeData.firstName + " " + resumeData.lastName,
+        title:
+          (resumeData.content.firstName || "") +
+          " " +
+          (resumeData.content.lastName || ""),
         text: "Check out my resume!",
         url: url,
       }}

@@ -2,6 +2,7 @@ import PaginatedResumePreview from "@/components/PaginatedResumePreview";
 import prisma from "@/lib/prisma";
 import { resumeDataInclude } from "@/lib/types";
 import { mapToResumeValues } from "@/lib/utils";
+import { DEFAULT_STYLE_ID, toResumeDocument } from "@/lib/resumeDocument";
 import { Metadata } from "next";
 import { resumeStyles } from "@/components/ResumeStyles/Styles";
 
@@ -18,7 +19,7 @@ export default async function FullScreenResumePreview({
   searchParams,
 }: Props) {
   const searchParam = await searchParams;
-  const currentStyleId = searchParam.styleId || "pankaj-prajapat";
+  const currentStyleId = searchParam.styleId || DEFAULT_STYLE_ID;
   const resumeId = (await params).slug;
   const resumeToEdit = resumeId
     ? await prisma.resume.findUnique({
@@ -26,15 +27,22 @@ export default async function FullScreenResumePreview({
         include: resumeDataInclude,
       })
     : null;
-  const resumeData = resumeToEdit ? mapToResumeValues(resumeToEdit) : {};
+  const resumeData = resumeToEdit
+    ? toResumeDocument(mapToResumeValues(resumeToEdit))
+    : null;
 
   // We don't need to find the component here, PaginatedResumePreview does it by ID
   // But we need to check if it exists to show error
-  const styleExists = resumeStyles.some(style => style.id === currentStyleId.toString());
+  const styleExists = resumeStyles.some(
+    (style) => style.id === currentStyleId.toString(),
+  );
 
   return (
-    <div className="flex min-h-screen w-full justify-center bg-secondary p-8">
-      {styleExists ? (
+    <div
+      className="flex min-h-screen w-full justify-center bg-secondary p-8"
+      data-resume-preview-root
+    >
+      {styleExists && resumeData ? (
         <PaginatedResumePreview
           resumeData={resumeData}
           styleId={currentStyleId.toString()}

@@ -55,6 +55,8 @@ interface RichTextEditorProps {
   className?: string;
   isBubbleButtons?: boolean;
   isFloatingButtons?: boolean;
+  designTextColor?: string;
+  onDesignTextColorChange?: (hex: string) => void;
 }
 
 export function RichTextEditor({
@@ -63,6 +65,8 @@ export function RichTextEditor({
   className,
   isBubbleButtons = false,
   isFloatingButtons = false,
+  designTextColor,
+  onDesignTextColorChange,
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -102,7 +106,11 @@ export function RichTextEditor({
 
   return (
     <div className={cn("overflow-hidden rounded-md border", className)}>
-      <MenuButtons editor={editor} />
+      <MenuButtons
+        editor={editor}
+        designTextColor={designTextColor}
+        onDesignTextColorChange={onDesignTextColorChange}
+      />
       {isBubbleButtons && <BubbleMenuButtons editor={editor} />}
       {isFloatingButtons && <FloatingMenuButtons editor={editor} />}
       <div className="min-h-32 max-w-none p-2">
@@ -113,7 +121,15 @@ export function RichTextEditor({
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function MenuButtons({ editor }: { editor: any }) {
+function MenuButtons({
+  editor,
+  designTextColor,
+  onDesignTextColorChange,
+}: {
+  editor: any;
+  designTextColor?: string;
+  onDesignTextColorChange?: (hex: string) => void;
+}) {
   return (
     <div className="flex flex-wrap gap-1 border-b bg-muted/50 p-1">
       {/* Heading DropDown  */}
@@ -345,8 +361,12 @@ function MenuButtons({ editor }: { editor: any }) {
       </Button>
       {/* Text Color  */}
       <ColorPicker
-        color={editor.getAttributes("text")?.color}
+        color={designTextColor ?? editor.getAttributes("text")?.color}
         onChange={(color) => {
+          const hex = typeof color.hex === "string" ? color.hex : undefined;
+          if (hex) {
+            onDesignTextColorChange?.(hex);
+          }
           editor.chain().focus().setColor(color.hex).run();
         }}
       />

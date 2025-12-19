@@ -42,7 +42,7 @@ export default function EducationForm({
   const form = useForm<EducationValues>({
     resolver: zodResolver(educationSchema),
     defaultValues: {
-      educations: resumeData.educations || [],
+      educations: resumeData.content.educations || [],
     },
   });
 
@@ -52,7 +52,11 @@ export default function EducationForm({
       if (!isValid) return;
       setResumeData({
         ...resumeData,
-        educations: values.educations?.filter((edu) => edu !== undefined) || [],
+        content: {
+          ...resumeData.content,
+          educations:
+            values.educations?.filter((edu) => edu !== undefined) || [],
+        },
       });
     });
     return unsubscribe;

@@ -6,7 +6,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ResumeValues } from "@/lib/validation";
+import { ResumeDocument } from "@/types/resumeDocument";
 import {
   Award,
   Briefcase,
@@ -26,7 +26,7 @@ import { Button } from "./ui/button";
 
 interface AddContentModalProps {
   onSelectSection: (key: string) => void;
-  setResumeData: React.Dispatch<React.SetStateAction<ResumeValues>>;
+  setResumeData: React.Dispatch<React.SetStateAction<ResumeDocument>>;
 }
 
 const sections = [
@@ -135,7 +135,10 @@ export default function AddContentModal({
       const parsedData = await response.json();
       setResumeData((prev) => ({
         ...prev,
-        ...parsedData,
+        content: {
+          ...prev.content,
+          ...parsedData,
+        },
       }));
 
       toast({

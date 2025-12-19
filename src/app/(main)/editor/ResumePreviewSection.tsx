@@ -1,23 +1,23 @@
 // import ResumePreview from "@/components/ResumeStyles/ResumePreview";
 "use client";
 import { cn } from "@/lib/utils";
-import { ResumeValues } from "@/lib/validation";
 import BorderStyleButton from "./BorderStyleButton";
 import ColorPicker from "./ColorPicker";
 import FullScreenPreviewButton from "./FullScreenPreviewButton";
 import DownloadButton from "./DownloadButton";
 import ShareButton from "./ShareButton";
-import { resumeStyles } from "@/components/ResumeStyles/Styles";
+import { resumeStyles } from "@/components/ResumeStyles/Styles.client";
 import { useSearchParams } from "next/navigation";
 import { env } from "@/env";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import PaginatedResumePreview from "@/components/PaginatedResumePreview";
+import { ResumeDocument } from "@/types/resumeDocument";
 
 interface ResumePreviewSectionProps {
-  resumeData: ResumeValues;
-  setResumeData: (data: ResumeValues) => void;
+  resumeData: ResumeDocument;
+  setResumeData: (data: ResumeDocument) => void;
   className?: string;
 }
 
@@ -28,7 +28,7 @@ export default function ResumePreviewSection({
 }: ResumePreviewSectionProps) {
   const searchParams = useSearchParams();
 
-  const currentStyleId = searchParams.get("styleId") || "1";
+  const currentStyleId = searchParams.get("styleId") || resumeData.styleId;
 
   const ResumeStylePreview = resumeStyles.find(
     (style) => style.id === currentStyleId,
@@ -42,24 +42,48 @@ export default function ResumePreviewSection({
     >
       <div className="absolute left-1 top-1 z-10 flex flex-none flex-col gap-3 opacity-50 transition-opacity group-hover:opacity-100 lg:left-1 lg:top-3 xl:opacity-100">
         <ColorPicker
-          color={resumeData.colorHex || undefined}
+          color={resumeData.design.color.accent || undefined}
           onChange={(color) =>
-            setResumeData({ ...resumeData, colorHex: color.hex })
+            setResumeData({
+              ...resumeData,
+              design: {
+                ...resumeData.design,
+                color: {
+                  ...resumeData.design.color,
+                  accent: color.hex,
+                },
+              },
+            })
           }
         />
         <BorderStyleButton
           borderStyle={
-            resumeData.borderStyle === null ? undefined : resumeData.borderStyle
+            resumeData.content.borderStyle === null
+              ? undefined
+              : resumeData.content.borderStyle
           }
           onChange={(borderStyle) =>
-            setResumeData({ ...resumeData, borderStyle })
+            setResumeData({
+              ...resumeData,
+              content: {
+                ...resumeData.content,
+                borderStyle,
+              },
+              design: {
+                ...resumeData.design,
+                decorations: {
+                  ...resumeData.design.decorations,
+                  borderStyle: borderStyle === "square" ? "none" : "solid",
+                },
+              },
+            })
           }
         />
         <FullScreenPreviewButton
-          href={`/resume/${resumeData.id}?&styleId=${currentStyleId}`}
+          href={`/resume/${resumeData.content.id}?&styleId=${currentStyleId}`}
         />
         <DownloadButton
-          url={`${env.NEXT_PUBLIC_BASE_URL}/resume/${resumeData.id}?&styleId=${currentStyleId}`}
+          url={`${env.NEXT_PUBLIC_BASE_URL}/resume/${resumeData.content.id}?&styleId=${currentStyleId}`}
         />
         <ShareButton resumeData={resumeData} />
       </div>

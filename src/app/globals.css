@@ -93,7 +93,63 @@ body {
   }
 }
 
+/*
+  Resume template design tokens
+  - Applied via CSS variables set by the template registry wrapper.
+  - Uses #resumePreviewContent (present in templates) to override Tailwind classes.
+*/
+[data-resume-design-scope="ats"] #resumePreviewContent {
+  font-size: var(--resume-base-font-size, 10px);
+  font-family: var(--resume-font-family, "Inter", sans-serif);
+  color: var(--resume-text-color, #18181b);
+}
+
+[data-resume-design-scope="ats"] #resumePreviewContent,
+[data-resume-design-scope="ats"] #resumePreviewContent * {
+  border-style: var(--resume-border-style, solid);
+}
+
+[data-resume-design-scope="ats"] #resumePreviewContent > :not([hidden]) ~ :not([hidden]) {
+  margin-top: var(--resume-section-gap, 0.5rem);
+  margin-bottom: 0;
+}
+
 @media print {
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  body {
+    margin: 0 !important;
+  }
+
+  /* PDF export uses the /resume/[id] preview page. Strip preview-only framing. */
+  [data-resume-preview-root] {
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  [data-resume-preview="paginated"] {
+    gap: 0 !important;
+  }
+
+  [data-resume-preview-page] {
+    box-shadow: none !important;
+    border: none !important;
+    max-width: none !important;
+    background: transparent !important;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  [data-resume-preview-page-inner] {
+    position: relative !important;
+    top: 0 !important;
+    transform: none !important;
+    width: auto !important;
+  }
+
   #resumePreviewContent {
     zoom: 1 !important;
     padding: 0;

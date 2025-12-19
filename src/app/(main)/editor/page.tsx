@@ -5,7 +5,6 @@ import { Metadata } from "next";
 import ResumeEditor from "./ResumeEditor";
 import Layout from "@/components/layout/Layout";
 import GeneratingPdfModal from "@/components/GeneratingPdfModal";
-import ResumeTemplateAside from "@/components/sideBars/ResumeTemplateAside";
 
 interface PageProps {
   searchParams: Promise<{ resumeId?: string; styleId?: string }>;
@@ -33,11 +32,8 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <Layout>
-      <ResumeEditor
-        resumeToEdit={resumeToEdit}
-      />
+      <ResumeEditor resumeToEdit={resumeToEdit} />
       <GeneratingPdfModal />
-      <ResumeTemplateAside resumeToEdit={resumeToEdit} />
     </Layout>
   );
 }

@@ -21,7 +21,7 @@ export default function SummaryForm({
   const form = useForm<SummaryValues>({
     resolver: zodResolver(summarySchema),
     defaultValues: {
-      summary: resumeData.summary || "",
+      summary: resumeData.content.summary || "",
     },
   });
 
@@ -29,7 +29,13 @@ export default function SummaryForm({
     const { unsubscribe } = form.watch(async (values) => {
       const isValid = await form.trigger();
       if (!isValid) return;
-      setResumeData({ ...resumeData, ...values });
+      setResumeData({
+        ...resumeData,
+        content: {
+          ...resumeData.content,
+          ...values,
+        },
+      });
     });
     return unsubscribe;
   }, [form, resumeData, setResumeData]);

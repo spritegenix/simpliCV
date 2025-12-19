@@ -1,8 +1,7 @@
 "use client";
 import useDimensions from "@/hooks/useDimensions";
-import { cn } from "@/lib/utils";
+import { cn, getResumeDateFormat, safeFormatDate } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { safeFormatDate } from "@/lib/utils";
 import Link from "next/link";
 import React, { useRef } from "react";
 import { BiEnvelope, BiGlobe, BiPhone, BiSolidMap } from "react-icons/bi";
@@ -16,14 +15,7 @@ interface ResumePreviewProps {
 export default function Ats16({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
-
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10.5px]";
-
-  // Classic serif styling
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#000000" : resumeData.colorHex;
+  const dateFormat = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
 
   return (
     <div
@@ -35,12 +27,13 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
     >
       <div
         className={cn(
-          "space-y-5 p-12 font-serif",
-          BaseFontSize,
+          "resume-root space-y-5 p-12 font-serif",
           !width && "invisible",
         )}
         style={{
           zoom: (1 / 794) * width,
+          fontSize: "var(--base-font)",
+          color: "var(--text)",
         }}
         id="resumePreviewContent"
       >
@@ -48,7 +41,7 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
         <header className="mb-6 flex flex-col items-center text-center">
           <h1
             className="mb-2 text-3xl font-extrabold tracking-wide text-gray-900"
-            style={{ color: colorHex }}
+            style={{ color: "var(--accent)" }}
           >
             {resumeData.firstName} {resumeData.lastName}
           </h1>
@@ -114,8 +107,15 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
 
         {/* Summary */}
         {resumeData.summary && (
-          <section>
-            <h3 className="mb-3 border-b-2 border-black pb-1 text-sm font-bold uppercase tracking-wider">
+          <section className="mb-[var(--section-gap)] break-inside-avoid">
+            <h3
+              className="mb-3 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider"
+              style={{
+                borderColor: "var(--accent)",
+                borderStyle: "var(--resume-border-style)" as any,
+                color: "var(--accent)",
+              }}
+            >
               Summary
             </h3>
             <p className="text-justify text-sm leading-relaxed text-gray-800">
@@ -126,8 +126,15 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
 
         {/* Education */}
         {resumeData.educations && resumeData.educations.length > 0 && (
-          <section>
-            <h3 className="mb-4 border-b-2 border-black pb-1 text-sm font-bold uppercase tracking-wider">
+          <section className="mb-[var(--section-gap)] break-inside-avoid">
+            <h3
+              className="mb-4 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider"
+              style={{
+                borderColor: "var(--accent)",
+                borderStyle: "var(--resume-border-style)" as any,
+                color: "var(--accent)",
+              }}
+            >
               Education
             </h3>
             <div className="space-y-4">
@@ -142,12 +149,15 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
                     </span>
                     <span className="whitespace-nowrap text-sm font-medium text-gray-700">
                       {edu.startDate &&
-                        safeFormatDate(edu.startDate, "MMM yyyy")}
+                        safeFormatDate(edu.startDate, dateFormat)}
                       {edu.endDate
-                        ? ` - ${safeFormatDate(edu.endDate, "MMM yyyy")}`
+                        ? ` - ${safeFormatDate(edu.endDate, dateFormat)}`
                         : ""}
                     </span>
                   </div>
+                  {edu.marks && (
+                    <p className="text-sm text-gray-700">{edu.marks}</p>
+                  )}
                 </div>
               ))}
             </div>
@@ -157,8 +167,15 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
         {/* Experience */}
         {resumeData.workExperiences &&
           resumeData.workExperiences.length > 0 && (
-            <section>
-              <h3 className="mb-4 border-b-2 border-black pb-1 text-sm font-bold uppercase tracking-wider">
+            <section className="mb-[var(--section-gap)] break-inside-avoid">
+              <h3
+                className="mb-4 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider"
+                style={{
+                  borderColor: "var(--accent)",
+                  borderStyle: "var(--resume-border-style)" as any,
+                  color: "var(--accent)",
+                }}
+              >
                 Work Experience
               </h3>
               <div className="space-y-6">
@@ -170,10 +187,10 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
                       </h4>
                       <span className="whitespace-nowrap text-sm font-medium text-gray-600">
                         {exp.startDate &&
-                          safeFormatDate(exp.startDate, "MMM yyyy")}{" "}
+                          safeFormatDate(exp.startDate, dateFormat)}{" "}
                         –{" "}
                         {exp.endDate
-                          ? safeFormatDate(exp.endDate, "MMM yyyy")
+                          ? safeFormatDate(exp.endDate, dateFormat)
                           : "Present"}
                         {exp.jobLocation && (
                           <span className="hidden sm:inline">
@@ -204,8 +221,15 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
         {/* Skills */}
         {/* Changed title to "Technical Expertise" to match sample */}
         {resumeData.skills && resumeData.skills.length > 0 && (
-          <section>
-            <h3 className="mb-3 border-b-2 border-black pb-1 text-sm font-bold uppercase tracking-wider">
+          <section className="mb-[var(--section-gap)] break-inside-avoid">
+            <h3
+              className="mb-3 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider"
+              style={{
+                borderColor: "var(--accent)",
+                borderStyle: "var(--resume-border-style)" as any,
+                color: "var(--accent)",
+              }}
+            >
               Technical Expertise
             </h3>
             <div className="text-sm leading-relaxed text-gray-800">
@@ -233,7 +257,7 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
                     </h4>
                     <span className="text-sm text-gray-600">
                       {project.startDate &&
-                        safeFormatDate(project.startDate, "MMM yyyy")}
+                        safeFormatDate(project.startDate, dateFormat)}
                     </span>
                   </div>
                   {project.links && project.links.length > 0 && (
@@ -283,6 +307,28 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
                 </div>
               ))}
             </div>
+          </section>
+        )}
+
+        {/* Interest / Others */}
+        {(resumeData.others?.title || resumeData.others?.description) && (
+          <section className="break-inside-avoid">
+            <h3
+              className="mb-3 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider"
+              style={{
+                borderColor: "var(--accent)",
+                borderStyle: "var(--resume-border-style)" as any,
+                color: "var(--accent)",
+              }}
+            >
+              {resumeData.others?.title || "Interests"}
+            </h3>
+            <div
+              className="richTextEditorStyle text-sm leading-snug text-gray-800"
+              dangerouslySetInnerHTML={{
+                __html: resumeData.others?.description || "",
+              }}
+            />
           </section>
         )}
       </div>

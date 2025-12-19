@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import "./swiper.css";
 import { ViewTransitions } from "next-view-transitions";
+import DevSwUnregister from "@/components/DevSwUnregister";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -44,6 +45,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            {process.env.NODE_ENV === "development" ? (
+              <DevSwUnregister />
+            ) : null}
             <ViewTransitions>
               {/*  modal portal */}
               <div id="modal-portal" className="relative z-[999999]" />

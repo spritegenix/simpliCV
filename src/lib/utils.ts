@@ -23,6 +23,14 @@ export const safeFormatDate = (
   }
 };
 
+export function getResumeDateFormat(
+  dateFormat: string | undefined | null,
+  fallback: string,
+): string {
+  const value = (dateFormat || "").trim();
+  return value.length > 0 ? value : fallback;
+}
+
 export function fileReplacer(key: unknown, value: unknown) {
   return value instanceof File
     ? {
@@ -70,7 +78,7 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
     email: data.email || undefined,
     socialLinks: data.socialLinks || undefined,
     portfolioLink: data.portfolioLink || undefined,
-    styleId: data.styleId || "1",
+    styleId: data.styleId || "ats1",
     workExperiences: data.workExperiences.map((exp) => ({
       position: exp.position || undefined,
       company: exp.company || undefined,

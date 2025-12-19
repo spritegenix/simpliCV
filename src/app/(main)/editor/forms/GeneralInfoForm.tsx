@@ -21,8 +21,8 @@ export default function GeneralInfoForm({
   const form = useForm<GeneralInfoValues>({
     resolver: zodResolver(generalInfoSchema),
     defaultValues: {
-      title: resumeData.title || "",
-      description: resumeData.description || "",
+      title: resumeData.content.title || "",
+      description: resumeData.content.description || "",
     },
   });
 
@@ -30,7 +30,13 @@ export default function GeneralInfoForm({
     const { unsubscribe } = form.watch(async (values) => {
       const isValid = await form.trigger();
       if (!isValid) return;
-      setResumeData({ ...resumeData, ...values });
+      setResumeData({
+        ...resumeData,
+        content: {
+          ...resumeData.content,
+          ...values,
+        },
+      });
     });
     return unsubscribe;
   }, [form, resumeData, setResumeData]);

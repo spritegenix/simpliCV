@@ -47,7 +47,7 @@ export default function WorkExperienceForm({
   const form = useForm<WorkExperienceValues>({
     resolver: zodResolver(workExperienceSchema),
     defaultValues: {
-      workExperiences: resumeData.workExperiences || [],
+      workExperiences: resumeData.content.workExperiences || [],
     },
   });
 
@@ -57,8 +57,11 @@ export default function WorkExperienceForm({
       if (!isValid) return;
       setResumeData({
         ...resumeData,
-        workExperiences:
-          values.workExperiences?.filter((exp) => exp !== undefined) || [],
+        content: {
+          ...resumeData.content,
+          workExperiences:
+            values.workExperiences?.filter((exp) => exp !== undefined) || [],
+        },
       });
     });
     return unsubscribe;
@@ -114,6 +117,8 @@ export default function WorkExperienceForm({
                   index={index}
                   form={form}
                   remove={remove}
+                  resumeData={resumeData}
+                  setResumeData={setResumeData}
                 />
               ))}
             </SortableContext>
@@ -146,6 +151,8 @@ interface WorkExperienceItemProps {
   form: UseFormReturn<WorkExperienceValues>;
   index: number;
   remove: (index: number) => void;
+  resumeData: EditorFormProps["resumeData"];
+  setResumeData: EditorFormProps["setResumeData"];
 }
 
 function WorkExperienceItem({
@@ -153,6 +160,8 @@ function WorkExperienceItem({
   form,
   index,
   remove,
+  resumeData,
+  setResumeData,
 }: WorkExperienceItemProps) {
   const {
     attributes,
@@ -302,6 +311,19 @@ function WorkExperienceItem({
                       },
                     );
                   }}
+                  designTextColor={resumeData.design.color.text || undefined}
+                  onDesignTextColorChange={(hex) =>
+                    setResumeData({
+                      ...resumeData,
+                      design: {
+                        ...resumeData.design,
+                        color: {
+                          ...resumeData.design.color,
+                          text: hex,
+                        },
+                      },
+                    })
+                  }
                 />
               </div>
             </FormControl>

@@ -1,7 +1,6 @@
 "use client";
 
-import { ResumeValues } from "@/lib/validation";
-import { useState } from "react";
+import { ResumeDocument } from "@/types/resumeDocument";
 import { steps } from "./steps";
 import LanguageRegion from "@/components/customisation/LanguageRegion";
 import DesignTemplate from "@/components/customisation/DesignTemplate";
@@ -17,122 +16,133 @@ import PersonalDetails from "@/components/customisation/PersonalDetails";
 import NameSection from "@/components/customisation/NameSection";
 
 interface CustomizationPanelProps {
-  resumeData: ResumeValues;
-  setResumeData: (data: ResumeValues) => void;
+  resumeData: ResumeDocument;
+  setResumeData: (data: ResumeDocument) => void;
 }
 
 export default function CustomizationPanel({
   resumeData,
   setResumeData,
 }: CustomizationPanelProps) {
-  const [language, setLanguage] = useState("English");
-  const [dateFormat, setDateFormat] = useState("MM/DD/YYYY");
-  const [pageFormat, setPageFormat] = useState("A4");
-  const [sectionOrder, setSectionOrder] = useState(
-    steps.map((step) => ({ key: step.key, title: step.title })),
-  );
+  const noop = () => {};
 
-  // Layout state
-  const [columnLayout, setColumnLayout] = useState<"one" | "two" | "mix">(
-    "two",
-  );
-  const [headerPosition, setHeaderPosition] = useState<
-    "top" | "left" | "right"
-  >("right");
-  const [leftColumnWidth, setLeftColumnWidth] = useState(50);
-  const [rightColumnWidth, setRightColumnWidth] = useState(50);
+  // Phase 2: ONLY these are wired (ATS-safe)
+  const fontSize = resumeData.design.typography.baseFontSize;
+  const setFontSize = (value: number) =>
+    setResumeData({
+      ...resumeData,
+      design: {
+        ...resumeData.design,
+        typography: {
+          ...resumeData.design.typography,
+          baseFontSize: value,
+        },
+      },
+    });
 
-  // Spacing state
-  const [fontSize, setFontSize] = useState(10);
-  const [lineHeight, setLineHeight] = useState(1.3);
-  const [leftRightMargin, setLeftRightMargin] = useState(18);
-  const [topBottomMargin, setTopBottomMargin] = useState(16);
-  const [spaceBetweenEntries, setSpaceBetweenEntries] = useState(8);
+  const fontCategory: "serif" | "sans" | "mono" =
+    resumeData.design.typography.fontFamily === "inter"
+      ? "sans"
+      : resumeData.design.typography.fontFamily;
 
-  // Font state
-  const [fontCategory, setFontCategory] = useState<"serif" | "sans" | "mono">(
-    "serif",
-  );
-  const [selectedFont, setSelectedFont] = useState("Lora");
+  const setFontCategory = (value: "serif" | "sans" | "mono") =>
+    setResumeData({
+      ...resumeData,
+      design: {
+        ...resumeData.design,
+        typography: {
+          ...resumeData.design.typography,
+          fontFamily: value === "sans" ? "inter" : value,
+        },
+      },
+    });
 
-  // Section Headings state
-  const [headingStyle, setHeadingStyle] = useState(1);
-  const [headingCapitalization, setHeadingCapitalization] = useState<
-    "capitalize" | "uppercase"
-  >("uppercase");
-  const [headingSize, setHeadingSize] = useState<"S" | "M" | "L" | "XL">("M");
-  const [headingIcons, setHeadingIcons] = useState<
-    "none" | "outline" | "filled"
-  >("filled");
+  const spaceBetweenEntries = resumeData.design.spacing.sectionGap;
+  const setSpaceBetweenEntries = (value: number) =>
+    setResumeData({
+      ...resumeData,
+      design: {
+        ...resumeData.design,
+        spacing: {
+          ...resumeData.design.spacing,
+          sectionGap: value,
+        },
+      },
+    });
 
-  // Entry Layout state
-  const [titleSubtitleSize, setTitleSubtitleSize] = useState<"S" | "M" | "L">(
-    "S",
-  );
-  const [subtitleStyle, setSubtitleStyle] = useState<
-    "normal" | "bold" | "italic"
-  >("normal");
-  const [subtitlePlacement, setSubtitlePlacement] = useState<
-    "same-line" | "next-line"
-  >("next-line");
-  const [indentBody, setIndentBody] = useState(false);
-  const [listStyle, setListStyle] = useState<"bullet" | "hyphen">("bullet");
+  // Everything else is intentionally frozen in Phase 2
+  const language = "English";
+  const dateFormat = "MM/DD/YYYY";
+  const pageFormat = "A4";
+  const sectionOrder = steps.map((step) => ({
+    key: step.key,
+    title: step.title,
+  }));
 
-  // Footer state
-  const [showPageNumbers, setShowPageNumbers] = useState(true);
-  const [showEmail, setShowEmail] = useState(true);
-  const [showName, setShowName] = useState(true);
+  const columnLayout: "one" | "two" | "mix" = "two";
+  const headerPosition: "top" | "left" | "right" = "right";
+  const leftColumnWidth = 50;
+  const rightColumnWidth = 50;
 
-  // Advanced state
-  const [linkIcon, setLinkIcon] = useState<"none" | "icon1" | "icon2">("icon1");
-  const [reduceDateLocationOpacity, setReduceDateLocationOpacity] =
-    useState(false);
+  const lineHeight = 1.3;
+  const leftRightMargin = 18;
+  const topBottomMargin = 16;
 
-  // Personal Details state
-  const [detailsAlign, setDetailsAlign] = useState<"left" | "center" | "right">(
-    "center",
-  );
-  const [detailsArrangement, setDetailsArrangement] = useState<
-    "icon" | "bullet" | "bar"
-  >("icon");
-  const [detailsIconStyle, setDetailsIconStyle] = useState(0);
+  const selectedFont = "Lora";
+  const headingStyle = 1;
+  const headingCapitalization: "capitalize" | "uppercase" = "uppercase";
+  const headingSize: "S" | "M" | "L" | "XL" = "M";
+  const headingIcons: "none" | "outline" | "filled" = "filled";
 
-  // Name state
-  const [nameSize, setNameSize] = useState<"XS" | "S" | "M" | "L" | "XL">("L");
-  const [nameBold, setNameBold] = useState(true);
-  const [nameFont, setNameFont] = useState<"body" | "creative">("body");
+  const titleSubtitleSize: "S" | "M" | "L" = "S";
+  const subtitleStyle: "normal" | "bold" | "italic" = "normal";
+  const subtitlePlacement: "same-line" | "next-line" = "next-line";
+  const indentBody = false;
+  const listStyle: "bullet" | "hyphen" = "bullet";
+
+  const showPageNumbers = true;
+  const showEmail = true;
+  const showName = true;
+
+  const linkIcon: "none" | "icon1" | "icon2" = "icon1";
+  const reduceDateLocationOpacity = false;
+
+  const detailsAlign: "left" | "center" | "right" = "center";
+  const detailsArrangement: "icon" | "bullet" | "bar" = "icon";
+  const detailsIconStyle = 0;
+
+  const nameSize: "XS" | "S" | "M" | "L" | "XL" = "L";
+  const nameBold = true;
+  const nameFont: "body" | "creative" = "body";
 
   return (
     <div className="w-full space-y-6 overflow-y-auto px-3 pb-5">
       {/* Apply a Design Template */}
-      <DesignTemplate />
+      <DesignTemplate resumeData={resumeData} setResumeData={setResumeData} />
 
       {/* Language & Region */}
       <LanguageRegion
         language={language}
-        setLanguage={setLanguage}
+        setLanguage={noop}
         dateFormat={dateFormat}
-        setDateFormat={setDateFormat}
+        setDateFormat={noop}
         pageFormat={pageFormat}
-        setPageFormat={setPageFormat}
+        setPageFormat={noop}
       />
 
       {/* Change Section Order */}
-      <SectionOrder
-        sectionOrder={sectionOrder}
-        setSectionOrder={setSectionOrder}
-      />
+      <SectionOrder sectionOrder={sectionOrder} setSectionOrder={noop as any} />
 
       {/* Layout */}
       <LayoutSection
         columnLayout={columnLayout}
-        setColumnLayout={setColumnLayout}
+        setColumnLayout={noop as any}
         headerPosition={headerPosition}
-        setHeaderPosition={setHeaderPosition}
+        setHeaderPosition={noop as any}
         leftColumnWidth={leftColumnWidth}
-        setLeftColumnWidth={setLeftColumnWidth}
+        setLeftColumnWidth={noop}
         rightColumnWidth={rightColumnWidth}
-        setRightColumnWidth={setRightColumnWidth}
+        setRightColumnWidth={noop}
       />
 
       {/* Font */}
@@ -140,19 +150,19 @@ export default function CustomizationPanel({
         fontCategory={fontCategory}
         setFontCategory={setFontCategory}
         selectedFont={selectedFont}
-        setSelectedFont={setSelectedFont}
+        setSelectedFont={noop}
       />
 
       {/* Section Headings */}
       <SectionHeadings
         headingStyle={headingStyle}
-        setHeadingStyle={setHeadingStyle}
+        setHeadingStyle={noop}
         headingCapitalization={headingCapitalization}
-        setHeadingCapitalization={setHeadingCapitalization}
+        setHeadingCapitalization={noop as any}
         headingSize={headingSize}
-        setHeadingSize={setHeadingSize}
+        setHeadingSize={noop as any}
         headingIcons={headingIcons}
-        setHeadingIcons={setHeadingIcons}
+        setHeadingIcons={noop as any}
       />
 
       {/* Spacing */}
@@ -160,11 +170,11 @@ export default function CustomizationPanel({
         fontSize={fontSize}
         setFontSize={setFontSize}
         lineHeight={lineHeight}
-        setLineHeight={setLineHeight}
+        setLineHeight={noop}
         leftRightMargin={leftRightMargin}
-        setLeftRightMargin={setLeftRightMargin}
+        setLeftRightMargin={noop}
         topBottomMargin={topBottomMargin}
-        setTopBottomMargin={setTopBottomMargin}
+        setTopBottomMargin={noop}
         spaceBetweenEntries={spaceBetweenEntries}
         setSpaceBetweenEntries={setSpaceBetweenEntries}
       />
@@ -172,53 +182,53 @@ export default function CustomizationPanel({
       {/* Entry Layout */}
       <EntryLayout
         titleSubtitleSize={titleSubtitleSize}
-        setTitleSubtitleSize={setTitleSubtitleSize}
+        setTitleSubtitleSize={noop as any}
         subtitleStyle={subtitleStyle}
-        setSubtitleStyle={setSubtitleStyle}
+        setSubtitleStyle={noop as any}
         subtitlePlacement={subtitlePlacement}
-        setSubtitlePlacement={setSubtitlePlacement}
+        setSubtitlePlacement={noop as any}
         indentBody={indentBody}
-        setIndentBody={setIndentBody}
+        setIndentBody={noop}
         listStyle={listStyle}
-        setListStyle={setListStyle}
+        setListStyle={noop as any}
       />
 
       {/* Footer */}
       <FooterSection
         showPageNumbers={showPageNumbers}
-        setShowPageNumbers={setShowPageNumbers}
+        setShowPageNumbers={noop}
         showEmail={showEmail}
-        setShowEmail={setShowEmail}
+        setShowEmail={noop}
         showName={showName}
-        setShowName={setShowName}
+        setShowName={noop}
       />
 
       {/* Advanced */}
       <AdvancedSection
         linkIcon={linkIcon}
-        setLinkIcon={setLinkIcon}
+        setLinkIcon={noop as any}
         reduceDateLocationOpacity={reduceDateLocationOpacity}
-        setReduceDateLocationOpacity={setReduceDateLocationOpacity}
+        setReduceDateLocationOpacity={noop}
       />
 
       {/* Personal Details */}
       <PersonalDetails
         detailsAlign={detailsAlign}
-        setDetailsAlign={setDetailsAlign}
+        setDetailsAlign={noop as any}
         detailsArrangement={detailsArrangement}
-        setDetailsArrangement={setDetailsArrangement}
+        setDetailsArrangement={noop as any}
         detailsIconStyle={detailsIconStyle}
-        setDetailsIconStyle={setDetailsIconStyle}
+        setDetailsIconStyle={noop}
       />
 
       {/* Name */}
       <NameSection
         nameSize={nameSize}
-        setNameSize={setNameSize}
+        setNameSize={noop as any}
         nameBold={nameBold}
-        setNameBold={setNameBold}
+        setNameBold={noop}
         nameFont={nameFont}
-        setNameFont={setNameFont}
+        setNameFont={noop as any}
       />
     </div>
   );

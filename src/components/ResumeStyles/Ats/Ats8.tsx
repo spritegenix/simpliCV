@@ -1,8 +1,7 @@
 "use client";
 import useDimensions from "@/hooks/useDimensions";
-import { cn } from "@/lib/utils";
+import { cn, getResumeDateFormat, safeFormatDate } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
@@ -23,6 +22,12 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
   const BaseFontSize = resumeData?.baseFontSize
     ? `text-[${resumeData.baseFontSize}px]`
     : "text-[10px]";
+
+  const dateFormatNumeric = getResumeDateFormat(
+    resumeData.dateFormat,
+    "MM/yyyy",
+  );
+  const dateFormatText = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
 
   return (
     <div
@@ -90,9 +95,9 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                       <div className="flex flex-col">
                         {exp.startDate && (
                           <span>
-                            {safeFormatDate(exp.startDate, "MM/yyyy")} -{" "}
+                            {safeFormatDate(exp.startDate, dateFormatNumeric)} -{" "}
                             {exp.endDate
-                              ? safeFormatDate(exp.endDate, "MM/yyyy")
+                              ? safeFormatDate(exp.endDate, dateFormatNumeric)
                               : "Present"}
                           </span>
                         )}
@@ -157,9 +162,9 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                         {item.startDate && (
                           <span>
                             {item.startDate &&
-                              `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
+                              `${safeFormatDate(item.startDate, dateFormatText)} - `}
                             {item.endDate
-                              ? safeFormatDate(item.endDate, "MMM yyyy")
+                              ? safeFormatDate(item.endDate, dateFormatText)
                               : "Present"}
                           </span>
                         )}
@@ -203,9 +208,9 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                     <p className="!m-0 flex w-full gap-x-4">
                       <span>
                         {edu.startDate &&
-                          `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                          `${safeFormatDate(edu.startDate, dateFormatText)} -`}{" "}
                         {edu.endDate
-                          ? safeFormatDate(edu.endDate, "MMM yyyy")
+                          ? safeFormatDate(edu.endDate, dateFormatText)
                           : "Present"}
                       </span>
                     </p>

@@ -1,8 +1,7 @@
 "use client";
 import useDimensions from "@/hooks/useDimensions";
-import { cn } from "@/lib/utils";
+import { cn, getResumeDateFormat, safeFormatDate } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
@@ -22,65 +21,63 @@ export default function ATSStyle3({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
+  const dateFormatNumeric = getResumeDateFormat(
+    resumeData.dateFormat,
+    "MM/yyyy",
+  );
+  const dateFormatText = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
 
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#0c275f" : resumeData.colorHex;
   return (
     <div
       className={cn(
-        "aspect-[210/297] h-fit w-full bg-white p-6 text-zinc-900",
+        "resume-root aspect-[210/297] h-fit w-full bg-white p-6",
         className,
       )}
+      style={{
+        color: "var(--text)",
+        fontSize: "var(--base-font)",
+      }}
       ref={containerRef}
     >
       <div
-        className={cn(
-          "space-y-2 font-inter",
-          BaseFontSize,
-          !width && "invisible",
-        )}
+        className={cn("", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
         }}
         id="resumePreviewContent"
       >
-        {resumeData.photo ? (
-          <PersonalInfoHeader resumeData={resumeData} />
-        ) : (
-          <PersonalInfoHeader1 resumeData={resumeData} />
-        )}
-        <div className="grid grid-cols-6 gap-x-4">
+        <section className="mb-[var(--section-gap)]">
+          {resumeData.photo ? (
+            <PersonalInfoHeader resumeData={resumeData} />
+          ) : (
+            <PersonalInfoHeader1 resumeData={resumeData} />
+          )}
+        </section>
+
+        <div className="grid grid-cols-6 gap-x-[calc(var(--section-gap)*0.5)]">
           {/* left side */}
           <div className="col-span-4">
             {/* Experience */}
             {!!resumeData?.workExperiences &&
               resumeData?.workExperiences?.length > 0 && (
-                <>
-                  <Heading colorHex={colorHex}>Professional Experience</Heading>
+                <section className="mb-[var(--section-gap)]">
+                  <Heading>Professional Experience</Heading>
                   {resumeData.workExperiences?.map((exp, index) => (
-                    <div key={index} className="!m-0 break-inside-avoid pb-2">
-                      <div className="text-[1.4em] font-semibold italic">
-                        {exp.position}
-                      </div>
-                      <div className="flex items-center gap-x-4">
-                        <span
-                          className="text-[1.2em] font-semibold"
-                          style={{
-                            color: colorHex,
-                          }}
-                        >
+                    <div
+                      key={index}
+                      className="break-inside-avoid pb-[calc(var(--section-gap)*0.25)]"
+                    >
+                      <div className="font-semibold italic">{exp.position}</div>
+                      <div className="flex items-center gap-x-[calc(var(--section-gap)*0.5)]">
+                        <span className="font-semibold text-[var(--accent)]">
                           {exp.company}
                         </span>
 
                         {exp.startDate && (
                           <span>
-                            {safeFormatDate(exp.startDate, "MM/yyyy")} -{" "}
+                            {safeFormatDate(exp.startDate, dateFormatNumeric)} -{" "}
                             {exp.endDate
-                              ? safeFormatDate(exp.endDate, "MM/yyyy")
+                              ? safeFormatDate(exp.endDate, dateFormatNumeric)
                               : "Present"}
                           </span>
                         )}
@@ -90,7 +87,7 @@ export default function ATSStyle3({
                           </span>
                         )}
                       </div>
-                      <div className="col-span-3 !m-0">
+                      <div className="col-span-3">
                         <div
                           dangerouslySetInnerHTML={{
                             __html: exp.description || "",
@@ -100,20 +97,20 @@ export default function ATSStyle3({
                       </div>
                     </div>
                   ))}
-                </>
+                </section>
               )}
             {/* Projects */}
             {!!resumeData.projectWorks &&
               resumeData.projectWorks?.length > 0 && (
-                <>
-                  <Heading colorHex={colorHex}>Project Work</Heading>
+                <section className="mb-[var(--section-gap)]">
+                  <Heading>Project Work</Heading>
                   {resumeData.projectWorks?.map((item, index) => (
                     <div
                       key={index}
-                      className="!m-0 w-[95%] break-inside-avoid space-y-1"
+                      className="w-[95%] break-inside-avoid space-y-[calc(var(--section-gap)*0.1)]"
                     >
-                      <div className="!m-0 flex justify-between gap-1">
-                        <p className="flex gap-1">
+                      <div className="flex justify-between gap-[calc(var(--section-gap)*0.1)]">
+                        <p className="flex gap-[calc(var(--section-gap)*0.1)]">
                           <Link
                             href={
                               !!item?.links && item?.links[0]
@@ -121,16 +118,16 @@ export default function ATSStyle3({
                                 : "#"
                             }
                             target="_blank"
-                            className="text-[1.2em] font-semibold"
-                            style={{
-                              color: colorHex,
-                            }}
+                            className="font-semibold text-[var(--accent)]"
                           >
                             {item.title}
                           </Link>
                           {!!item.links &&
                             item.links.map((l, index) => (
-                              <span key={index} className="mr-1 mt-1">
+                              <span
+                                key={index}
+                                className="mr-[calc(var(--section-gap)*0.1)] mt-[calc(var(--section-gap)*0.1)]"
+                              >
                                 <ContactLinks href={l} text={"NO_TEXT"} />
                               </span>
                             ))}
@@ -144,9 +141,9 @@ export default function ATSStyle3({
                           {item.startDate && (
                             <span>
                               {item.startDate &&
-                                `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
+                                `${safeFormatDate(item.startDate, dateFormatText)} - `}
                               {item.endDate
-                                ? safeFormatDate(item.endDate, "MMM yyyy")
+                                ? safeFormatDate(item.endDate, dateFormatText)
                                 : "Present"}
                             </span>
                           )}
@@ -160,7 +157,7 @@ export default function ATSStyle3({
                       />
                     </div>
                   ))}
-                </>
+                </section>
               )}
           </div>
 
@@ -168,37 +165,35 @@ export default function ATSStyle3({
           <div className="col-span-2">
             {/* Summary */}
             {resumeData.summary && (
-              <>
-                <Heading colorHex={colorHex}>Professional Summary</Heading>
+              <section className="mb-[var(--section-gap)]">
+                <Heading>Professional Summary</Heading>
                 <Text>{resumeData.summary}</Text>
-              </>
+              </section>
             )}
 
             {/* Academics */}
             {!!resumeData.educations && resumeData.educations?.length > 0 && (
-              <>
-                <Heading colorHex={colorHex}>Academics</Heading>
+              <section className="mb-[var(--section-gap)]">
+                <Heading>Academics</Heading>
 
                 {resumeData.educations?.map((edu, index) => (
                   <div key={index} className="!m-0 break-inside-avoid">
                     <div className="">
                       <div className="!m-0 flex w-[90%] flex-col flex-wrap justify-between">
-                        <span className="text-[1.2em] font-semibold">
+                        <span className="font-semibold">
                           {edu.degree} ({edu.stream})
                         </span>
-                        <span className="text-[1em] font-semibold">
-                          {edu.school}
-                        </span>{" "}
+                        <span className="font-semibold">{edu.school}</span>{" "}
                         <p>{edu.description}</p>
                       </div>
                     </div>
                     <div className="">
-                      <p className="!m-0 flex w-full gap-x-4">
+                      <p className="!m-0 flex w-full gap-x-[calc(var(--section-gap)*0.5)]">
                         <span>
                           {edu.startDate &&
-                            `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                            `${safeFormatDate(edu.startDate, dateFormatText)} -`}{" "}
                           {edu.endDate
-                            ? safeFormatDate(edu.endDate, "MMM yyyy")
+                            ? safeFormatDate(edu.endDate, dateFormatText)
                             : "Present"}
                         </span>
                         <span> {edu.location}</span>
@@ -207,13 +202,13 @@ export default function ATSStyle3({
                     </div>
                   </div>
                 ))}
-              </>
+              </section>
             )}
             {/* Skills  */}
             {!!resumeData.skills && resumeData.skills?.length > 0 && (
-              <>
-                <Heading colorHex={colorHex}>Skills</Heading>
-                <div className="grid grid-cols-1 gap-x-2 gap-y-2">
+              <section className="mb-[var(--section-gap)]">
+                <Heading>Skills</Heading>
+                <div className="grid grid-cols-1 gap-x-[calc(var(--section-gap)*0.25)] gap-y-[calc(var(--section-gap)*0.25)]">
                   {resumeData.skills?.map((skill, index) => (
                     <div key={index} className="!m-0 break-inside-avoid">
                       <div className="!m-0 flex items-center justify-between">
@@ -228,21 +223,21 @@ export default function ATSStyle3({
                     </div>
                   ))}
                 </div>
-              </>
+              </section>
             )}
             {/* Certifications  */}
             {!!resumeData.certifications &&
               resumeData.certifications?.length > 0 && (
-                <>
-                  <Heading colorHex={colorHex}>Certifications</Heading>
+                <section className="mb-[var(--section-gap)]">
+                  <Heading>Certifications</Heading>
                   <div
-                    className={`flex flex-wrap gap-x-2 ${resumeData.certifications.find((skill) => skill.description) && "flex-col"}`}
+                    className={`flex flex-wrap gap-x-[calc(var(--section-gap)*0.25)] ${resumeData.certifications.find((skill) => skill.description) && "flex-col"}`}
                   >
                     {resumeData.certifications?.map((skill, index) => (
                       <div key={index} className="!m-0 break-inside-avoid">
                         <Link
                           href={skill.link ? skill.link : "#"}
-                          className="before:mr-1 before:content-['•']"
+                          className="before:mr-[calc(var(--section-gap)*0.1)] before:content-['•']"
                         >
                           {skill.title}
                         </Link>{" "}
@@ -252,20 +247,20 @@ export default function ATSStyle3({
                       </div>
                     ))}
                   </div>
-                </>
+                </section>
               )}
 
             {/* Interest  */}
             {!!resumeData.others?.title && (
-              <div className="!m-0 break-inside-avoid">
-                <Heading colorHex={colorHex}>{resumeData.others.title}</Heading>
+              <section className="mb-[var(--section-gap)] break-inside-avoid">
+                <Heading>{resumeData.others.title}</Heading>
                 <div
                   dangerouslySetInnerHTML={{
                     __html: resumeData.others.description || "",
                   }}
                   className="richTextEditorStyle whitespace-pre-line"
                 />
-              </div>
+              </section>
             )}
           </div>
         </div>
@@ -288,8 +283,6 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
     email,
     borderStyle,
   } = resumeData;
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#0c275f" : resumeData.colorHex;
 
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
@@ -306,27 +299,15 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
       <div className="flex flex-col">
         <div className={`flex flex-col justify-between`}>
           <div className="my-auto">
-            <p
-              className="text-[3em] font-bold"
-              style={{
-                color: colorHex,
-              }}
-            >
+            <p className="font-bold text-[var(--accent)]">
               {firstName} {lastName}
             </p>
-            <p
-              className="text-[1.6em] font-medium"
-              style={{
-                color: colorHex,
-              }}
-            >
-              {jobTitle}
-            </p>
+            <p className="font-medium text-[var(--accent)]">{jobTitle}</p>
           </div>
         </div>
-        <div className="flex flex-wrap gap-x-2">
+        <div className="flex flex-wrap gap-x-[calc(var(--section-gap)*0.25)]">
           {(city || country) && (
-            <p className="flex items-center gap-1">
+            <p className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
               <BiSolidMap />
               {city}
               {city && country ? ", " : ""}
@@ -349,7 +330,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
           )}
         </div>
       </div>
-      <div className="flex h-max gap-6">
+      <div className="flex h-max">
         {photoSrc && (
           <Image
             src={photoSrc}
@@ -383,35 +364,21 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
     phone,
     email,
   } = resumeData;
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#0c275f" : resumeData.colorHex;
 
   return (
-    <div className="mb-2 space-y-2">
+    <div className="space-y-[calc(var(--section-gap)*0.25)]">
       <div className="flex w-[90%] flex-col">
         <div className={`flex flex-col justify-between`}>
           <div className="my-auto">
-            <p
-              className="text-[3em] font-bold"
-              style={{
-                color: colorHex,
-              }}
-            >
+            <p className="font-bold text-[var(--accent)]">
               {firstName} {lastName}
             </p>
-            <p
-              className="text-[1.6em] font-medium"
-              style={{
-                color: colorHex,
-              }}
-            >
-              {jobTitle}
-            </p>
+            <p className="font-medium text-[var(--accent)]">{jobTitle}</p>
           </div>
         </div>
-        <div className="flex flex-wrap gap-x-2">
+        <div className="flex flex-wrap gap-x-[calc(var(--section-gap)*0.25)]">
           {(city || country) && (
-            <p className="flex items-center gap-1">
+            <p className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
               <BiSolidMap />
               {city}
               {city && country ? ", " : ""}
@@ -453,7 +420,7 @@ function ContactLinks({
         <Link
           href={href ? href : "#"}
           target="_blank"
-          className="flex items-center gap-1"
+          className="flex items-center gap-[calc(var(--section-gap)*0.25)]"
         >
           {icon ? icon : <SocialMediaIconFinder url={href ? href : ""} />}
           {text === "NO_TEXT" ? "" : <p>{text}</p>}
@@ -464,33 +431,16 @@ function ContactLinks({
 }
 
 function Text({ children }: { children: string }) {
-  return <p className="!m-0 whitespace-pre-line">{children}</p>;
+  return <p className="whitespace-pre-line">{children}</p>;
 }
 
-function Heading({
-  children,
-  colorHex,
-}: {
-  children: string;
-  colorHex: string | undefined;
-}) {
+function Heading({ children }: { children: string }) {
   return (
     <>
-      <div className="flex break-inside-avoid flex-col space-y-1 py-2 text-base">
-        <h1
-          className="text-nowrap text-[1.2em] font-semibold"
-          style={{
-            color: colorHex,
-          }}
-        >
+      <div className="flex break-inside-avoid flex-col space-y-[calc(var(--section-gap)*0.1)] py-[calc(var(--section-gap)*0.25)]">
+        <h1 className="text-nowrap font-semibold text-[var(--accent)]">
           {children}
         </h1>
-        {/* <div
-          className="border-1 mb-[5px] mt-auto h-0 w-full border"
-          style={{
-            borderColor: colorHex,
-          }}
-        ></div> */}
       </div>
     </>
   );

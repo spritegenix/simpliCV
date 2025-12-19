@@ -1,9 +1,8 @@
 "use client";
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import useDimensions from "@/hooks/useDimensions";
-import { cn } from "@/lib/utils";
+import { cn, getResumeDateFormat, safeFormatDate } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
-import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
@@ -19,31 +18,24 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
-
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#5d6064" : resumeData.colorHex;
+  const dateFormat = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
 
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white font-arial text-[#5d6064]",
-        className,
-      )}
+      className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
       ref={containerRef}
     >
       <div
-        className={cn(BaseFontSize, !width && "invisible", "relative")}
+        className={cn("resume-root", !width && "invisible", "relative")}
         style={{
           zoom: (1 / 794) * width,
+          color: "var(--text)",
+          fontSize: "var(--base-font)",
         }}
         id="resumePreviewContent"
       >
-        <div className="absolute inset-y-0 left-[67%] h-full w-0 border border-zinc-300" />
-        <div className="absolute inset-x-0 top-[10.7rem] h-0 w-full border border-zinc-300" />
+        <div className="absolute inset-y-0 left-[67%] h-full w-0 border [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+        <div className="absolute inset-x-0 top-[10.7rem] h-0 w-full border [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
         {/* Top Section  */}
         <div className="h-[8.5rem] p-6 pb-3">
           <PersonalInfoHeader resumeData={resumeData} />
@@ -53,20 +45,18 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
           <div className="col-span-8 space-y-3 p-3 pl-6">
             {/* Summary */}
             {resumeData.summary && (
-              <>
-                <Heading isBorder={false} colorHex={colorHex}>
-                  Profile
-                </Heading>
+              <section className="mb-[var(--section-gap)] break-inside-avoid">
+                <Heading isBorder={false}>Profile</Heading>
                 <Text className="text-justify">{resumeData.summary}</Text>
-              </>
+              </section>
             )}
             {/* Experience */}
             {!!resumeData?.workExperiences &&
               resumeData?.workExperiences?.length > 0 && (
-                <>
-                  <Heading colorHex={colorHex}>Experience</Heading>
-                  <ul className="relative !mt-0 space-y-1 pl-4">
-                    <div className="absolute inset-y-0 left-1 h-full w-0 border border-l border-zinc-300" />
+                <section className="mb-[var(--section-gap)] break-inside-avoid">
+                  <Heading>Experience</Heading>
+                  <ul className="relative !mt-0 space-y-[calc(var(--section-gap)*0.25)] pl-4">
+                    <div className="absolute inset-y-0 left-1 h-full w-0 border border-l [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
                     {resumeData.workExperiences?.map((exp, index) => (
                       <li
                         key={index}
@@ -75,16 +65,11 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                         <span
                           className="absolute -left-[0.885rem] top-1.5 h-[6px] w-[6px] rounded-full"
                           style={{
-                            backgroundColor: colorHex,
+                            backgroundColor: "var(--accent)",
                           }}
                         />
                         <div className="!m-0 flex items-center justify-between">
-                          <span
-                            className="text-[1.2em] font-semibold"
-                            style={{
-                              color: colorHex,
-                            }}
-                          >
+                          <span className="text-[1.2em] font-semibold text-[var(--accent)]">
                             {exp.company}
                           </span>
                           {exp.jobLocation && <span>{exp.jobLocation}</span>}
@@ -95,9 +80,9 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                           </span>
                           {exp.startDate && (
                             <span>
-                              {safeFormatDate(exp.startDate, "MMM yyyy")} -{" "}
+                              {safeFormatDate(exp.startDate, dateFormat)} -{" "}
                               {exp.endDate
-                                ? safeFormatDate(exp.endDate, "MMM yyyy")
+                                ? safeFormatDate(exp.endDate, dateFormat)
                                 : "Present"}
                             </span>
                           )}
@@ -111,15 +96,15 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                       </li>
                     ))}
                   </ul>
-                </>
+                </section>
               )}
             {/* Projects */}
             {!!resumeData.projectWorks &&
               resumeData.projectWorks?.length > 0 && (
-                <>
-                  <Heading colorHex={colorHex}>Project Work</Heading>
-                  <ul className="relative space-y-1 pl-4">
-                    <div className="absolute inset-y-0 left-1 h-full w-0 border border-l border-zinc-300" />
+                <section className="mb-[var(--section-gap)] break-inside-avoid">
+                  <Heading>Project Work</Heading>
+                  <ul className="relative space-y-[calc(var(--section-gap)*0.25)] pl-4">
+                    <div className="absolute inset-y-0 left-1 h-full w-0 border border-l [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
                     {resumeData.projectWorks?.map((item, index) => (
                       <li
                         key={index}
@@ -128,7 +113,7 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                         <span
                           className="absolute -left-[0.885rem] top-1.5 h-[6px] w-[6px] rounded-full"
                           style={{
-                            backgroundColor: colorHex,
+                            backgroundColor: "var(--accent)",
                           }}
                         />
                         <div className="!m-0 flex justify-between gap-1">
@@ -140,10 +125,7 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                                   : "#"
                               }
                               target="_blank"
-                              className="text-[1.2em] font-semibold"
-                              style={{
-                                color: colorHex,
-                              }}
+                              className="text-[1.2em] font-semibold text-[var(--accent)]"
                             >
                               {item.title}
                             </Link>
@@ -161,9 +143,9 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                             {item.startDate && (
                               <span>
                                 {item.startDate &&
-                                  `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
+                                  `${safeFormatDate(item.startDate, dateFormat)} - `}
                                 {item.endDate
-                                  ? safeFormatDate(item.endDate, "MMM yyyy")
+                                  ? safeFormatDate(item.endDate, dateFormat)
                                   : "Present"}
                               </span>
                             )}
@@ -178,17 +160,15 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                       </li>
                     ))}
                   </ul>
-                </>
+                </section>
               )}
           </div>
           {/* Right Side  */}
           <div className="col-span-4 space-y-3 p-3 pr-6">
             {/* Social Links  */}
             {resumeData.photo && (
-              <>
-                <Heading isBorder={false} colorHex={colorHex}>
-                  Contact
-                </Heading>
+              <section className="mb-[var(--section-gap)] break-inside-avoid">
+                <Heading isBorder={false}>Contact</Heading>
                 <div className="!mt-0 space-y-1">
                   {(resumeData.city || resumeData.country) && (
                     <p className="flex items-center gap-1">
@@ -222,15 +202,12 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                     />
                   )}
                 </div>
-              </>
+              </section>
             )}
             {/* Skills  */}
             {!!resumeData.skills && resumeData.skills?.length > 0 && (
-              <>
-                <Heading
-                  isBorder={!resumeData.photo ? false : true}
-                  colorHex={colorHex}
-                >
+              <section className="mb-[var(--section-gap)] break-inside-avoid">
+                <Heading isBorder={!resumeData.photo ? false : true}>
                   Skills
                 </Heading>
                 {resumeData.skills?.map((skill, index) => (
@@ -246,12 +223,12 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                     <p className="whitespace-pre-line"></p>
                   </div>
                 ))}
-              </>
+              </section>
             )}
             {/* Academics */}
             {!!resumeData.educations && resumeData.educations?.length > 0 && (
-              <>
-                <Heading colorHex={colorHex}>Education</Heading>
+              <section className="mb-[var(--section-gap)] break-inside-avoid">
+                <Heading>Education</Heading>
                 {resumeData.educations?.map((edu, index) => (
                   <div
                     key={index}
@@ -264,9 +241,9 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                     <div className="!m-0">
                       <p>
                         {edu.startDate &&
-                          `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                          `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
                         {edu.endDate
-                          ? safeFormatDate(edu.endDate, "MMM yyyy")
+                          ? safeFormatDate(edu.endDate, dateFormat)
                           : "Present"}
                       </p>
                       <p className="font-semibold">
@@ -285,13 +262,13 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                     </ul>
                   </div>
                 ))}
-              </>
+              </section>
             )}
             {/* Certifications  */}
             {!!resumeData.certifications &&
               resumeData.certifications?.length > 0 && (
-                <>
-                  <Heading colorHex={colorHex}>Certifications</Heading>
+                <section className="mb-[var(--section-gap)] break-inside-avoid">
+                  <Heading>Certifications</Heading>
                   <div className={cn("!m-0")}>
                     {resumeData.certifications?.map((skill, index) => (
                       <div
@@ -313,19 +290,19 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                       </div>
                     ))}
                   </div>
-                </>
+                </section>
               )}
             {/* Interest  */}
             {!!resumeData.others?.title && (
-              <>
-                <Heading colorHex={colorHex}>{resumeData.others.title}</Heading>
+              <section className="mb-[var(--section-gap)] break-inside-avoid">
+                <Heading>{resumeData.others.title}</Heading>
                 <div
                   dangerouslySetInnerHTML={{
                     __html: resumeData.others.description || "",
                   }}
                   className="richTextEditorStyle !mt-0 whitespace-pre-line"
                 />
-              </>
+              </section>
             )}
           </div>
         </div>
@@ -349,9 +326,6 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
     borderStyle,
   } = resumeData;
 
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#5d6064" : resumeData.colorHex;
-
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
   useEffect(() => {
@@ -368,7 +342,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
           className={`flex ${photoSrc ? "h-[100px]" : ""} flex-col justify-between`}
         >
           <div className="my-auto">
-            <p className="text-[2.5rem] font-bold" style={{ color: colorHex }}>
+            <p className="text-[2.5rem] font-bold text-[var(--accent)]">
               {firstName} {lastName}
             </p>
             <p className="text-[1.6em] font-medium">{jobTitle}</p>
@@ -443,7 +417,7 @@ function ContactLinks({
         <Link
           href={href ? href : "#"}
           target="_blank"
-          className="flex items-center gap-1"
+          className="flex items-center gap-[calc(var(--section-gap)*0.25)]"
         >
           {icon ? icon : <SocialMediaIconFinder url={href ? href : ""} />}
           {text === "NO_TEXT" ? "" : <p>{text}</p>}
@@ -467,11 +441,9 @@ function Text({
 
 function Heading({
   children,
-  colorHex,
   isBorder = true,
 }: {
   children: string;
-  colorHex: string | undefined;
   isBorder?: boolean;
 }) {
   return (
@@ -479,15 +451,13 @@ function Heading({
       <div className="relative break-inside-avoid pb-2">
         {isBorder && (
           <>
-            <div className="absolute inset-x-0 -top-[0.3rem] h-0 w-full border border-zinc-300" />
-            <div className="absolute inset-x-0 bottom-[0.25rem] h-0 w-full border border-zinc-300" />
+            <div className="absolute inset-x-0 -top-[0.3rem] h-0 w-full border [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+            <div className="absolute inset-x-0 bottom-[0.25rem] h-0 w-full border [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
           </>
         )}
         <h1
           className="text-nowrap text-[1.4em] font-bold uppercase tracking-[0.2em]"
-          style={{
-            color: colorHex,
-          }}
+          style={{ color: "var(--accent)" }}
         >
           {children}
         </h1>

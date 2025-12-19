@@ -45,10 +45,23 @@ export default function ProjectsForm({
   resumeData,
   setResumeData,
 }: EditorFormProps) {
+  const designTextColor = resumeData.design.color.text || undefined;
+  const handleDesignTextColorChange = (hex: string) =>
+    setResumeData({
+      ...resumeData,
+      design: {
+        ...resumeData.design,
+        color: {
+          ...resumeData.design.color,
+          text: hex,
+        },
+      },
+    });
+
   const form = useForm<ProjectWorkValues>({
     resolver: zodResolver(projectWorkSchema),
     defaultValues: {
-      projectWorks: resumeData.projectWorks || [],
+      projectWorks: resumeData.content.projectWorks || [],
     },
   });
 
@@ -70,7 +83,10 @@ export default function ProjectsForm({
 
       setResumeData({
         ...resumeData,
-        projectWorks: projectWorks || [],
+        content: {
+          ...resumeData.content,
+          projectWorks: projectWorks || [],
+        },
       });
     });
     return unsubscribe;
@@ -127,6 +143,8 @@ export default function ProjectsForm({
                   index={index}
                   form={form}
                   remove={remove}
+                  designTextColor={designTextColor}
+                  onDesignTextColorChange={handleDesignTextColorChange}
                 />
               ))}
             </SortableContext>
@@ -159,9 +177,18 @@ interface ProjectItemProps {
   form: UseFormReturn<ProjectWorkValues>;
   index: number;
   remove: (index: number) => void;
+  designTextColor?: string;
+  onDesignTextColorChange: (hex: string) => void;
 }
 
-function ProjectItem({ id, form, index, remove }: ProjectItemProps) {
+function ProjectItem({
+  id,
+  form,
+  index,
+  remove,
+  designTextColor,
+  onDesignTextColorChange,
+}: ProjectItemProps) {
   const {
     attributes,
     listeners,
@@ -305,6 +332,8 @@ function ProjectItem({ id, form, index, remove }: ProjectItemProps) {
                       shouldDirty: true,
                     });
                   }}
+                  designTextColor={designTextColor}
+                  onDesignTextColorChange={onDesignTextColorChange}
                 />
               </div>
             </FormControl>
