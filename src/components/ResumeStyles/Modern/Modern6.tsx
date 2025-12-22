@@ -15,15 +15,19 @@ interface ResumePreviewProps {
 export default function Modern6({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
-  const accentColor = "#f59e0b"; // orange
+  const accentColor = "var(--accent)";
 
   return (
     <div
       className={cn(
-        "aspect-[210/297] h-fit w-full bg-white font-sans text-slate-800 shadow-sm",
+        "resume-root modern aspect-[210/297] h-fit w-full bg-white font-sans shadow-sm",
         className,
       )}
       ref={containerRef}
+      style={{
+        color: "var(--text)",
+        fontSize: "var(--base-font)",
+      }}
     >
       <div
         id="resumePreviewContent"

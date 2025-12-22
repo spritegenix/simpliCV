@@ -1,7 +1,17 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { MapPin, Phone, Mail, Globe, Link2, Briefcase, GraduationCap, Edit3, Settings } from "lucide-react";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  Link2,
+  Briefcase,
+  GraduationCap,
+  Edit3,
+  Settings,
+} from "lucide-react";
 import { ResumeValues } from "@/lib/validation";
 import useDimensions from "@/hooks/useDimensions";
 import { safeFormatDate } from "@/lib/utils";
@@ -11,25 +21,23 @@ interface ResumePreviewProps {
   className?: string;
 }
 
-export default function PurpleModern({ resumeData, className = "" }: ResumePreviewProps) {
+export default function PurpleModern({
+  resumeData,
+  className = "",
+}: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
-
-  // Default purple gradient color
-  const primaryColor =
-    resumeData.colorHex === "#000000" || !resumeData.colorHex
-      ? "#9b4bdc"
-      : resumeData.colorHex;
-
-  const darkPurple = "#4b0055";
+  const primaryColor = "var(--accent)";
 
   return (
     <div
-      className={`aspect-[210/297] h-fit w-full bg-white text-slate-800 ${className}`}
+      className={`resume-root modern aspect-[210/297] h-fit w-full bg-white ${className}`}
       ref={containerRef}
+      style={{
+        color: "var(--text)",
+        fontSize: "var(--base-font)",
+      }}
     >
-
-
       <div
         className={`h-full ${!width ? "invisible" : ""}`}
         style={{
@@ -43,7 +51,7 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
           <div
             className="absolute inset-0 z-0 h-full w-full"
             style={{
-              background: `linear-gradient(135deg, ${primaryColor} 0%, #4c1d95 100%)`, // Gradient to dark purple
+              background: `linear-gradient(135deg, ${primaryColor} 0%, color-mix(in srgb, var(--accent) 55%, var(--text)) 100%)`,
               clipPath: "polygon(0 0, 100% 0, 100% 75%, 0% 100%)",
             }}
           />
@@ -117,7 +125,10 @@ export default function PurpleModern({ resumeData, className = "" }: ResumePrevi
             {resumeData.certifications &&
               resumeData.certifications.length > 0 && (
                 <div>
-                  <SectionTitleSide title="References" colorHex={primaryColor} />
+                  <SectionTitleSide
+                    title="References"
+                    colorHex={primaryColor}
+                  />
                   <div className="space-y-4">
                     {resumeData.certifications.map((cert, idx) => (
                       <div key={idx}>
@@ -294,7 +305,13 @@ const PhotoSection = ({ resumeData }: { resumeData: ResumeValues }) => {
 };
 
 // Section Title for Sidebar
-const SectionTitleSide = ({ title, colorHex }: { title: string; colorHex: string }) => {
+const SectionTitleSide = ({
+  title,
+  colorHex,
+}: {
+  title: string;
+  colorHex: string;
+}) => {
   return (
     <h3
       className="mb-3 border-b-2 pb-1 text-sm font-bold uppercase tracking-wide"
@@ -306,7 +323,13 @@ const SectionTitleSide = ({ title, colorHex }: { title: string; colorHex: string
 };
 
 // Section Title for Main Content
-const SectionTitleMain = ({ title, colorHex }: { title: string; colorHex: string }) => {
+const SectionTitleMain = ({
+  title,
+  colorHex,
+}: {
+  title: string;
+  colorHex: string;
+}) => {
   return (
     <h3
       className="mb-6 text-lg font-bold uppercase tracking-wide"
@@ -318,8 +341,15 @@ const SectionTitleMain = ({ title, colorHex }: { title: string; colorHex: string
 };
 
 // Contact Section Component
-const ContactSection = ({ resumeData, colorHex }: { resumeData: ResumeValues; colorHex: string }) => {
-  const { phone, email, city, country, portfolioLink, socialLinks } = resumeData;
+const ContactSection = ({
+  resumeData,
+  colorHex,
+}: {
+  resumeData: ResumeValues;
+  colorHex: string;
+}) => {
+  const { phone, email, city, country, portfolioLink, socialLinks } =
+    resumeData;
 
   return (
     <div className="space-y-2 text-xs">
@@ -361,17 +391,17 @@ const ContactSection = ({ resumeData, colorHex }: { resumeData: ResumeValues; co
   );
 };
 
-
-const Header = ({ 
-  resumeData, 
-  primaryColor, 
-  darkPurple 
-}: { 
-  resumeData: ResumeValues; 
+const Header = ({
+  resumeData,
+  primaryColor,
+  darkPurple,
+}: {
+  resumeData: ResumeValues;
   primaryColor: string;
   darkPurple: string;
 }) => {
-  const { firstName, lastName, jobTitle, summary, photo, borderStyle } = resumeData;
+  const { firstName, lastName, jobTitle, summary, photo, borderStyle } =
+    resumeData;
   const [photoSrc, setPhotoSrc] = useState<string>(
     photo instanceof File ? "" : photo || "",
   );
@@ -392,62 +422,72 @@ const Header = ({
   };
 
   return (
-    <header style={{
-      background: `linear-gradient(135deg, ${primaryColor}, ${darkPurple})`,
-      color: "white",
-      display: "flex",
-      padding: "40px",
-      alignItems: "center"
-    }}>
+    <header
+      style={{
+        background: `linear-gradient(135deg, ${primaryColor}, ${darkPurple})`,
+        color: "white",
+        display: "flex",
+        padding: "40px",
+        alignItems: "center",
+      }}
+    >
       {photoSrc && (
-        <div style={{
-          width: "140px",
-          height: "140px",
-          border: "6px solid white",
-          overflow: "hidden",
-          marginRight: "30px",
-          borderRadius: getBorderRadius()
-        }}>
-          <img 
-            src={photoSrc} 
-            alt="Profile" 
-            style={{ 
-              width: "100%", 
-              height: "100%", 
-              objectFit: "cover" 
+        <div
+          style={{
+            width: "140px",
+            height: "140px",
+            border: "6px solid white",
+            overflow: "hidden",
+            marginRight: "30px",
+            borderRadius: getBorderRadius(),
+          }}
+        >
+          <img
+            src={photoSrc}
+            alt="Profile"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
             }}
           />
         </div>
       )}
-      
+
       <div>
-        <h1 style={{ 
-          fontSize: "32px", 
-          fontWeight: 700, 
-          margin: 0,
-          textTransform: "uppercase"
-        }}>
+        <h1
+          style={{
+            fontSize: "32px",
+            fontWeight: 700,
+            margin: 0,
+            textTransform: "uppercase",
+          }}
+        >
           {firstName} {lastName}
         </h1>
         {jobTitle && (
-          <h2 style={{ 
-            fontSize: "14px", 
-            opacity: 0.9, 
-            marginBottom: "10px",
-            marginTop: "4px",
-            fontWeight: 400,
-            textTransform: "uppercase"
-          }}>
+          <h2
+            style={{
+              fontSize: "14px",
+              opacity: 0.9,
+              marginBottom: "10px",
+              marginTop: "4px",
+              fontWeight: 400,
+              textTransform: "uppercase",
+            }}
+          >
             {jobTitle}
           </h2>
         )}
         {summary && (
-          <p style={{ 
-            fontSize: "12px", 
-            maxWidth: "420px",
-            margin: 0,
-            lineHeight: "1.6"
-          }}>
+          <p
+            style={{
+              fontSize: "12px",
+              maxWidth: "420px",
+              margin: 0,
+              lineHeight: "1.6",
+            }}
+          >
             {summary}
           </p>
         )}
@@ -456,82 +496,131 @@ const Header = ({
   );
 };
 
-const LeftColumn = ({ 
-  resumeData, 
-  primaryColor, 
-  darkPurple 
-}: { 
-  resumeData: ResumeValues; 
+const LeftColumn = ({
+  resumeData,
+  primaryColor,
+  darkPurple,
+}: {
+  resumeData: ResumeValues;
   primaryColor: string;
   darkPurple: string;
 }) => {
-  const { summary, phone, email, city, country, portfolioLink, socialLinks } = resumeData;
+  const { summary, phone, email, city, country, portfolioLink, socialLinks } =
+    resumeData;
 
   return (
     <aside style={{ padding: "30px" }}>
       {/* About Me - Only show if there's a summary and no header summary was shown */}
       {summary && (
         <>
-          <div style={{
-            background: `linear-gradient(90deg, ${primaryColor}, ${darkPurple})`,
-            color: "white",
-            textAlign: "center",
-            padding: "8px",
-            borderRadius: "20px",
-            margin: "20px 0 10px",
-            fontSize: "13px",
-            fontWeight: 600
-          }}>
+          <div
+            style={{
+              background: `linear-gradient(90deg, ${primaryColor}, ${darkPurple})`,
+              color: "white",
+              textAlign: "center",
+              padding: "8px",
+              borderRadius: "20px",
+              margin: "20px 0 10px",
+              fontSize: "13px",
+              fontWeight: 600,
+            }}
+          >
             ABOUT ME
           </div>
-          <p style={{ 
-            fontSize: "12px", 
-            color: "#555", 
-            lineHeight: "1.6",
-            margin: "0 0 20px 0"
-          }}>
+          <p
+            style={{
+              fontSize: "12px",
+              color: "#555",
+              lineHeight: "1.6",
+              margin: "0 0 20px 0",
+            }}
+          >
             {summary}
           </p>
         </>
       )}
 
       {/* Contact Info */}
-      <div style={{
-        background: `linear-gradient(90deg, ${primaryColor}, ${darkPurple})`,
-        color: "white",
-        textAlign: "center",
-        padding: "8px",
-        borderRadius: "20px",
-        margin: "20px 0 10px",
-        fontSize: "13px",
-        fontWeight: 600
-      }}>
+      <div
+        style={{
+          background: `linear-gradient(90deg, ${primaryColor}, ${darkPurple})`,
+          color: "white",
+          textAlign: "center",
+          padding: "8px",
+          borderRadius: "20px",
+          margin: "20px 0 10px",
+          fontSize: "13px",
+          fontWeight: 600,
+        }}
+      >
         CONTACT INFO
       </div>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
         {phone && (
-          <li style={{ fontSize: "12px", margin: "10px 0", display: "flex", alignItems: "center", gap: "8px" }}>
+          <li
+            style={{
+              fontSize: "12px",
+              margin: "10px 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
             <Phone size={12} /> {phone}
           </li>
         )}
         {email && (
-          <li style={{ fontSize: "12px", margin: "10px 0", display: "flex", alignItems: "center", gap: "8px" }}>
+          <li
+            style={{
+              fontSize: "12px",
+              margin: "10px 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
             <Mail size={12} /> {email}
           </li>
         )}
         {(city || country) && (
-          <li style={{ fontSize: "12px", margin: "10px 0", display: "flex", alignItems: "center", gap: "8px" }}>
+          <li
+            style={{
+              fontSize: "12px",
+              margin: "10px 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
             <MapPin size={12} /> {[city, country].filter(Boolean).join(", ")}
           </li>
         )}
         {portfolioLink && (
-          <li style={{ fontSize: "12px", margin: "10px 0", display: "flex", alignItems: "center", gap: "8px" }}>
+          <li
+            style={{
+              fontSize: "12px",
+              margin: "10px 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
             <Globe size={12} /> Portfolio
           </li>
         )}
         {socialLinks?.map((link, idx) => (
-          <li key={idx} style={{ fontSize: "12px", margin: "10px 0", display: "flex", alignItems: "center", gap: "8px" }}>
-            <Link2 size={12} /> {link.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
+          <li
+            key={idx}
+            style={{
+              fontSize: "12px",
+              margin: "10px 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <Link2 size={12} />{" "}
+            {link.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
           </li>
         ))}
       </ul>
@@ -539,12 +628,12 @@ const LeftColumn = ({
   );
 };
 
-const RightColumn = ({ 
-  resumeData, 
-  primaryColor, 
-  darkPurple 
-}: { 
-  resumeData: ResumeValues; 
+const RightColumn = ({
+  resumeData,
+  primaryColor,
+  darkPurple,
+}: {
+  resumeData: ResumeValues;
   primaryColor: string;
   darkPurple: string;
 }) => {
@@ -555,50 +644,77 @@ const RightColumn = ({
       {/* WORK EXPERIENCE */}
       {workExperiences && workExperiences.length > 0 && (
         <section style={{ marginBottom: "30px" }}>
-          <h3 style={{ 
-            fontSize: "16px", 
-            color: darkPurple, 
-            marginBottom: "20px",
-            fontWeight: 600,
-            display: "flex",
-            alignItems: "center",
-            gap: "8px"
-          }}>
+          <h3
+            style={{
+              fontSize: "16px",
+              color: darkPurple,
+              marginBottom: "20px",
+              fontWeight: 600,
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
             <Briefcase size={16} /> WORK EXPERIENCE
           </h3>
           <div style={{ position: "relative", marginLeft: "15px" }}>
             {/* Timeline Line */}
-            <div style={{
-              position: "absolute",
-              left: "4px",
-              top: 0,
-              width: "2px",
-              height: "100%",
-              background: primaryColor
-            }} />
-            
+            <div
+              style={{
+                position: "absolute",
+                left: "4px",
+                top: 0,
+                width: "2px",
+                height: "100%",
+                background: primaryColor,
+              }}
+            />
+
             {workExperiences.map((exp, idx) => (
               <div key={idx} style={{ display: "flex", marginBottom: "25px" }}>
-                <span style={{
-                  width: "10px",
-                  height: "10px",
-                  background: primaryColor,
-                  borderRadius: "50%",
-                  marginRight: "15px",
-                  marginTop: "6px",
-                  flexShrink: 0
-                }} />
+                <span
+                  style={{
+                    width: "10px",
+                    height: "10px",
+                    background: primaryColor,
+                    borderRadius: "50%",
+                    marginRight: "15px",
+                    marginTop: "6px",
+                    flexShrink: 0,
+                  }}
+                />
                 <div>
-                  <h4 style={{ fontSize: "13px", fontWeight: 600, margin: "0 0 4px 0" }}>
+                  <h4
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      margin: "0 0 4px 0",
+                    }}
+                  >
                     {exp.company}{" "}
-                    <span style={{ fontWeight: 400, color: "#777", marginLeft: "10px" }}>
-                      {exp.startDate && safeFormatDate(exp.startDate, "yyyy")} – {exp.endDate ? safeFormatDate(exp.endDate, "yyyy") : "PRESENT"}
+                    <span
+                      style={{
+                        fontWeight: 400,
+                        color: "#777",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      {exp.startDate && safeFormatDate(exp.startDate, "yyyy")} –{" "}
+                      {exp.endDate
+                        ? safeFormatDate(exp.endDate, "yyyy")
+                        : "PRESENT"}
                     </span>
                   </h4>
-                  <strong style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>
+                  <strong
+                    style={{
+                      fontSize: "12px",
+                      display: "block",
+                      marginBottom: "4px",
+                    }}
+                  >
                     {exp.position}
                   </strong>
-                  <div 
+                  <div
                     style={{ fontSize: "12px", color: "#555" }}
                     dangerouslySetInnerHTML={{ __html: exp.description || "" }}
                   />
@@ -612,56 +728,83 @@ const RightColumn = ({
       {/* EDUCATION */}
       {educations && educations.length > 0 && (
         <section style={{ marginBottom: "30px" }}>
-          <h3 style={{ 
-            fontSize: "16px", 
-            color: darkPurple, 
-            marginBottom: "20px",
-            fontWeight: 600,
-            display: "flex",
-            alignItems: "center",
-            gap: "8px"
-          }}>
+          <h3
+            style={{
+              fontSize: "16px",
+              color: darkPurple,
+              marginBottom: "20px",
+              fontWeight: 600,
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
             <GraduationCap size={16} /> EDUCATION
           </h3>
           <div style={{ position: "relative", marginLeft: "15px" }}>
             {/* Timeline Line */}
-            <div style={{
-              position: "absolute",
-              left: "4px",
-              top: 0,
-              width: "2px",
-              height: "100%",
-              background: primaryColor
-            }} />
-            
+            <div
+              style={{
+                position: "absolute",
+                left: "4px",
+                top: 0,
+                width: "2px",
+                height: "100%",
+                background: primaryColor,
+              }}
+            />
+
             {educations.map((edu, idx) => (
               <div key={idx} style={{ display: "flex", marginBottom: "25px" }}>
-                <span style={{
-                  width: "10px",
-                  height: "10px",
-                  background: primaryColor,
-                  borderRadius: "50%",
-                  marginRight: "15px",
-                  marginTop: "6px",
-                  flexShrink: 0
-                }} />
+                <span
+                  style={{
+                    width: "10px",
+                    height: "10px",
+                    background: primaryColor,
+                    borderRadius: "50%",
+                    marginRight: "15px",
+                    marginTop: "6px",
+                    flexShrink: 0,
+                  }}
+                />
                 <div>
-                  <h4 style={{ fontSize: "13px", fontWeight: 600, margin: "0 0 4px 0" }}>
+                  <h4
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      margin: "0 0 4px 0",
+                    }}
+                  >
                     {edu.school}{" "}
-                    <span style={{ fontWeight: 400, color: "#777", marginLeft: "10px" }}>
-                      {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} – {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "PRESENT"}
+                    <span
+                      style={{
+                        fontWeight: 400,
+                        color: "#777",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} –{" "}
+                      {edu.endDate
+                        ? safeFormatDate(edu.endDate, "yyyy")
+                        : "PRESENT"}
                     </span>
                   </h4>
-                   <strong style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>
-                     {edu.degree} {edu.stream}
-                     {edu.marks && ` | ${edu.marks}`}
-                   </strong>
-                   {edu.description && (
-                     <div 
-                       style={{ fontSize: "12px", color: "#555", margin: 0 }}
-                       dangerouslySetInnerHTML={{ __html: edu.description }}
-                     />
-                   )}
+                  <strong
+                    style={{
+                      fontSize: "12px",
+                      display: "block",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    {edu.degree} {edu.stream}
+                    {edu.marks && ` | ${edu.marks}`}
+                  </strong>
+                  {edu.description && (
+                    <div
+                      style={{ fontSize: "12px", color: "#555", margin: 0 }}
+                      dangerouslySetInnerHTML={{ __html: edu.description }}
+                    />
+                  )}
                 </div>
               </div>
             ))}
@@ -671,65 +814,87 @@ const RightColumn = ({
 
       {/* SKILLS & SOFTWARE - Two Column */}
       {skills && skills.length > 0 && (
-        <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "30px" }}>
+        <section
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "30px",
+          }}
+        >
           <div>
-            <h3 style={{ 
-              fontSize: "16px", 
-              color: darkPurple, 
-              marginBottom: "20px",
-              fontWeight: 600,
-              display: "flex",
-              alignItems: "center",
-              gap: "8px"
-            }}>
+            <h3
+              style={{
+                fontSize: "16px",
+                color: darkPurple,
+                marginBottom: "20px",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
               <Edit3 size={16} /> SKILLS
             </h3>
             {skills.slice(0, Math.ceil(skills.length / 2)).map((skill, idx) => (
               <div key={idx} style={{ marginBottom: "12px" }}>
-                <span style={{ fontSize: "12px", fontWeight: 500 }}>{skill.title}</span>
-                <div style={{
-                  height: "6px",
-                  background: "#ddd",
-                  borderRadius: "4px",
-                  overflow: "hidden",
-                  marginTop: "4px"
-                }}>
-                  <div style={{
-                    height: "100%",
-                    background: `linear-gradient(90deg, ${primaryColor}, ${darkPurple})`,
-                    width: "70%"
-                  }} />
+                <span style={{ fontSize: "12px", fontWeight: 500 }}>
+                  {skill.title}
+                </span>
+                <div
+                  style={{
+                    height: "6px",
+                    background: "#ddd",
+                    borderRadius: "4px",
+                    overflow: "hidden",
+                    marginTop: "4px",
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "100%",
+                      background: `linear-gradient(90deg, ${primaryColor}, ${darkPurple})`,
+                      width: "70%",
+                    }}
+                  />
                 </div>
               </div>
             ))}
           </div>
           <div>
-            <h3 style={{ 
-              fontSize: "16px", 
-              color: darkPurple, 
-              marginBottom: "20px",
-              fontWeight: 600,
-              display: "flex",
-              alignItems: "center",
-              gap: "8px"
-            }}>
+            <h3
+              style={{
+                fontSize: "16px",
+                color: darkPurple,
+                marginBottom: "20px",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
               <Settings size={16} /> {others?.title || "SOFTWARE"}
             </h3>
             {skills.slice(Math.ceil(skills.length / 2)).map((skill, idx) => (
               <div key={idx} style={{ marginBottom: "12px" }}>
-                <span style={{ fontSize: "12px", fontWeight: 500 }}>{skill.title}</span>
-                <div style={{
-                  height: "6px",
-                  background: "#ddd",
-                  borderRadius: "4px",
-                  overflow: "hidden",
-                  marginTop: "4px"
-                }}>
-                  <div style={{
-                    height: "100%",
-                    background: `linear-gradient(90deg, ${primaryColor}, ${darkPurple})`,
-                    width: "75%"
-                  }} />
+                <span style={{ fontSize: "12px", fontWeight: 500 }}>
+                  {skill.title}
+                </span>
+                <div
+                  style={{
+                    height: "6px",
+                    background: "#ddd",
+                    borderRadius: "4px",
+                    overflow: "hidden",
+                    marginTop: "4px",
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "100%",
+                      background: `linear-gradient(90deg, ${primaryColor}, ${darkPurple})`,
+                      width: "75%",
+                    }}
+                  />
                 </div>
               </div>
             ))}

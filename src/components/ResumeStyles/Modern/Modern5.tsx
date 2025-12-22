@@ -19,7 +19,7 @@ const DEFAULT_SECTION_ORDER = [
   "educations",
   "certifications",
   "skills",
-  "others"
+  "others",
 ] as const;
 
 // Helper to get section display order
@@ -29,24 +29,31 @@ const getSectionOrder = (resumeData: ResumeValues): string[] => {
   // if (resumeData.sectionOrder && resumeData.sectionOrder.length > 0) {
   //   return resumeData.sectionOrder;
   // }
-  
+
   // For now, return default order
   return [...DEFAULT_SECTION_ORDER];
 };
 
 // Helper to check if section has content
-const hasSectionContent = (resumeData: ResumeValues, sectionKey: string): boolean => {
+const hasSectionContent = (
+  resumeData: ResumeValues,
+  sectionKey: string,
+): boolean => {
   switch (sectionKey) {
     case "summary":
       return !!resumeData.summary;
     case "workExperiences":
-      return !!resumeData.workExperiences && resumeData.workExperiences.length > 0;
+      return (
+        !!resumeData.workExperiences && resumeData.workExperiences.length > 0
+      );
     case "projectWorks":
       return !!resumeData.projectWorks && resumeData.projectWorks.length > 0;
     case "educations":
       return !!resumeData.educations && resumeData.educations.length > 0;
     case "certifications":
-      return !!resumeData.certifications && resumeData.certifications.length > 0;
+      return (
+        !!resumeData.certifications && resumeData.certifications.length > 0
+      );
     case "skills":
       return !!resumeData.skills && resumeData.skills.length > 0;
     case "others":
@@ -56,14 +63,21 @@ const hasSectionContent = (resumeData: ResumeValues, sectionKey: string): boolea
   }
 };
 
-export default function ModernTimeline({ resumeData, className = "" }: ResumePreviewProps) {
+export default function ModernTimeline({
+  resumeData,
+  className = "",
+}: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
 
   return (
     <div
-      className={`aspect-[210/297] h-fit w-full bg-white font-sans text-slate-900 ${className}`}
+      className={`resume-root modern aspect-[210/297] h-fit w-full bg-white font-sans ${className}`}
       ref={containerRef}
+      style={{
+        color: "var(--text)",
+        fontSize: "var(--base-font)",
+      }}
     >
       <div
         id="resumePreviewContent"
@@ -77,15 +91,21 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
           <Header resumeData={resumeData} />
 
           {/* Divider */}
-          <div style={{ margin: "30px 0", height: "1px", backgroundColor: "#000" }} />
+          <div
+            style={{
+              margin: "var(--section-gap) 0",
+              height: "1px",
+              backgroundColor: "var(--accent)",
+            }}
+          />
 
           {/* Content Sections - Dynamic ordering */}
           <div>
             {getSectionOrder(resumeData)
-              .filter(sectionKey => hasSectionContent(resumeData, sectionKey))
+              .filter((sectionKey) => hasSectionContent(resumeData, sectionKey))
               .map((sectionKey, index) => {
                 const isFirst = index === 0;
-                
+
                 // Render section based on key
                 switch (sectionKey) {
                   case "summary":
@@ -95,13 +115,19 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                         label="PROFILE"
                         isFirst={isFirst}
                         content={
-                          <p style={{ color: "#0f172a", margin: 0, whiteSpace: "pre-line" }}>
+                          <p
+                            style={{
+                              color: "var(--text)",
+                              margin: 0,
+                              whiteSpace: "pre-line",
+                            }}
+                          >
                             {resumeData.summary}
                           </p>
                         }
                       />
                     );
-                  
+
                   case "workExperiences":
                     return (
                       <Section
@@ -111,28 +137,46 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                         content={
                           <>
                             {resumeData.workExperiences!.map((exp, idx) => (
-                              <div key={idx} style={{ marginBottom: idx < resumeData.workExperiences!.length - 1 ? "30px" : 0 }}>
-                                <h3 style={{ 
-                                  fontSize: "14px", 
-                                  fontWeight: 600, 
-                                  textTransform: "uppercase",
-                                  margin: 0,
-                                  marginBottom: "4px"
-                                }}>
+                              <div
+                                key={idx}
+                                style={{
+                                  marginBottom:
+                                    idx < resumeData.workExperiences!.length - 1
+                                      ? "30px"
+                                      : 0,
+                                }}
+                              >
+                                <h3
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    margin: 0,
+                                    marginBottom: "4px",
+                                  }}
+                                >
                                   {exp.position}
                                 </h3>
-                                <span style={{ 
-                                  display: "block", 
-                                  fontSize: "12px", 
-                                  color: "#64748b",
-                                  marginBottom: "10px"
-                                }}>
-                                  {exp.company} / {exp.startDate && formatDate(exp.startDate, "yyyy")} -{" "}
-                                  {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
+                                <span
+                                  style={{
+                                    display: "block",
+                                    fontSize: "12px",
+                                    color:
+                                      "color-mix(in srgb, var(--text) 70%, transparent)",
+                                    marginBottom: "10px",
+                                  }}
+                                >
+                                  {exp.company} /{" "}
+                                  {exp.startDate &&
+                                    formatDate(exp.startDate, "yyyy")}{" "}
+                                  -{" "}
+                                  {exp.endDate
+                                    ? formatDate(exp.endDate, "yyyy")
+                                    : "PRESENT"}
                                 </span>
                                 {exp.description && (
                                   <div
-                                    className="richTextEditorStyle whitespace-pre-line text-[14px] leading-[1.7] pl-[18px]"
+                                    className="richTextEditorStyle whitespace-pre-line pl-[18px] text-[14px] leading-[1.7]"
                                     dangerouslySetInnerHTML={{
                                       __html: exp.description || "",
                                     }}
@@ -144,7 +188,7 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                         }
                       />
                     );
-                  
+
                   case "projectWorks":
                     return (
                       <Section
@@ -154,51 +198,76 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                         content={
                           <>
                             {resumeData.projectWorks!.map((project, idx) => (
-                              <div key={idx} style={{ marginBottom: idx < resumeData.projectWorks!.length - 1 ? "30px" : 0 }}>
-                                <h3 style={{ 
-                                  fontSize: "14px", 
-                                  fontWeight: 600, 
-                                  textTransform: "uppercase",
-                                  margin: 0,
-                                  marginBottom: "4px"
-                                }}>
+                              <div
+                                key={idx}
+                                style={{
+                                  marginBottom:
+                                    idx < resumeData.projectWorks!.length - 1
+                                      ? "30px"
+                                      : 0,
+                                }}
+                              >
+                                <h3
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    margin: 0,
+                                    marginBottom: "4px",
+                                  }}
+                                >
                                   {project.title}
                                 </h3>
-                                <span style={{ 
-                                  display: "block", 
-                                  fontSize: "12px", 
-                                  color: "#64748b",
-                                  marginBottom: "10px"
-                                }}>
+                                <span
+                                  style={{
+                                    display: "block",
+                                    fontSize: "12px",
+                                    color:
+                                      "color-mix(in srgb, var(--text) 70%, transparent)",
+                                    marginBottom: "10px",
+                                  }}
+                                >
                                   {project.company && `${project.company} / `}
-                                  {project.startDate && formatDate(project.startDate, "yyyy")} -{" "}
-                                  {project.endDate ? formatDate(project.endDate, "yyyy") : "PRESENT"}
+                                  {project.startDate &&
+                                    formatDate(project.startDate, "yyyy")}{" "}
+                                  -{" "}
+                                  {project.endDate
+                                    ? formatDate(project.endDate, "yyyy")
+                                    : "PRESENT"}
                                 </span>
                                 {project.description && (
                                   <div
-                                    className="richTextEditorStyle whitespace-pre-line text-[14px] leading-[1.7] pl-[18px]"
+                                    className="richTextEditorStyle whitespace-pre-line pl-[18px] text-[14px] leading-[1.7]"
                                     dangerouslySetInnerHTML={{
                                       __html: project.description || "",
                                     }}
                                   />
                                 )}
                                 {project.links && project.links.length > 0 && (
-                                  <div style={{ marginTop: "8px", paddingLeft: "18px" }}>
+                                  <div
+                                    style={{
+                                      marginTop: "8px",
+                                      paddingLeft: "18px",
+                                    }}
+                                  >
                                     {project.links.map((link, i) => (
                                       <a
                                         key={i}
                                         href={link}
                                         target="_blank"
                                         rel="noreferrer"
-                                        style={{ 
-                                          display: "block", 
-                                          fontSize: "11px", 
-                                          color: "#3b82f6",
+                                        style={{
+                                          display: "block",
+                                          fontSize: "11px",
+                                          color: "var(--accent)",
                                           textDecoration: "underline",
-                                          marginBottom: "2px"
+                                          marginBottom: "2px",
                                         }}
                                       >
-                                        {link.replace(/^https?:\/\/(www\.)?/, "")}
+                                        {link.replace(
+                                          /^https?:\/\/(www\.)?/,
+                                          "",
+                                        )}
                                       </a>
                                     ))}
                                   </div>
@@ -209,7 +278,7 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                         }
                       />
                     );
-                  
+
                   case "educations":
                     return (
                       <Section
@@ -219,41 +288,59 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                         content={
                           <>
                             {resumeData.educations!.map((edu, idx) => (
-                              <div key={idx} style={{ marginBottom: idx < resumeData.educations!.length - 1 ? "30px" : 0 }}>
-                                <h3 style={{ 
-                                  fontSize: "14px", 
-                                  fontWeight: 600, 
-                                  textTransform: "uppercase",
-                                  margin: 0,
-                                  marginBottom: "4px"
-                                }}>
+                              <div
+                                key={idx}
+                                style={{
+                                  marginBottom:
+                                    idx < resumeData.educations!.length - 1
+                                      ? "30px"
+                                      : 0,
+                                }}
+                              >
+                                <h3
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    margin: 0,
+                                    marginBottom: "4px",
+                                  }}
+                                >
                                   {edu.degree} {edu.stream && `- ${edu.stream}`}
                                 </h3>
-                                 <span style={{ 
-                                   display: "block", 
-                                   fontSize: "12px", 
-                                   color: "#64748b",
-                                   marginBottom: "10px"
-                                 }}>
-                                   {edu.school} / {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
-                                   {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
-                                   {edu.marks && ` | ${edu.marks}`}
-                                 </span>
-                                 {edu.description && (
-                                   <div
-                                     className="richTextEditorStyle whitespace-pre-line text-[14px] leading-[1.7] pl-[18px]"
-                                     dangerouslySetInnerHTML={{
-                                       __html: edu.description || "",
-                                     }}
-                                   />
-                                 )}
+                                <span
+                                  style={{
+                                    display: "block",
+                                    fontSize: "12px",
+                                    color:
+                                      "color-mix(in srgb, var(--text) 70%, transparent)",
+                                    marginBottom: "10px",
+                                  }}
+                                >
+                                  {edu.school} /{" "}
+                                  {edu.startDate &&
+                                    formatDate(edu.startDate, "yyyy")}{" "}
+                                  -{" "}
+                                  {edu.endDate
+                                    ? formatDate(edu.endDate, "yyyy")
+                                    : "PRESENT"}
+                                  {edu.marks && ` | ${edu.marks}`}
+                                </span>
+                                {edu.description && (
+                                  <div
+                                    className="richTextEditorStyle whitespace-pre-line pl-[18px] text-[14px] leading-[1.7]"
+                                    dangerouslySetInnerHTML={{
+                                      __html: edu.description || "",
+                                    }}
+                                  />
+                                )}
                               </div>
                             ))}
                           </>
                         }
                       />
                     );
-                  
+
                   case "certifications":
                     return (
                       <Section
@@ -263,24 +350,37 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                         content={
                           <>
                             {resumeData.certifications!.map((cert, idx) => (
-                              <div key={idx} style={{ marginBottom: idx < resumeData.certifications!.length - 1 ? "20px" : 0 }}>
-                                <h3 style={{ 
-                                  fontSize: "14px", 
-                                  fontWeight: 600, 
-                                  textTransform: "uppercase",
-                                  margin: 0,
-                                  marginBottom: "4px"
-                                }}>
+                              <div
+                                key={idx}
+                                style={{
+                                  marginBottom:
+                                    idx < resumeData.certifications!.length - 1
+                                      ? "20px"
+                                      : 0,
+                                }}
+                              >
+                                <h3
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    margin: 0,
+                                    marginBottom: "4px",
+                                  }}
+                                >
                                   {cert.title}
                                 </h3>
                                 {cert.description && (
-                                  <p style={{ 
-                                    fontSize: "12px", 
-                                    color: "#64748b", 
-                                    margin: 0,
-                                    marginBottom: "4px",
-                                    paddingLeft: "18px"
-                                  }}>
+                                  <p
+                                    style={{
+                                      fontSize: "12px",
+                                      color:
+                                        "color-mix(in srgb, var(--text) 70%, transparent)",
+                                      margin: 0,
+                                      marginBottom: "4px",
+                                      paddingLeft: "18px",
+                                    }}
+                                  >
                                     {cert.description}
                                   </p>
                                 )}
@@ -289,15 +389,18 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                                     href={cert.link}
                                     target="_blank"
                                     rel="noreferrer"
-                                    style={{ 
-                                      display: "block", 
-                                      fontSize: "11px", 
-                                      color: "#3b82f6",
+                                    style={{
+                                      display: "block",
+                                      fontSize: "11px",
+                                      color: "var(--accent)",
                                       textDecoration: "underline",
-                                      paddingLeft: "18px"
+                                      paddingLeft: "18px",
                                     }}
                                   >
-                                    {cert.link.replace(/^https?:\/\/(www\.)?/, "")}
+                                    {cert.link.replace(
+                                      /^https?:\/\/(www\.)?/,
+                                      "",
+                                    )}
                                   </a>
                                 )}
                               </div>
@@ -306,7 +409,7 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                         }
                       />
                     );
-                  
+
                   case "skills":
                     return (
                       <Section
@@ -317,16 +420,19 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                           <ul style={{ paddingLeft: "18px", margin: 0 }}>
                             {resumeData.skills!.map((skill, idx) =>
                               skill.skillName?.map((item, i) => (
-                                <li key={`${idx}-${i}`} style={{ marginBottom: "6px" }}>
+                                <li
+                                  key={`${idx}-${i}`}
+                                  style={{ marginBottom: "6px" }}
+                                >
                                   {item}
                                 </li>
-                              ))
+                              )),
                             )}
                           </ul>
                         }
                       />
                     );
-                  
+
                   case "others":
                     return (
                       <Section
@@ -335,7 +441,7 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                         isFirst={isFirst}
                         content={
                           <div
-                            className="richTextEditorStyle whitespace-pre-line text-[14px] leading-[1.7] pl-[18px]"
+                            className="richTextEditorStyle whitespace-pre-line pl-[18px] text-[14px] leading-[1.7]"
                             dangerouslySetInnerHTML={{
                               __html: resumeData.others!.description || "",
                             }}
@@ -343,12 +449,11 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
                         }
                       />
                     );
-                  
+
                   default:
                     return null;
                 }
-              })
-            }
+              })}
           </div>
         </div>
       </div>
@@ -361,7 +466,18 @@ export default function ModernTimeline({ resumeData, className = "" }: ResumePre
 // ----------------------------------------------------------------------
 
 const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
-  const { firstName, lastName, photo, borderStyle, phone, email, city, country, socialLinks, portfolioLink } = resumeData;
+  const {
+    firstName,
+    lastName,
+    photo,
+    borderStyle,
+    phone,
+    email,
+    city,
+    country,
+    socialLinks,
+    portfolioLink,
+  } = resumeData;
   const [photoSrc, setPhotoSrc] = useState<string>(
     photo instanceof File ? "" : photo || "",
   );
@@ -382,7 +498,14 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "30px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "30px",
+      }}
+    >
       {/* Profile Image */}
       {photoSrc && (
         <div>
@@ -401,23 +524,27 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
 
       {/* Header Right */}
       <div>
-        <h1 style={{ 
-          fontSize: "42px", 
-          fontWeight: 600, 
-          textTransform: "uppercase", 
-          letterSpacing: "3px",
-          margin: 0 
-        }}>
+        <h1
+          style={{
+            fontSize: "42px",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "3px",
+            margin: 0,
+          }}
+        >
           {firstName} {lastName}
         </h1>
-        <div style={{ 
-          marginTop: "12px", 
-          display: "flex", 
-          flexWrap: "wrap", 
-          gap: "20px", 
-          fontSize: "15px",
-          color: "#334155" 
-        }}>
+        <div
+          style={{
+            marginTop: "12px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "20px",
+            fontSize: "15px",
+            color: "var(--text)",
+          }}
+        >
           {phone && (
             <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <Phone size={14} />
@@ -436,24 +563,40 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
               {[city, country].filter(Boolean).join(", ")}
             </span>
           )}
-          {socialLinks && socialLinks.length > 0 && socialLinks.map((link, index) => (
-            <a
-              key={index}
-              href={link}
-              target="_blank"
-              rel="noreferrer"
-              style={{ display: "flex", alignItems: "center", gap: "6px", textDecoration: "none", color: "#334155" }}
-            >
-              <SocialMediaIconFinder url={link} />
-              <span style={{ fontSize: "13px" }}>{link.split("://")?.[1]?.split("/")[0]}</span>
-            </a>
-          ))}
+          {socialLinks &&
+            socialLinks.length > 0 &&
+            socialLinks.map((link, index) => (
+              <a
+                key={index}
+                href={link}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  textDecoration: "none",
+                  color: "var(--text)",
+                }}
+              >
+                <SocialMediaIconFinder url={link} />
+                <span style={{ fontSize: "13px" }}>
+                  {link.split("://")?.[1]?.split("/")[0]}
+                </span>
+              </a>
+            ))}
           {portfolioLink && (
             <a
               href={portfolioLink}
               target="_blank"
               rel="noreferrer"
-              style={{ display: "flex", alignItems: "center", gap: "6px", textDecoration: "none", color: "#334155" }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                textDecoration: "none",
+                color: "var(--text)",
+              }}
             >
               <span style={{ fontSize: "13px" }}>Portfolio</span>
             </a>
@@ -465,72 +608,90 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
 };
 
 // Section Component - Each section is a row with label, timeline dot, and content
-const Section = ({ label, content, isFirst = false }: { label: string; content: React.ReactNode; isFirst?: boolean }) => {
+const Section = ({
+  label,
+  content,
+  isFirst = false,
+}: {
+  label: string;
+  content: React.ReactNode;
+  isFirst?: boolean;
+}) => {
   return (
-    <div style={{ 
-      display: "grid", 
-      gridTemplateColumns: "160px 40px 1fr", 
-      columnGap: "20px",
-      marginBottom: "40px",
-      position: "relative"
-    }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "160px 40px 1fr",
+        columnGap: "20px",
+        marginBottom: "var(--section-gap)",
+        position: "relative",
+      }}
+    >
       {/* Label */}
-      <div style={{ 
-        fontSize: "14px", 
-        fontWeight: 600, 
-        textTransform: "uppercase", 
-        letterSpacing: "2px",
-        paddingTop: "10px"
-      }}>
+      <div
+        style={{
+          fontSize: "14px",
+          fontWeight: 600,
+          textTransform: "uppercase",
+          letterSpacing: "2px",
+          paddingTop: "10px",
+        }}
+      >
         {label}
       </div>
 
       {/* Timeline Column with Line and Dot */}
-      <div style={{ 
-        display: "flex", 
-        justifyContent: "center",
-        position: "relative"
-      }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          position: "relative",
+        }}
+      >
         {/* Vertical line segment */}
         {!isFirst && (
-          <div style={{
+          <div
+            style={{
+              position: "absolute",
+              top: "-40px",
+              left: "50%",
+              width: "2px",
+              height: "50px",
+              backgroundColor: "var(--accent)",
+              transform: "translateX(-50%)",
+            }}
+          />
+        )}
+
+        {/* Dot */}
+        <div
+          style={{
+            marginTop: "10px",
+            height: "12px",
+            width: "12px",
+            borderRadius: "50%",
+            backgroundColor: "var(--accent)",
+            position: "relative",
+            zIndex: 2,
+          }}
+        />
+
+        {/* Line continuing down */}
+        <div
+          style={{
             position: "absolute",
-            top: "-40px",
+            top: "22px",
             left: "50%",
             width: "2px",
-            height: "50px",
-            backgroundColor: "#000",
-            transform: "translateX(-50%)"
-          }} />
-        )}
-        
-        {/* Dot */}
-        <div style={{
-          marginTop: "10px",
-          height: "12px",
-          width: "12px",
-          borderRadius: "50%",
-          backgroundColor: "#000",
-          position: "relative",
-          zIndex: 2
-        }} />
-        
-        {/* Line continuing down */}
-        <div style={{
-          position: "absolute",
-          top: "22px",
-          left: "50%",
-          width: "2px",
-          height: "100%",
-          backgroundColor: "#000",
-          transform: "translateX(-50%)"
-        }} />
+            height: "100%",
+            backgroundColor: "var(--accent)",
+            transform: "translateX(-50%)",
+          }}
+        />
       </div>
 
       {/* Content */}
-      <div style={{ fontSize: "14px", lineHeight: "1.7" }}>
-        {content}
-      </div>
+      <div style={{ fontSize: "14px", lineHeight: "1.7" }}>{content}</div>
     </div>
   );
 };

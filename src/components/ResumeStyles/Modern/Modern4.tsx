@@ -14,59 +14,62 @@ interface ResumePreviewProps {
   className?: string;
 }
 
-export default function MillieSmithResume({ resumeData, className }: ResumePreviewProps) {
+export default function MillieSmithResume({
+  resumeData,
+  className,
+}: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
-
-  // Default color logic
-  const colorHex = resumeData.colorHex === "#000000" || !resumeData.colorHex 
-    ? "#2c5f7c" // Navy blue matching the template
-    : resumeData.colorHex;
 
   return (
     <div
       className={cn(
-        "aspect-[210/297] h-fit w-full bg-white text-slate-800 shadow-sm",
-        className
+        "resume-root modern aspect-[210/297] h-fit w-full bg-white shadow-sm",
+        className,
       )}
       ref={containerRef}
-      style={{ fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}
+      style={{
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        color: "var(--text)",
+        fontSize: "var(--base-font)",
+      }}
     >
       <div
-        className={cn(
-          "h-full",
-          !width && "invisible"
-        )}
+        className={cn("h-full", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
         }}
         id="resumePreviewContent"
       >
         {/* Header Section */}
-        <div className="text-center px-10 pt-8 pb-4 bg-gray-50">
-          <h1 className="text-3xl font-light tracking-[0.5rem] text-gray-700 mb-1">
-            {resumeData.firstName?.toUpperCase()} {resumeData.lastName?.toUpperCase()}
+        <div className="bg-gray-50 px-10 pb-4 pt-8 text-center">
+          <h1 className="mb-1 text-3xl font-light tracking-[0.5rem] text-gray-700">
+            {resumeData.firstName?.toUpperCase()}{" "}
+            {resumeData.lastName?.toUpperCase()}
           </h1>
           {resumeData.jobTitle && (
-            <p className="text-xs tracking-[0.15rem] font-normal" style={{ color: colorHex }}>
+            <p
+              className="text-xs font-normal tracking-[0.15rem]"
+              style={{ color: "var(--accent)" }}
+            >
               {resumeData.jobTitle.toUpperCase()}
             </p>
           )}
         </div>
 
         {/* Divider */}
-        <div className="h-0.5 bg-gray-300 mx-10" />
+        <div className="mx-10 h-0.5 bg-gray-300" />
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-12 min-h-[calc(100%-180px)]">
+        <div className="grid min-h-[calc(100%-180px)] grid-cols-12">
           {/* Left Column */}
           <div className="col-span-5 border-r-2 border-gray-300">
-            <LeftColumn resumeData={resumeData} colorHex={colorHex} />
+            <LeftColumn resumeData={resumeData} colorHex={"var(--accent)"} />
           </div>
 
           {/* Right Column */}
           <div className="col-span-7">
-            <RightColumn resumeData={resumeData} colorHex={colorHex} />
+            <RightColumn resumeData={resumeData} colorHex={"var(--accent)"} />
           </div>
         </div>
       </div>
@@ -101,19 +104,24 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
   }, [photo]);
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="space-y-6 p-8">
       {/* Photo */}
       {photoSrc && (
         <div className="flex justify-center">
-          <div className="w-32 h-32 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+          <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-gray-200">
             <Image
               src={photoSrc}
               width={128}
               height={128}
               alt="Profile"
-              className="object-cover w-full h-full"
+              className="h-full w-full object-cover"
               style={{
-                borderRadius: borderStyle === BorderStyles.SQUARE ? '0px' : borderStyle === BorderStyles.CIRCLE ? '50%' : '10%',
+                borderRadius:
+                  borderStyle === BorderStyles.SQUARE
+                    ? "0px"
+                    : borderStyle === BorderStyles.CIRCLE
+                      ? "50%"
+                      : "10%",
               }}
             />
           </div>
@@ -147,11 +155,11 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
         <>
           {/* Horizontal Divider */}
           <div className="h-px bg-gray-300" />
-          
+
           <div>
             <SectionTitle title={resumeData.others.title} colorHex={colorHex} />
             <div
-              className="text-xs leading-relaxed text-gray-600 richTextEditorStyle whitespace-pre-line"
+              className="richTextEditorStyle whitespace-pre-line text-xs leading-relaxed text-gray-600"
               dangerouslySetInnerHTML={{
                 __html: resumeData.others.description || "",
               }}
@@ -165,15 +173,17 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
 
 const RightColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
   return (
-    <div className="p-8 space-y-6">
+    <div className="space-y-6 p-8">
       {/* Education Section */}
       <EducationSection resumeData={resumeData} colorHex={colorHex} />
 
       {/* Horizontal Divider */}
-      {resumeData.educations && resumeData.educations.length > 0 && 
-       resumeData.workExperiences && resumeData.workExperiences.length > 0 && (
-        <div className="h-px bg-gray-300 my-4" />
-      )}
+      {resumeData.educations &&
+        resumeData.educations.length > 0 &&
+        resumeData.workExperiences &&
+        resumeData.workExperiences.length > 0 && (
+          <div className="my-4 h-px bg-gray-300" />
+        )}
 
       {/* Experience Section */}
       <ExperienceSection resumeData={resumeData} colorHex={colorHex} />
@@ -181,7 +191,7 @@ const RightColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       {/* Projects Section */}
       {resumeData.projectWorks && resumeData.projectWorks.length > 0 && (
         <>
-          <div className="h-px bg-gray-300 my-4" />
+          <div className="my-4 h-px bg-gray-300" />
           <ProjectsSection resumeData={resumeData} colorHex={colorHex} />
         </>
       )}
@@ -189,7 +199,7 @@ const RightColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       {/* Certifications */}
       {resumeData.certifications && resumeData.certifications.length > 0 && (
         <>
-          <div className="h-px bg-gray-300 my-4" />
+          <div className="my-4 h-px bg-gray-300" />
           <CertificationsSection resumeData={resumeData} colorHex={colorHex} />
         </>
       )}
@@ -197,10 +207,16 @@ const RightColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
   );
 };
 
-function SectionTitle({ title, colorHex }: { title: string; colorHex?: string }) {
+function SectionTitle({
+  title,
+  colorHex,
+}: {
+  title: string;
+  colorHex?: string;
+}) {
   return (
-    <h2 
-      className="text-lg font-bold tracking-wide mb-3"
+    <h2
+      className="mb-3 text-lg font-bold tracking-wide"
       style={{ color: colorHex }}
     >
       {title}
@@ -209,7 +225,8 @@ function SectionTitle({ title, colorHex }: { title: string; colorHex?: string })
 }
 
 const ContactSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
-  const { city, country, phone, email, portfolioLink, socialLinks } = resumeData;
+  const { city, country, phone, email, portfolioLink, socialLinks } =
+    resumeData;
 
   return (
     <div>
@@ -217,37 +234,60 @@ const ContactSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       <div className="space-y-3">
         {phone && (
           <div className="flex items-start gap-3">
-            <Phone size={14} style={{ color: colorHex, flexShrink: 0, marginTop: '2px' }} />
+            <Phone
+              size={14}
+              style={{ color: colorHex, flexShrink: 0, marginTop: "2px" }}
+            />
             <span className="text-xs text-gray-600">{phone}</span>
           </div>
         )}
         {email && (
           <div className="flex items-start gap-3">
-            <Mail size={14} style={{ color: colorHex, flexShrink: 0, marginTop: '2px' }} />
-            <span className="text-xs text-gray-600 break-all">{email}</span>
+            <Mail
+              size={14}
+              style={{ color: colorHex, flexShrink: 0, marginTop: "2px" }}
+            />
+            <span className="break-all text-xs text-gray-600">{email}</span>
           </div>
         )}
         {portfolioLink && (
           <div className="flex items-start gap-3">
-            <Globe size={14} style={{ color: colorHex, flexShrink: 0, marginTop: '2px' }} />
-            <a href={portfolioLink} className="text-xs text-gray-600 hover:underline break-all">
-              {portfolioLink.replace(/^https?:\/\/(www\.)?/, '')}
+            <Globe
+              size={14}
+              style={{ color: colorHex, flexShrink: 0, marginTop: "2px" }}
+            />
+            <a
+              href={portfolioLink}
+              className="break-all text-xs text-gray-600 hover:underline"
+            >
+              {portfolioLink.replace(/^https?:\/\/(www\.)?/, "")}
             </a>
           </div>
         )}
         {(city || country) && (
           <div className="flex items-start gap-3">
-            <MapPin size={14} style={{ color: colorHex, flexShrink: 0, marginTop: '2px' }} />
+            <MapPin
+              size={14}
+              style={{ color: colorHex, flexShrink: 0, marginTop: "2px" }}
+            />
             <span className="text-xs text-gray-600">
-              {[city, country].filter(Boolean).join(', ')}
+              {[city, country].filter(Boolean).join(", ")}
             </span>
           </div>
         )}
         {socialLinks?.map((link, index) => (
           <div key={index} className="flex items-start gap-3">
-            <LinkIcon size={14} style={{ color: colorHex, flexShrink: 0, marginTop: '2px' }} />
-            <a href={link} target="_blank" rel="noreferrer" className="text-xs text-gray-600 hover:underline break-all">
-              {link.replace(/^https?:\/\/(www\.)?/, '')}
+            <LinkIcon
+              size={14}
+              style={{ color: colorHex, flexShrink: 0, marginTop: "2px" }}
+            />
+            <a
+              href={link}
+              target="_blank"
+              rel="noreferrer"
+              className="break-all text-xs text-gray-600 hover:underline"
+            >
+              {link.replace(/^https?:\/\/(www\.)?/, "")}
             </a>
           </div>
         ))}
@@ -265,8 +305,8 @@ const SkillsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       <SectionTitle title="SKILLS" colorHex={colorHex} />
       <ul className="space-y-2">
         {skills.map((skill, index) => (
-          <li key={index} className="text-xs text-gray-600 pl-4 relative">
-            <span 
+          <li key={index} className="relative pl-4 text-xs text-gray-600">
+            <span
               className="absolute left-0 top-0.5 text-[8px]"
               style={{ color: colorHex }}
             >
@@ -274,7 +314,10 @@ const SkillsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
             </span>
             <span className="font-medium">{skill.title}</span>
             {skill.skillName && skill.skillName.length > 0 && (
-              <span className="text-gray-500"> - {skill.skillName.join(', ')}</span>
+              <span className="text-gray-500">
+                {" "}
+                - {skill.skillName.join(", ")}
+              </span>
             )}
           </li>
         ))}
@@ -293,12 +336,15 @@ const EducationSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       <div className="space-y-4">
         {educations.map((edu, index) => (
           <div key={index} className="break-inside-avoid">
-            <p className="text-xs text-gray-600 mb-1">
-              {edu.startDate && formatDate(edu.startDate, 'yyyy')} - {edu.endDate ? formatDate(edu.endDate, 'yyyy') : 'Present'}
+            <p className="mb-1 text-xs text-gray-600">
+              {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
+              {edu.endDate ? formatDate(edu.endDate, "yyyy") : "Present"}
             </p>
-            <div className="pl-4 relative">
-              <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">■</span>
-              <p className="font-bold text-sm text-gray-800 mb-0.5">
+            <div className="relative pl-4">
+              <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">
+                ■
+              </span>
+              <p className="mb-0.5 text-sm font-bold text-gray-800">
                 {edu.degree?.toUpperCase()}
               </p>
               <p className="text-xs text-gray-600">{edu.school}</p>
@@ -306,13 +352,17 @@ const EducationSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
                 <p className="text-xs text-gray-600">in {edu.stream}</p>
               )}
               {edu.location && (
-                <p className="text-[10px] text-gray-500 italic mt-0.5">{edu.location}</p>
+                <p className="mt-0.5 text-[10px] italic text-gray-500">
+                  {edu.location}
+                </p>
               )}
               {edu.marks && (
-                <p className="text-[10px] text-gray-600 mt-0.5">Grade: {edu.marks}</p>
+                <p className="mt-0.5 text-[10px] text-gray-600">
+                  Grade: {edu.marks}
+                </p>
               )}
               {edu.description && (
-                <div className="text-[10px] text-gray-600 mt-1 whitespace-pre-line">
+                <div className="mt-1 whitespace-pre-line text-[10px] text-gray-600">
                   {edu.description}
                 </div>
               )}
@@ -337,21 +387,30 @@ const ExperienceSection: React.FC<SectionProps> = ({
       <div className="space-y-4">
         {workExperiences.map((exp, index) => (
           <div key={index} className="break-inside-avoid">
-            <div className="pl-4 relative">
-              <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">■</span>
+            <div className="relative pl-4">
+              <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">
+                ■
+              </span>
               <div className="mb-2">
-                <p className="font-bold text-sm text-gray-800">{exp.company?.toUpperCase()}</p>
+                <p className="text-sm font-bold text-gray-800">
+                  {exp.company?.toUpperCase()}
+                </p>
                 <p className="text-xs text-gray-600">
-                  {exp.startDate && formatDate(exp.startDate, 'yyyy')} - {exp.endDate ? formatDate(exp.endDate, 'yyyy') : 'PRESENT'}
+                  {exp.startDate && formatDate(exp.startDate, "yyyy")} -{" "}
+                  {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
                 </p>
               </div>
-              <p className="text-xs text-gray-600 mb-1 font-semibold">{exp.position}</p>
+              <p className="mb-1 text-xs font-semibold text-gray-600">
+                {exp.position}
+              </p>
               {exp.jobLocation && (
-                <p className="text-[10px] text-gray-500 mb-1">{exp.jobLocation}</p>
+                <p className="mb-1 text-[10px] text-gray-500">
+                  {exp.jobLocation}
+                </p>
               )}
               {exp.description && (
-                <div 
-                  className="text-xs text-gray-600 leading-relaxed prose prose-sm max-w-none"
+                <div
+                  className="prose prose-sm max-w-none text-xs leading-relaxed text-gray-600"
                   dangerouslySetInnerHTML={{ __html: exp.description }}
                 />
               )}
@@ -373,17 +432,24 @@ const ProjectsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       <div className="space-y-4">
         {projectWorks.map((project, index) => (
           <div key={index} className="break-inside-avoid">
-            <div className="pl-4 relative">
-              <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">■</span>
+            <div className="relative pl-4">
+              <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">
+                ■
+              </span>
               <div className="mb-1">
-                <p className="font-bold text-sm text-gray-800">{project.title}</p>
+                <p className="text-sm font-bold text-gray-800">
+                  {project.title}
+                </p>
                 <p className="text-xs text-gray-600">
-                  {project.startDate && formatDate(project.startDate, 'yyyy')} - {project.endDate ? formatDate(project.endDate, 'yyyy') : 'Present'}
+                  {project.startDate && formatDate(project.startDate, "yyyy")} -{" "}
+                  {project.endDate
+                    ? formatDate(project.endDate, "yyyy")
+                    : "Present"}
                 </p>
               </div>
               {project.description && (
-                <div 
-                  className="text-xs text-gray-600 leading-relaxed"
+                <div
+                  className="text-xs leading-relaxed text-gray-600"
                   dangerouslySetInnerHTML={{ __html: project.description }}
                 />
               )}
@@ -395,7 +461,10 @@ const ProjectsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
   );
 };
 
-const CertificationsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
+const CertificationsSection: React.FC<SectionProps> = ({
+  resumeData,
+  colorHex,
+}) => {
   const { certifications } = resumeData;
   if (!certifications || certifications.length === 0) return null;
 
@@ -404,11 +473,15 @@ const CertificationsSection: React.FC<SectionProps> = ({ resumeData, colorHex })
       <SectionTitle title="CERTIFICATIONS" colorHex={colorHex} />
       <ul className="space-y-2">
         {certifications.map((cert, index) => (
-          <li key={index} className="text-xs text-gray-600 pl-4 relative">
-            <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">■</span>
-            <span className="font-bold block">{cert.title}</span>
+          <li key={index} className="relative pl-4 text-xs text-gray-600">
+            <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">
+              ■
+            </span>
+            <span className="block font-bold">{cert.title}</span>
             {cert.description && (
-              <span className="text-[10px] text-gray-500">{cert.description}</span>
+              <span className="text-[10px] text-gray-500">
+                {cert.description}
+              </span>
             )}
           </li>
         ))}

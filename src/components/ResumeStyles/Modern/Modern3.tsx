@@ -19,33 +19,27 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
-
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-
-  const colorHex =
-    resumeData.colorHex === "#000000" || resumeData.colorHex === undefined
-      ? "#6f706a"
-      : resumeData.colorHex;
   return (
     <div
       className={cn(
-        "relative aspect-[210/297] h-fit w-full overflow-hidden bg-white font-poppins",
+        "resume-root modern relative aspect-[210/297] h-fit w-full overflow-hidden bg-white font-poppins",
         className,
       )}
+      style={{
+        color: "var(--text)",
+        fontSize: "var(--base-font)",
+      }}
       ref={containerRef}
     >
       <div
         className="absolute z-[0] h-[180px] w-screen"
         style={{
-          backgroundColor: hexToRgbaPercent(colorHex, 100),
+          backgroundColor: "var(--accent)",
         }}
       />
       <div
         className={cn(
           "mx-10 grid h-full grid-cols-12 space-y-2",
-          BaseFontSize,
           !width && "invisible",
         )}
         style={{
@@ -57,7 +51,8 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
         <div
           className="z-[1] col-span-4 mt-16 space-y-3 rounded-t-full p-6"
           style={{
-            backgroundColor: alteredHexToRgbaPercent(colorHex),
+            backgroundColor:
+              "color-mix(in srgb, var(--accent) 12%, transparent)",
           }}
         >
           <PersonalInfoHeader resumeData={resumeData} />
@@ -202,7 +197,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     {resumeData.workExperiences?.map((exp, index) => (
                       <li
                         key={index}
-                        className="relative z-10 break-inside-avoid before:absolute before:-left-4 before:top-0 before:z-10 before:h-3 before:w-3 before:rounded-full before:border-[1px] before:border-zinc-900 before:bg-white after:absolute after:-left-[11px] after:top-0 after:z-0 after:h-full after:w-px after:bg-zinc-900"
+                        className="relative z-10 break-inside-avoid before:absolute before:-left-4 before:top-0 before:z-10 before:h-3 before:w-3 before:rounded-full before:border-[1px] before:bg-white before:[border-color:var(--accent)] after:absolute after:-left-[11px] after:top-0 after:z-0 after:h-full after:w-px after:bg-[var(--accent)]"
                       >
                         <div className="!m-0 flex items-center justify-between">
                           <span className="text-[1.2em] font-semibold">
@@ -388,11 +383,11 @@ function Heading({ children }: { children: string }) {
   return (
     <>
       <div className="grid break-inside-avoid grid-cols-6 items-center">
-        <h1 className="col-span-3 text-wrap text-[1.2em] font-semibold uppercase">
+        <h1 className="col-span-3 text-wrap text-[1.2em] font-semibold uppercase text-[var(--accent)]">
           {children}
         </h1>
         <div className="col-span-3 flex items-center justify-end">
-          <div className="h-0.5 w-10/12 bg-zinc-700" />
+          <div className="h-0.5 w-10/12 bg-[var(--accent)]" />
         </div>
       </div>
     </>
