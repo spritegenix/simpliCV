@@ -69,28 +69,30 @@ function adaptLegacyTemplateComponent(
     const legacy = toLegacyResumeValues(resumeData);
     const isAts = styleId.startsWith("ats");
 
+    const sharedVars = {
+      "--base-font": `${resumeData.design.typography.baseFontSize}px`,
+      "--text": resumeData.design.color.text,
+      "--accent": resumeData.design.color.accent,
+      "--section-gap": `${resumeData.design.spacing.sectionGap}px`,
+      "--resume-border-style": resumeData.design.decorations.borderStyle,
+    };
+
+    const atsVars = isAts
+      ? {
+          "--resume-base-font-size": `${resumeData.design.typography.baseFontSize}px`,
+          "--resume-font-family": fontFamilyToCss(
+            resumeData.design.typography.fontFamily,
+          ),
+          "--resume-text-color": resumeData.design.color.text,
+          "--resume-accent-color": resumeData.design.color.accent,
+          "--resume-section-gap": `${resumeData.design.spacing.sectionGap}px`,
+        }
+      : {};
+
     return (
       <div
         data-resume-design-scope={isAts ? "ats" : undefined}
-        style={
-          (isAts
-            ? {
-                "--resume-base-font-size": `${resumeData.design.typography.baseFontSize}px`,
-                "--resume-font-family": fontFamilyToCss(
-                  resumeData.design.typography.fontFamily,
-                ),
-                "--resume-text-color": resumeData.design.color.text,
-                "--resume-accent-color": resumeData.design.color.accent,
-                "--resume-section-gap": `${resumeData.design.spacing.sectionGap}px`,
-                "--resume-border-style":
-                  resumeData.design.decorations.borderStyle,
-                "--base-font": `${resumeData.design.typography.baseFontSize}px`,
-                "--text": resumeData.design.color.text,
-                "--accent": resumeData.design.color.accent,
-                "--section-gap": `${resumeData.design.spacing.sectionGap}px`,
-              }
-            : undefined) as React.CSSProperties | undefined
-        }
+        style={{ ...sharedVars, ...atsVars } as React.CSSProperties}
       >
         <LegacyComponent resumeData={legacy} className={className} />
       </div>

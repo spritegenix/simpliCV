@@ -265,34 +265,6 @@ export default function ModernSidebar({
                   />
                 </div>
               )}
-
-              {/* LANGUAGES (Mock) - "Languages with percentage bars" */}
-              {/* Using a static mock or repurposing data if available. Since strict "Languages section" demanded. */}
-              <div>
-                <SectionHeaderMain title="Languages" colorHex={primaryColor} />
-                <div className="space-y-3">
-                  {["English", "Spanish", "French"].map((lang, idx) => (
-                    <div key={idx}>
-                      <div className="mb-1 flex justify-between text-[10px] font-bold text-slate-600">
-                        <span>{lang}</span>
-                        <span>
-                          {idx === 0 ? "100%" : idx === 1 ? "80%" : "60%"}
-                        </span>
-                      </div>
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                        <div
-                          className="h-full rounded-full"
-                          style={{
-                            width:
-                              idx === 0 ? "100%" : idx === 1 ? "80%" : "60%",
-                            backgroundColor: primaryColor,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>
