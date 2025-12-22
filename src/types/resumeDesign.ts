@@ -1,4 +1,8 @@
 export type ResumeDesign = {
+  formatting: {
+    /** date-fns format string (e.g. "MMM yyyy", "MM/dd/yyyy") */
+    dateFormat: string;
+  };
   color: {
     text: string;
     accent: string;

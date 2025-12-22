@@ -6,19 +6,25 @@ import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { resumeSchema, ResumeValues } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
 // import { del, put } from "@vercel/blob";
-// import { uploadToS3, deleteFromS3 } from "@/lib/s3"; 
+// import { uploadToS3, deleteFromS3 } from "@/lib/s3";
 import { deleteFromS3 } from "@/lib/s3";
 // import path from "path";
-
-
 
 export async function saveResume(values: ResumeValues) {
   const { id } = values;
 
   // console.log("received values", values);
 
-  const { photo, workExperiences, educations, certifications, others, projectWorks, skills, ...resumeValues } =
-    resumeSchema.parse(values);
+  const {
+    photo,
+    workExperiences,
+    educations,
+    certifications,
+    others,
+    projectWorks,
+    skills,
+    ...resumeValues
+  } = resumeSchema.parse(values);
 
   const { userId } = await auth();
 
@@ -32,7 +38,9 @@ export async function saveResume(values: ResumeValues) {
     const resumeCount = await prisma.resume.count({ where: { userId } });
 
     if (!canCreateResume(subscriptionLevel, resumeCount)) {
-      throw new Error("Maximum resume count reached for this subscription level");
+      throw new Error(
+        "Maximum resume count reached for this subscription level",
+      );
     }
   }
 
@@ -45,8 +53,10 @@ export async function saveResume(values: ResumeValues) {
   }
 
   const hasCustomizations =
-    (resumeValues.borderStyle && resumeValues.borderStyle !== existingResume?.borderStyle) ||
-    (resumeValues.colorHex && resumeValues.colorHex !== existingResume?.colorHex);
+    (resumeValues.borderStyle &&
+      resumeValues.borderStyle !== existingResume?.borderStyle) ||
+    (resumeValues.colorHex &&
+      resumeValues.colorHex !== existingResume?.colorHex);
 
   if (hasCustomizations && !canUseCustomizations(subscriptionLevel)) {
     throw new Error("Customizations not allowed for this subscription level");
@@ -78,7 +88,7 @@ export async function saveResume(values: ResumeValues) {
   //   newPhotoUrl = newUrl;
   // } else if (photo === null) {
   //   if (existingResume?.photoUrl) {
-  //     //-------> Vercel Bolb 
+  //     //-------> Vercel Bolb
   //     // await del(existingResume.photoUrl);
   //     //---------> S3
   //     const urlParts = new URL(existingResume.photoUrl);
@@ -111,9 +121,12 @@ export async function saveResume(values: ResumeValues) {
     newPhotoUrl = null;
   }
 
+  const { dateFormat: _dateFormat, ...resumeValuesWithoutDateFormat } =
+    resumeValues;
+
   // Sanitize resumeValues to remove nulls or undefined where not allowed
   const sanitizedResumeValues = {
-    ...resumeValues,
+    ...resumeValuesWithoutDateFormat,
     colorHex: resumeValues.colorHex || undefined, // Required in DB, default provided by DB if undefined, but if null we must use undefined
     borderStyle: resumeValues.borderStyle || undefined,
     // For other optional string fields that might be null from Zod, ensure they are compatible
@@ -170,16 +183,20 @@ export async function saveResume(values: ResumeValues) {
           deleteMany: {},
           create: projectWorks?.map((project) => ({
             ...project,
-            startDate: project.startDate ? new Date(project.startDate) : undefined,
+            startDate: project.startDate
+              ? new Date(project.startDate)
+              : undefined,
             endDate: project.endDate ? new Date(project.endDate) : undefined,
           })),
         },
-        others: others ? {
-          upsert: {
-            update: { ...others },
-            create: { ...others },
-          },
-        } : undefined,
+        others: others
+          ? {
+              upsert: {
+                update: { ...others },
+                create: { ...others },
+              },
+            }
+          : undefined,
       },
     });
   } else {
@@ -215,12 +232,14 @@ export async function saveResume(values: ResumeValues) {
         projectWorks: {
           create: projectWorks?.map((project) => ({
             ...project,
-            startDate: project.startDate ? new Date(project.startDate) : undefined,
+            startDate: project.startDate
+              ? new Date(project.startDate)
+              : undefined,
             endDate: project.endDate ? new Date(project.endDate) : undefined,
           })),
         },
         others: {
-          create: others || undefined
+          create: others || undefined,
         },
       },
     });

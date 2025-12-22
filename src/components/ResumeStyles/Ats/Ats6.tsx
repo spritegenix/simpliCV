@@ -8,6 +8,10 @@ import React, { useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
 import Link from "next/link";
 import { BiSolidMap } from "react-icons/bi";
+import {
+  normalizeSectionOrder,
+  type ResumeSectionKey,
+} from "@/lib/sectionOrder";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -19,6 +23,227 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
 
   const { width } = useDimensions(containerRef);
   const dateFormat = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
+
+  const orderedSections = normalizeSectionOrder(resumeData.sectionOrder);
+  const leftColumnKeys: ResumeSectionKey[] = [
+    "summary",
+    "workExperiences",
+    "projectWorks",
+  ];
+  const rightColumnKeys: ResumeSectionKey[] = [
+    "skills",
+    "educations",
+    "certifications",
+    "others",
+  ];
+  const leftOrder = orderedSections.filter((k) => leftColumnKeys.includes(k));
+  const rightOrder = orderedSections.filter((k) => rightColumnKeys.includes(k));
+
+  const sections: Record<ResumeSectionKey, React.ReactNode> = {
+    summary: resumeData.summary ? (
+      <section className="mb-[var(--section-gap)] break-inside-avoid">
+        <Heading isBorder={false}>Profile</Heading>
+        <Text className="text-justify">{resumeData.summary}</Text>
+      </section>
+    ) : null,
+    workExperiences:
+      !!resumeData?.workExperiences &&
+      resumeData?.workExperiences?.length > 0 ? (
+        <section className="mb-[var(--section-gap)] break-inside-avoid">
+          <Heading>Experience</Heading>
+          <ul className="relative !mt-0 space-y-[calc(var(--section-gap)*0.25)] pl-4">
+            <div className="absolute inset-y-0 left-1 h-full w-0 border border-l [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+            {resumeData.workExperiences?.map((exp, index) => (
+              <li key={index} className="relative z-10 break-inside-avoid">
+                <span
+                  className="absolute -left-[0.885rem] top-1.5 h-[6px] w-[6px] rounded-full"
+                  style={{
+                    backgroundColor: "var(--accent)",
+                  }}
+                />
+                <div className="!m-0 flex items-center justify-between">
+                  <span className="text-[1.2em] font-semibold text-[var(--accent)]">
+                    {exp.company}
+                  </span>
+                  {exp.jobLocation && <span>{exp.jobLocation}</span>}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[1.1em] font-semibold italic">
+                    {exp.position}
+                  </span>
+                  {exp.startDate && (
+                    <span>
+                      {safeFormatDate(exp.startDate, dateFormat)} -{" "}
+                      {exp.endDate
+                        ? safeFormatDate(exp.endDate, dateFormat)
+                        : "now"}
+                    </span>
+                  )}
+                </div>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: exp.description || "",
+                  }}
+                  className="richTextEditorStyle whitespace-pre-line"
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null,
+    projectWorks:
+      !!resumeData.projectWorks && resumeData.projectWorks?.length > 0 ? (
+        <section className="mb-[var(--section-gap)] break-inside-avoid">
+          <Heading>Project Work</Heading>
+          <ul className="relative space-y-[calc(var(--section-gap)*0.25)] pl-4">
+            <div className="absolute inset-y-0 left-1 h-full w-0 border border-l [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+            {resumeData.projectWorks?.map((item, index) => (
+              <li key={index} className="relative z-10 break-inside-avoid">
+                <span
+                  className="absolute -left-[0.885rem] top-1.5 h-[6px] w-[6px] rounded-full"
+                  style={{
+                    backgroundColor: "var(--accent)",
+                  }}
+                />
+                <div className="!m-0 flex justify-between gap-1">
+                  <p className="flex gap-1">
+                    <Link
+                      href={
+                        !!item?.links && item?.links[0] ? item?.links[0] : "#"
+                      }
+                      target="_blank"
+                      className="text-[1.2em] font-semibold text-[var(--accent)]"
+                    >
+                      {item.title}
+                    </Link>
+                    {!!item.links &&
+                      item.links.map((l, index) => (
+                        <span key={index} className="mr-1 mt-1">
+                          <ContactLinks href={l} text={"NO_TEXT"} />
+                        </span>
+                      ))}
+                  </p>
+                  <p className="flex flex-col text-right">
+                    {item.company && (
+                      <span className="italic">{item.company}</span>
+                    )}
+                    {item.startDate && (
+                      <span>
+                        {item.startDate &&
+                          `${safeFormatDate(item.startDate, dateFormat)} - `}
+                        {item.endDate
+                          ? safeFormatDate(item.endDate, dateFormat)
+                          : "present"}
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: item.description || "",
+                  }}
+                  className="richTextEditorStyle whitespace-pre-line"
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null,
+    skills:
+      !!resumeData.skills && resumeData.skills?.length > 0 ? (
+        <section className="mb-[var(--section-gap)] break-inside-avoid">
+          <Heading isBorder={!resumeData.photo ? false : true}>Skills</Heading>
+          {resumeData.skills?.map((skill, index) => (
+            <div key={index} className="!m-0 break-inside-avoid">
+              <div className="!m-0 flex items-center justify-between">
+                <p>
+                  <span className="font-semibold">{skill.title}</span>
+                  {skill.skillName && skill.skillName.length > 0 && (
+                    <span>- {skill.skillName?.join(", ")}</span>
+                  )}
+                </p>
+              </div>
+              <p className="whitespace-pre-line"></p>
+            </div>
+          ))}
+        </section>
+      ) : null,
+    educations:
+      !!resumeData.educations && resumeData.educations?.length > 0 ? (
+        <section className="mb-[var(--section-gap)] break-inside-avoid">
+          <Heading>Education</Heading>
+          {resumeData.educations?.map((edu, index) => (
+            <div
+              key={index}
+              className={cn(
+                "!m-0 break-inside-avoid",
+                index !== (resumeData.educations?.length ?? 0) - 1 && "pb-2",
+              )}
+            >
+              <div className="!m-0">
+                <p>
+                  {edu.startDate &&
+                    `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
+                  {edu.endDate
+                    ? safeFormatDate(edu.endDate, dateFormat)
+                    : "now"}
+                </p>
+                <p className="font-semibold">
+                  {edu.school}
+                  {edu.location && `, ${edu.location}`}
+                </p>{" "}
+              </div>
+              <ul className="!mt-0 list-disc pl-3">
+                {(edu.degree || edu.stream) && (
+                  <li className="">
+                    {edu.degree} {edu.stream && `(${edu.stream})`}
+                  </li>
+                )}
+                {edu.marks && <li>{edu.marks}</li>}
+                {edu.description && <li>{edu.description}</li>}
+              </ul>
+            </div>
+          ))}
+        </section>
+      ) : null,
+    certifications:
+      !!resumeData.certifications && resumeData.certifications?.length > 0 ? (
+        <section className="mb-[var(--section-gap)] break-inside-avoid">
+          <Heading>Certifications</Heading>
+          <div className={cn("!m-0")}>
+            {resumeData.certifications?.map((skill, index) => (
+              <div
+                key={index}
+                className={cn(
+                  "break-inside-avoid",
+                  index !== (resumeData.certifications?.length ?? 0) - 1 &&
+                    "pb-2",
+                )}
+              >
+                <Link
+                  href={skill.link ? skill.link : "#"}
+                  className="before:mr-1 before:content-['•']"
+                >
+                  {skill.title}
+                </Link>{" "}
+                {skill.description && <p>{skill.description}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null,
+    others: !!resumeData.others?.title ? (
+      <section className="mb-[var(--section-gap)] break-inside-avoid">
+        <Heading>{resumeData.others.title}</Heading>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: resumeData.others.description || "",
+          }}
+          className="richTextEditorStyle !mt-0 whitespace-pre-line"
+        />
+      </section>
+    ) : null,
+  };
 
   return (
     <div
@@ -43,125 +268,9 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
         <div className="grid h-full grid-cols-12 gap-x-3">
           {/* Left Side  */}
           <div className="col-span-8 space-y-3 p-3 pl-6">
-            {/* Summary */}
-            {resumeData.summary && (
-              <section className="mb-[var(--section-gap)] break-inside-avoid">
-                <Heading isBorder={false}>Profile</Heading>
-                <Text className="text-justify">{resumeData.summary}</Text>
-              </section>
-            )}
-            {/* Experience */}
-            {!!resumeData?.workExperiences &&
-              resumeData?.workExperiences?.length > 0 && (
-                <section className="mb-[var(--section-gap)] break-inside-avoid">
-                  <Heading>Experience</Heading>
-                  <ul className="relative !mt-0 space-y-[calc(var(--section-gap)*0.25)] pl-4">
-                    <div className="absolute inset-y-0 left-1 h-full w-0 border border-l [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
-                    {resumeData.workExperiences?.map((exp, index) => (
-                      <li
-                        key={index}
-                        className="relative z-10 break-inside-avoid"
-                      >
-                        <span
-                          className="absolute -left-[0.885rem] top-1.5 h-[6px] w-[6px] rounded-full"
-                          style={{
-                            backgroundColor: "var(--accent)",
-                          }}
-                        />
-                        <div className="!m-0 flex items-center justify-between">
-                          <span className="text-[1.2em] font-semibold text-[var(--accent)]">
-                            {exp.company}
-                          </span>
-                          {exp.jobLocation && <span>{exp.jobLocation}</span>}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-[1.1em] font-semibold italic">
-                            {exp.position}
-                          </span>
-                          {exp.startDate && (
-                            <span>
-                              {safeFormatDate(exp.startDate, dateFormat)} -{" "}
-                              {exp.endDate
-                                ? safeFormatDate(exp.endDate, dateFormat)
-                                : "Present"}
-                            </span>
-                          )}
-                        </div>
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: exp.description || "",
-                          }}
-                          className="richTextEditorStyle whitespace-pre-line"
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-            {/* Projects */}
-            {!!resumeData.projectWorks &&
-              resumeData.projectWorks?.length > 0 && (
-                <section className="mb-[var(--section-gap)] break-inside-avoid">
-                  <Heading>Project Work</Heading>
-                  <ul className="relative space-y-[calc(var(--section-gap)*0.25)] pl-4">
-                    <div className="absolute inset-y-0 left-1 h-full w-0 border border-l [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
-                    {resumeData.projectWorks?.map((item, index) => (
-                      <li
-                        key={index}
-                        className="relative z-10 break-inside-avoid"
-                      >
-                        <span
-                          className="absolute -left-[0.885rem] top-1.5 h-[6px] w-[6px] rounded-full"
-                          style={{
-                            backgroundColor: "var(--accent)",
-                          }}
-                        />
-                        <div className="!m-0 flex justify-between gap-1">
-                          <p className="flex gap-1">
-                            <Link
-                              href={
-                                !!item?.links && item?.links[0]
-                                  ? item?.links[0]
-                                  : "#"
-                              }
-                              target="_blank"
-                              className="text-[1.2em] font-semibold text-[var(--accent)]"
-                            >
-                              {item.title}
-                            </Link>
-                            {!!item.links &&
-                              item.links.map((l, index) => (
-                                <span key={index} className="mr-1 mt-1">
-                                  <ContactLinks href={l} text={"NO_TEXT"} />
-                                </span>
-                              ))}
-                          </p>
-                          <p className="flex flex-col text-right">
-                            {item.company && (
-                              <span className="italic">{item.company}</span>
-                            )}
-                            {item.startDate && (
-                              <span>
-                                {item.startDate &&
-                                  `${safeFormatDate(item.startDate, dateFormat)} - `}
-                                {item.endDate
-                                  ? safeFormatDate(item.endDate, dateFormat)
-                                  : "Present"}
-                              </span>
-                            )}
-                          </p>
-                        </div>
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: item.description || "",
-                          }}
-                          className="richTextEditorStyle whitespace-pre-line"
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
+            {leftOrder.map((key) => (
+              <React.Fragment key={key}>{sections[key]}</React.Fragment>
+            ))}
           </div>
           {/* Right Side  */}
           <div className="col-span-4 space-y-3 p-3 pr-6">
@@ -204,106 +313,9 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                 </div>
               </section>
             )}
-            {/* Skills  */}
-            {!!resumeData.skills && resumeData.skills?.length > 0 && (
-              <section className="mb-[var(--section-gap)] break-inside-avoid">
-                <Heading isBorder={!resumeData.photo ? false : true}>
-                  Skills
-                </Heading>
-                {resumeData.skills?.map((skill, index) => (
-                  <div key={index} className="!m-0 break-inside-avoid">
-                    <div className="!m-0 flex items-center justify-between">
-                      <p>
-                        <span className="font-semibold">{skill.title}</span>
-                        {skill.skillName && skill.skillName.length > 0 && (
-                          <span>- {skill.skillName?.join(", ")}</span>
-                        )}
-                      </p>
-                    </div>
-                    <p className="whitespace-pre-line"></p>
-                  </div>
-                ))}
-              </section>
-            )}
-            {/* Academics */}
-            {!!resumeData.educations && resumeData.educations?.length > 0 && (
-              <section className="mb-[var(--section-gap)] break-inside-avoid">
-                <Heading>Education</Heading>
-                {resumeData.educations?.map((edu, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "!m-0 break-inside-avoid",
-                      index !== (resumeData.educations?.length ?? 0) - 1 &&
-                        "pb-2",
-                    )}
-                  >
-                    <div className="!m-0">
-                      <p>
-                        {edu.startDate &&
-                          `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
-                        {edu.endDate
-                          ? safeFormatDate(edu.endDate, dateFormat)
-                          : "Present"}
-                      </p>
-                      <p className="font-semibold">
-                        {edu.school}
-                        {edu.location && `, ${edu.location}`}
-                      </p>{" "}
-                    </div>
-                    <ul className="!mt-0 list-disc pl-3">
-                      {(edu.degree || edu.stream) && (
-                        <li className="">
-                          {edu.degree} {edu.stream && `(${edu.stream})`}
-                        </li>
-                      )}
-                      {edu.marks && <li>{edu.marks}</li>}
-                      {edu.description && <li>{edu.description}</li>}
-                    </ul>
-                  </div>
-                ))}
-              </section>
-            )}
-            {/* Certifications  */}
-            {!!resumeData.certifications &&
-              resumeData.certifications?.length > 0 && (
-                <section className="mb-[var(--section-gap)] break-inside-avoid">
-                  <Heading>Certifications</Heading>
-                  <div className={cn("!m-0")}>
-                    {resumeData.certifications?.map((skill, index) => (
-                      <div
-                        key={index}
-                        className={cn(
-                          "break-inside-avoid",
-                          index !==
-                            (resumeData.certifications?.length ?? 0) - 1 &&
-                            "pb-2",
-                        )}
-                      >
-                        <Link
-                          href={skill.link ? skill.link : "#"}
-                          className="before:mr-1 before:content-['•']"
-                        >
-                          {skill.title}
-                        </Link>{" "}
-                        {skill.description && <p>{skill.description}</p>}
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
-            {/* Interest  */}
-            {!!resumeData.others?.title && (
-              <section className="mb-[var(--section-gap)] break-inside-avoid">
-                <Heading>{resumeData.others.title}</Heading>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: resumeData.others.description || "",
-                  }}
-                  className="richTextEditorStyle !mt-0 whitespace-pre-line"
-                />
-              </section>
-            )}
+            {rightOrder.map((key) => (
+              <React.Fragment key={key}>{sections[key]}</React.Fragment>
+            ))}
           </div>
         </div>
       </div>

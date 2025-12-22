@@ -2,6 +2,10 @@
 import useDimensions from "@/hooks/useDimensions";
 import { cn, getResumeDateFormat, safeFormatDate } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
+import {
+  normalizeSectionOrder,
+  type ResumeSectionKey,
+} from "@/lib/sectionOrder";
 import Link from "next/link";
 import React, { useRef } from "react";
 import { BiEnvelope, BiGlobe, BiPhone, BiSolidMap } from "react-icons/bi";
@@ -29,6 +33,212 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
     resumeData.dateFormat,
     "MM/yyyy",
   );
+
+  const orderedSections = normalizeSectionOrder(resumeData.sectionOrder);
+  const sections: Record<ResumeSectionKey, React.ReactNode> = {
+    summary: resumeData.summary ? (
+      <section>
+        <h3
+          className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
+          style={{ borderColor: colorHex }}
+        >
+          Profile
+        </h3>
+        <p className="text-justify text-sm leading-relaxed text-gray-800">
+          {resumeData.summary}
+        </p>
+      </section>
+    ) : null,
+    workExperiences:
+      resumeData.workExperiences && resumeData.workExperiences.length > 0 ? (
+        <section>
+          <h3
+            className="mb-3 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            style={{ borderColor: colorHex }}
+          >
+            Professional Experience
+          </h3>
+          <div className="space-y-4">
+            {resumeData.workExperiences.map((exp, index) => (
+              <div key={index}>
+                <div className="flex items-baseline justify-between">
+                  <h4 className="text-base font-bold text-gray-900">
+                    {exp.position}
+                  </h4>
+                  <span className="text-sm font-medium text-gray-600">
+                    {exp.startDate &&
+                      safeFormatDate(exp.startDate, dateFormatNumeric)}{" "}
+                    –{" "}
+                    {exp.endDate
+                      ? safeFormatDate(exp.endDate, dateFormatNumeric)
+                      : "present"}
+                  </span>
+                </div>
+                <div className="mb-1 flex items-baseline justify-between">
+                  <span className="italic text-gray-700">{exp.company}</span>
+                  {exp.jobLocation && (
+                    <span className="text-xs text-gray-500">
+                      {exp.jobLocation}
+                    </span>
+                  )}
+                </div>
+                <div
+                  className="richTextEditorStyle text-sm leading-snug text-gray-800"
+                  dangerouslySetInnerHTML={{
+                    __html: exp.description || "",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null,
+    educations:
+      resumeData.educations && resumeData.educations.length > 0 ? (
+        <section>
+          <h3
+            className="mb-3 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            style={{ borderColor: colorHex }}
+          >
+            Education
+          </h3>
+          <div className="space-y-3">
+            {resumeData.educations.map((edu, index) => (
+              <div key={index}>
+                <div className="flex items-baseline justify-between">
+                  <h4 className="text-base font-bold text-gray-900">
+                    {edu.degree}
+                  </h4>
+                  <span className="text-sm font-medium text-gray-600">
+                    {edu.startDate &&
+                      safeFormatDate(edu.startDate, dateFormatNumeric)}{" "}
+                    –{" "}
+                    {edu.endDate
+                      ? safeFormatDate(edu.endDate, dateFormatNumeric)
+                      : "now"}
+                  </span>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <span className="italic text-gray-700">{edu.school}</span>
+                  {edu.location && (
+                    <span className="text-xs text-gray-500">
+                      {edu.location}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null,
+    skills:
+      resumeData.skills && resumeData.skills.length > 0 ? (
+        <section>
+          <h3
+            className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            style={{ borderColor: colorHex }}
+          >
+            Skills
+          </h3>
+          <div className="text-sm leading-relaxed">
+            {resumeData.skills.map((skill, index) => (
+              <div key={index} className="mb-1">
+                <span className="font-bold text-gray-900">
+                  • {skill.title}:
+                </span>{" "}
+                <span className="text-gray-800">
+                  {skill.skillName?.join(", ")}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null,
+    projectWorks:
+      resumeData.projectWorks && resumeData.projectWorks.length > 0 ? (
+        <section>
+          <h3
+            className="mb-3 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            style={{ borderColor: colorHex }}
+          >
+            Projects
+          </h3>
+          <div className="space-y-3">
+            {resumeData.projectWorks.map((project, index) => (
+              <div key={index}>
+                <div className="flex items-baseline justify-between">
+                  <h4 className="font-bold text-gray-900">{project.title}</h4>
+                  <span className="text-sm text-gray-600">
+                    {project.startDate &&
+                      safeFormatDate(project.startDate, dateFormatNumeric)}
+                  </span>
+                </div>
+                {project.links && project.links.length > 0 && (
+                  <div className="mb-1 text-xs">
+                    {project.links.map((link, i) => (
+                      <Link
+                        key={i}
+                        href={link}
+                        target="_blank"
+                        className="mr-2 text-blue-700 hover:underline"
+                      >
+                        {link}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+                <div
+                  className="richTextEditorStyle text-sm text-gray-800"
+                  dangerouslySetInnerHTML={{
+                    __html: project.description || "",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null,
+    certifications:
+      resumeData.certifications && resumeData.certifications.length > 0 ? (
+        <section>
+          <h3
+            className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            style={{ borderColor: colorHex }}
+          >
+            Awards & Certifications
+          </h3>
+          <ul className="list-none space-y-1 text-sm text-gray-800">
+            {resumeData.certifications.map((cert, index) => (
+              <li key={index}>
+                <span className="font-bold">{cert.title}</span>
+                {cert.description && (
+                  <span className="block pl-2 italic text-gray-600">
+                    {cert.description}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null,
+    others:
+      resumeData.others?.title || resumeData.others?.description ? (
+        <section>
+          <h3
+            className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            style={{ borderColor: colorHex }}
+          >
+            {resumeData.others?.title || "Other"}
+          </h3>
+          <div
+            className="richTextEditorStyle text-sm leading-snug text-gray-800"
+            dangerouslySetInnerHTML={{
+              __html: resumeData.others?.description || "",
+            }}
+          />
+        </section>
+      ) : null,
+  };
 
   return (
     <div
@@ -124,200 +334,9 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
           </div>
         </header>
 
-        {/* Summary */}
-        {resumeData.summary && (
-          <section>
-            <h3
-              className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
-              style={{ borderColor: colorHex }}
-            >
-              Profile
-            </h3>
-            <p className="text-justify text-sm leading-relaxed text-gray-800">
-              {resumeData.summary}
-            </p>
-          </section>
-        )}
-
-        {/* Experience */}
-        {resumeData.workExperiences &&
-          resumeData.workExperiences.length > 0 && (
-            <section>
-              <h3
-                className="mb-3 border-b-2 border-gray-800 text-sm font-bold uppercase"
-                style={{ borderColor: colorHex }}
-              >
-                Professional Experience
-              </h3>
-              <div className="space-y-4">
-                {resumeData.workExperiences.map((exp, index) => (
-                  <div key={index}>
-                    <div className="flex items-baseline justify-between">
-                      <h4 className="text-base font-bold text-gray-900">
-                        {exp.position}
-                      </h4>
-                      <span className="text-sm font-medium text-gray-600">
-                        {exp.startDate &&
-                          safeFormatDate(exp.startDate, dateFormatNumeric)}{" "}
-                        –{" "}
-                        {exp.endDate
-                          ? safeFormatDate(exp.endDate, dateFormatNumeric)
-                          : "Present"}
-                      </span>
-                    </div>
-                    <div className="mb-1 flex items-baseline justify-between">
-                      <span className="italic text-gray-700">
-                        {exp.company}
-                      </span>
-                      {exp.jobLocation && (
-                        <span className="text-xs text-gray-500">
-                          {exp.jobLocation}
-                        </span>
-                      )}
-                    </div>
-                    <div
-                      className="richTextEditorStyle text-sm leading-snug text-gray-800"
-                      dangerouslySetInnerHTML={{
-                        __html: exp.description || "",
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-        {/* Education */}
-        {resumeData.educations && resumeData.educations.length > 0 && (
-          <section>
-            <h3
-              className="mb-3 border-b-2 border-gray-800 text-sm font-bold uppercase"
-              style={{ borderColor: colorHex }}
-            >
-              Education
-            </h3>
-            <div className="space-y-3">
-              {resumeData.educations.map((edu, index) => (
-                <div key={index}>
-                  <div className="flex items-baseline justify-between">
-                    <h4 className="text-base font-bold text-gray-900">
-                      {edu.degree}
-                    </h4>
-                    <span className="text-sm font-medium text-gray-600">
-                      {edu.startDate &&
-                        safeFormatDate(edu.startDate, dateFormatNumeric)}{" "}
-                      –{" "}
-                      {edu.endDate
-                        ? safeFormatDate(edu.endDate, dateFormatNumeric)
-                        : "Present"}
-                    </span>
-                  </div>
-                  <div className="flex items-baseline justify-between">
-                    <span className="italic text-gray-700">{edu.school}</span>
-                    {edu.location && (
-                      <span className="text-xs text-gray-500">
-                        {edu.location}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Skills */}
-        {resumeData.skills && resumeData.skills.length > 0 && (
-          <section>
-            <h3
-              className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
-              style={{ borderColor: colorHex }}
-            >
-              Skills
-            </h3>
-            <div className="text-sm leading-relaxed">
-              {resumeData.skills.map((skill, index) => (
-                <div key={index} className="mb-1">
-                  <span className="font-bold text-gray-900">
-                    • {skill.title}:
-                  </span>{" "}
-                  <span className="text-gray-800">
-                    {skill.skillName?.join(", ")}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Projects */}
-        {resumeData.projectWorks && resumeData.projectWorks.length > 0 && (
-          <section>
-            <h3
-              className="mb-3 border-b-2 border-gray-800 text-sm font-bold uppercase"
-              style={{ borderColor: colorHex }}
-            >
-              Projects
-            </h3>
-            <div className="space-y-3">
-              {resumeData.projectWorks.map((project, index) => (
-                <div key={index}>
-                  <div className="flex items-baseline justify-between">
-                    <h4 className="font-bold text-gray-900">{project.title}</h4>
-                    <span className="text-sm text-gray-600">
-                      {project.startDate &&
-                        safeFormatDate(project.startDate, dateFormatNumeric)}
-                    </span>
-                  </div>
-                  {project.links && project.links.length > 0 && (
-                    <div className="mb-1 text-xs">
-                      {project.links.map((link, i) => (
-                        <Link
-                          key={i}
-                          href={link}
-                          target="_blank"
-                          className="mr-2 text-blue-700 hover:underline"
-                        >
-                          {link}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                  <div
-                    className="richTextEditorStyle text-sm text-gray-800"
-                    dangerouslySetInnerHTML={{
-                      __html: project.description || "",
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Certifications (Awards/Languages mapped here if needed visually, but using standard fields) */}
-        {resumeData.certifications && resumeData.certifications.length > 0 && (
-          <section>
-            <h3
-              className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
-              style={{ borderColor: colorHex }}
-            >
-              Awards & Certifications
-            </h3>
-            <ul className="list-none space-y-1 text-sm text-gray-800">
-              {resumeData.certifications.map((cert, index) => (
-                <li key={index}>
-                  <span className="font-bold">{cert.title}</span>
-                  {cert.description && (
-                    <span className="block pl-2 italic text-gray-600">
-                      {cert.description}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+        {orderedSections.map((key) => (
+          <React.Fragment key={key}>{sections[key]}</React.Fragment>
+        ))}
       </div>
     </div>
   );

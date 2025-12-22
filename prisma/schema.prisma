@@ -15,6 +15,8 @@ model Resume {
   description     String?
   photoUrl        String?
   colorHex        String           @default("#000000")
+  dateFormat      String?
+  sectionOrder    String[]         @default([])
   borderStyle     String           @default("squircle")
   baseFontSize    Int              @default(10)
   summary         String?

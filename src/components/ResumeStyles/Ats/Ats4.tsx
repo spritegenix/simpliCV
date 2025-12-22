@@ -8,6 +8,10 @@ import React, { useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
 import Link from "next/link";
 import { BiSolidMap } from "react-icons/bi";
+import {
+  normalizeSectionOrder,
+  type ResumeSectionKey,
+} from "@/lib/sectionOrder";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -27,6 +31,20 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
     resumeData.colorHex === "#000000" ? "#545454" : resumeData.colorHex;
 
   const dateFormat = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
+
+  const orderedSections = normalizeSectionOrder(resumeData.sectionOrder);
+  const leftColumnKeys: ResumeSectionKey[] = [
+    "skills",
+    "educations",
+    "certifications",
+    "others",
+  ];
+  const rightColumnKeys: ResumeSectionKey[] = [
+    "workExperiences",
+    "projectWorks",
+  ];
+  const leftOrder = orderedSections.filter((k) => leftColumnKeys.includes(k));
+  const rightOrder = orderedSections.filter((k) => rightColumnKeys.includes(k));
 
   return (
     <div
@@ -71,229 +89,259 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
           />
           {/* Left Side  */}
           <div className="col-span-5 space-y-3 pl-6 pr-3">
-            {/* Skills  */}
-            {!!resumeData.skills && resumeData.skills?.length > 0 && (
-              <>
-                <Heading colorHex={colorHex} className="w-28">
-                  Skills
-                </Heading>
-                {resumeData.skills?.map((skill, index) => (
-                  <div key={index} className="!m-0 break-inside-avoid">
-                    <div className="!m-0 flex items-center justify-between">
-                      <p>
-                        <span className="font-semibold">{skill.title}</span>
-                        {skill.skillName && skill.skillName.length > 0 && (
-                          <span>- {skill.skillName?.join(", ")}</span>
-                        )}
-                      </p>
-                    </div>
-                    <p className="whitespace-pre-line"></p>
-                  </div>
-                ))}
-              </>
-            )}
-            {/* Academics */}
-            {!!resumeData.educations && resumeData.educations?.length > 0 && (
-              <>
-                <Heading colorHex={colorHex} className="w-32">
-                  Education
-                </Heading>
-                {resumeData.educations?.map((edu, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "!m-0 break-inside-avoid",
-                      index !== (resumeData.educations?.length ?? 0) - 1 &&
-                        "pb-2",
-                    )}
-                  >
-                    <ul className="!mt-0 pl-3">
-                      <li className="font-semibold">
-                        {edu.school}
-                        {edu.location && `, ${edu.location}`}
-                      </li>
-                      {(edu.degree || edu.stream) && (
-                        <li className="">
-                          {edu.degree} {edu.stream && `(${edu.stream})`}
-                        </li>
-                      )}
-                      <li className="flex w-full justify-between">
-                        {edu.marks && <span>{edu.marks}</span>}
-                        <span>
-                          {edu.startDate &&
-                            `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
-                          {edu.endDate
-                            ? safeFormatDate(edu.endDate, dateFormat)
-                            : "Present"}
-                        </span>
-                      </li>
-                      {edu.description && (
-                        <li className="italic">{edu.description}</li>
-                      )}
-                    </ul>
-                  </div>
-                ))}
-              </>
-            )}
-            {/* Certifications  */}
-            {!!resumeData.certifications &&
-              resumeData.certifications?.length > 0 && (
-                <>
-                  <Heading colorHex={colorHex} className="w-36">
-                    Certifications
-                  </Heading>
-                  <div className={cn("!m-0")}>
-                    {resumeData.certifications?.map((skill, index) => (
-                      <div
-                        key={index}
-                        className={cn(
-                          "break-inside-avoid",
-                          index !==
-                            (resumeData.certifications?.length ?? 0) - 1 &&
-                            "pb-2",
-                        )}
-                      >
-                        <Link
-                          href={skill.link ? skill.link : "#"}
-                          className="before:mr-1 before:content-['•']"
+            {(() => {
+              const sections: Record<ResumeSectionKey, React.ReactNode> = {
+                summary: null,
+                workExperiences: null,
+                projectWorks: null,
+                skills:
+                  !!resumeData.skills && resumeData.skills?.length > 0 ? (
+                    <>
+                      <Heading colorHex={colorHex} className="w-28">
+                        Skills
+                      </Heading>
+                      {resumeData.skills?.map((skill, index) => (
+                        <div key={index} className="!m-0 break-inside-avoid">
+                          <div className="!m-0 flex items-center justify-between">
+                            <p>
+                              <span className="font-semibold">
+                                {skill.title}
+                              </span>
+                              {skill.skillName &&
+                                skill.skillName.length > 0 && (
+                                  <span>- {skill.skillName?.join(", ")}</span>
+                                )}
+                            </p>
+                          </div>
+                          <p className="whitespace-pre-line"></p>
+                        </div>
+                      ))}
+                    </>
+                  ) : null,
+                educations:
+                  !!resumeData.educations &&
+                  resumeData.educations?.length > 0 ? (
+                    <>
+                      <Heading colorHex={colorHex} className="w-32">
+                        Education
+                      </Heading>
+                      {resumeData.educations?.map((edu, index) => (
+                        <div
+                          key={index}
+                          className={cn(
+                            "!m-0 break-inside-avoid",
+                            index !==
+                              (resumeData.educations?.length ?? 0) - 1 &&
+                              "pb-2",
+                          )}
                         >
-                          {skill.title}
-                        </Link>{" "}
-                        {skill.description && <p>{skill.description}</p>}
+                          <ul className="!mt-0 pl-3">
+                            <li className="font-semibold">
+                              {edu.school}
+                              {edu.location && `, ${edu.location}`}
+                            </li>
+                            {(edu.degree || edu.stream) && (
+                              <li className="">
+                                {edu.degree} {edu.stream && `(${edu.stream})`}
+                              </li>
+                            )}
+                            <li className="flex w-full justify-between">
+                              {edu.marks && <span>{edu.marks}</span>}
+                              <span>
+                                {edu.startDate &&
+                                  `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
+                                {edu.endDate
+                                  ? safeFormatDate(edu.endDate, dateFormat)
+                                  : "now"}
+                              </span>
+                            </li>
+                            {edu.description && (
+                              <li className="italic">{edu.description}</li>
+                            )}
+                          </ul>
+                        </div>
+                      ))}
+                    </>
+                  ) : null,
+                certifications:
+                  !!resumeData.certifications &&
+                  resumeData.certifications?.length > 0 ? (
+                    <>
+                      <Heading colorHex={colorHex} className="w-36">
+                        Certifications
+                      </Heading>
+                      <div className={cn("!m-0")}>
+                        {resumeData.certifications?.map((skill, index) => (
+                          <div
+                            key={index}
+                            className={cn(
+                              "break-inside-avoid",
+                              index !==
+                                (resumeData.certifications?.length ?? 0) - 1 &&
+                                "pb-2",
+                            )}
+                          >
+                            <Link
+                              href={skill.link ? skill.link : "#"}
+                              className="before:mr-1 before:content-['•']"
+                            >
+                              {skill.title}
+                            </Link>{" "}
+                            {skill.description && <p>{skill.description}</p>}
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            {/* Interest  */}
-            {!!resumeData.others?.title && (
-              <>
-                <Heading colorHex={colorHex} className="w-28">
-                  {resumeData.others.title}
-                </Heading>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: resumeData.others.description || "",
-                  }}
-                  className="richTextEditorStyle !mt-0 whitespace-pre-line"
-                />
-              </>
-            )}
+                    </>
+                  ) : null,
+                others: !!resumeData.others?.title ? (
+                  <>
+                    <Heading colorHex={colorHex} className="w-28">
+                      {resumeData.others.title}
+                    </Heading>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: resumeData.others.description || "",
+                      }}
+                      className="richTextEditorStyle !mt-0 whitespace-pre-line"
+                    />
+                  </>
+                ) : null,
+              };
+
+              return leftOrder.map((key) => (
+                <React.Fragment key={key}>{sections[key]}</React.Fragment>
+              ));
+            })()}
           </div>
           {/* Right Side  */}
           <div className="col-span-7 space-y-3 pl-3 pr-6">
-            {/* Experience */}
-            {!!resumeData?.workExperiences &&
-              resumeData?.workExperiences?.length > 0 && (
-                <>
-                  <Heading colorHex={colorHex} className="w-36">
-                    Experience
-                  </Heading>
-                  <ul className="relative space-y-1 pl-4">
-                    <div className="absolute inset-y-0 left-1 h-full w-0 border border-l border-zinc-300" />
-                    {resumeData.workExperiences?.map((exp, index) => (
-                      <li
-                        key={index}
-                        className="relative z-10 break-inside-avoid"
-                      >
-                        <span
-                          className="absolute -left-[0.885rem] top-1.5 h-[6px] w-[6px] rounded-full"
-                          style={{
-                            backgroundColor: colorHex,
-                          }}
-                        />
-                        <div className="!m-0 flex items-center justify-between">
-                          <span
-                            className="text-[1.2em] font-semibold"
-                            style={{
-                              color: colorHex,
-                            }}
+            {(() => {
+              const sections: Record<ResumeSectionKey, React.ReactNode> = {
+                summary: null,
+                skills: null,
+                educations: null,
+                certifications: null,
+                others: null,
+                workExperiences:
+                  !!resumeData?.workExperiences &&
+                  resumeData?.workExperiences?.length > 0 ? (
+                    <>
+                      <Heading colorHex={colorHex} className="w-36">
+                        Experience
+                      </Heading>
+                      <ul className="relative space-y-1 pl-4">
+                        <div className="absolute inset-y-0 left-1 h-full w-0 border border-l border-zinc-300" />
+                        {resumeData.workExperiences?.map((exp, index) => (
+                          <li
+                            key={index}
+                            className="relative z-10 break-inside-avoid"
                           >
-                            {exp.company}
-                          </span>
-                          {exp.jobLocation && <span>{exp.jobLocation}</span>}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-[1.1em] font-semibold italic">
-                            {exp.position}
-                          </span>
-                          {exp.startDate && (
-                            <span>
-                              {safeFormatDate(exp.startDate, dateFormat)} -{" "}
-                              {exp.endDate
-                                ? safeFormatDate(exp.endDate, dateFormat)
-                                : "Present"}
-                            </span>
-                          )}
-                        </div>
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: exp.description || "",
-                          }}
-                          className="richTextEditorStyle whitespace-pre-line"
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            {/* Projects */}
-            {!!resumeData.projectWorks &&
-              resumeData.projectWorks?.length > 0 && (
-                <>
-                  <Heading colorHex={colorHex} className="w-40">
-                    Project Work
-                  </Heading>
-                  {resumeData.projectWorks?.map((item, index) => (
-                    <div key={index} className="!m-0 break-inside-avoid">
-                      <div className="!m-0 flex justify-between gap-1">
-                        <p className="flex gap-1">
-                          <Link
-                            href={
-                              !!item?.links && item?.links[0]
-                                ? item?.links[0]
-                                : "#"
-                            }
-                            target="_blank"
-                            className="text-[1.2em] font-semibold"
-                            style={{
-                              color: colorHex,
-                            }}
-                          >
-                            {item.title}
-                          </Link>
-                          {!!item.links &&
-                            item.links.map((l, index) => (
-                              <span key={index} className="mr-1 mt-1">
-                                <ContactLinks href={l} text={"NO_TEXT"} />
+                            <span
+                              className="absolute -left-[0.885rem] top-1.5 h-[6px] w-[6px] rounded-full"
+                              style={{
+                                backgroundColor: colorHex,
+                              }}
+                            />
+                            <div className="!m-0 flex items-center justify-between">
+                              <span
+                                className="text-[1.2em] font-semibold"
+                                style={{
+                                  color: colorHex,
+                                }}
+                              >
+                                {exp.company}
                               </span>
-                            ))}
-                        </p>
-                        <p className="flex flex-col text-right">
-                          {item.company && (
-                            <span className="italic">{item.company}</span>
-                          )}
-                          {item.startDate && (
-                            <span>
-                              {item.startDate &&
-                                `${safeFormatDate(item.startDate, dateFormat)} - `}
-                              {item.endDate
-                                ? safeFormatDate(item.endDate, dateFormat)
-                                : "Present"}
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: item.description || "",
-                        }}
-                        className="richTextEditorStyle whitespace-pre-line"
-                      />
-                    </div>
-                  ))}
-                </>
-              )}
+                              {exp.jobLocation && (
+                                <span>{exp.jobLocation}</span>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-[1.1em] font-semibold italic">
+                                {exp.position}
+                              </span>
+                              {exp.startDate && (
+                                <span>
+                                  {safeFormatDate(exp.startDate, dateFormat)} -{" "}
+                                  {exp.endDate
+                                    ? safeFormatDate(exp.endDate, dateFormat)
+                                    : "now"}
+                                </span>
+                              )}
+                            </div>
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: exp.description || "",
+                              }}
+                              className="richTextEditorStyle whitespace-pre-line"
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : null,
+                projectWorks:
+                  !!resumeData.projectWorks &&
+                  resumeData.projectWorks?.length > 0 ? (
+                    <>
+                      <Heading colorHex={colorHex} className="w-40">
+                        Project Work
+                      </Heading>
+                      {resumeData.projectWorks?.map((item, index) => (
+                        <div key={index} className="!m-0 break-inside-avoid">
+                          <div className="!m-0 flex justify-between gap-1">
+                            <p className="flex gap-1">
+                              <Link
+                                href={
+                                  !!item?.links && item?.links[0]
+                                    ? item?.links[0]
+                                    : "#"
+                                }
+                                target="_blank"
+                                className="text-[1.2em] font-semibold"
+                                style={{
+                                  color: colorHex,
+                                }}
+                              >
+                                {item.title}
+                              </Link>
+                              {!!item.links &&
+                                item.links.map((l, index) => (
+                                  <span key={index} className="mr-1 mt-1">
+                                    <ContactLinks href={l} text={"NO_TEXT"} />
+                                  </span>
+                                ))}
+                            </p>
+                            <p className="flex flex-col text-right">
+                              {item.company && (
+                                <span className="italic">{item.company}</span>
+                              )}
+                              {item.startDate && (
+                                <span>
+                                  {item.startDate &&
+                                    `${safeFormatDate(item.startDate, dateFormat)} - `}
+                                  {item.endDate
+                                    ? safeFormatDate(item.endDate, dateFormat)
+                                    : "present"}
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: item.description || "",
+                            }}
+                            className="richTextEditorStyle whitespace-pre-line"
+                          />
+                        </div>
+                      ))}
+                    </>
+                  ) : null,
+              };
+
+              return rightOrder.map((key) => (
+                <React.Fragment key={key}>{sections[key]}</React.Fragment>
+              ));
+            })()}
           </div>
         </div>
       </div>

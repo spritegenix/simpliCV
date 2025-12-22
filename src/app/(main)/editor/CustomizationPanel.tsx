@@ -14,6 +14,13 @@ import FooterSection from "@/components/customisation/FooterSection";
 import AdvancedSection from "@/components/customisation/AdvancedSection";
 import PersonalDetails from "@/components/customisation/PersonalDetails";
 import NameSection from "@/components/customisation/NameSection";
+import {
+  SECTION_TITLES,
+  getSectionTitle,
+  normalizeSectionOrder,
+  type ResumeSectionKey,
+} from "@/lib/sectionOrder";
+import type { ResumeValues } from "@/lib/validation";
 
 interface CustomizationPanelProps {
   resumeData: ResumeDocument;
@@ -25,6 +32,53 @@ export default function CustomizationPanel({
   setResumeData,
 }: CustomizationPanelProps) {
   const noop = () => {};
+
+  const isNonEmptyString = (value: unknown): value is string =>
+    typeof value === "string" && value.trim().length > 0;
+
+  const sectionHasContent = (key: ResumeSectionKey, content: ResumeValues) => {
+    switch (key) {
+      case "summary":
+        return isNonEmptyString(content.summary);
+      case "workExperiences":
+        return (
+          Array.isArray(content.workExperiences) &&
+          content.workExperiences.length > 0
+        );
+      case "projectWorks":
+        return (
+          Array.isArray(content.projectWorks) && content.projectWorks.length > 0
+        );
+      case "skills":
+        return (
+          Array.isArray(content.skills) &&
+          content.skills.some(
+            (s) =>
+              isNonEmptyString(s?.title) ||
+              (Array.isArray(s?.skillName) && s.skillName.length > 0),
+          )
+        );
+      case "educations":
+        return (
+          Array.isArray(content.educations) && content.educations.length > 0
+        );
+      case "certifications":
+        return (
+          Array.isArray(content.certifications) &&
+          content.certifications.some(
+            (c) =>
+              isNonEmptyString(c?.title) || isNonEmptyString(c?.description),
+          )
+        );
+      case "others":
+        return (
+          isNonEmptyString(content.others?.title) ||
+          isNonEmptyString(content.others?.description)
+        );
+      default:
+        return false;
+    }
+  };
 
   // Phase 2: ONLY these are wired (ATS-safe)
   const fontSize = resumeData.design.typography.baseFontSize;
@@ -72,12 +126,59 @@ export default function CustomizationPanel({
 
   // Everything else is intentionally frozen in Phase 2
   const language = "English";
-  const dateFormat = "MM/DD/YYYY";
+  const dateFormat = resumeData.design.formatting?.dateFormat ?? "MMM yyyy";
+  const setDateFormat = (value: string) =>
+    setResumeData({
+      ...resumeData,
+      design: {
+        ...resumeData.design,
+        formatting: {
+          ...resumeData.design.formatting,
+          dateFormat: value,
+        },
+      },
+    });
   const pageFormat = "A4";
-  const sectionOrder = steps.map((step) => ({
-    key: step.key,
-    title: step.title,
+  const sectionOrderKeys = normalizeSectionOrder(
+    resumeData.content.sectionOrder,
+  );
+  const visibleSectionOrderKeys = sectionOrderKeys.filter((key) =>
+    sectionHasContent(key, resumeData.content),
+  );
+
+  const sectionOrder = visibleSectionOrderKeys.map((key) => ({
+    key,
+    title: getSectionTitle(key, {
+      othersTitle: resumeData.content.others?.title,
+    }),
   }));
+
+  const setSectionOrder = (sections: { key: string; title: string }[]) => {
+    const keys = sections
+      .map((s) => s.key)
+      .filter((k): k is ResumeSectionKey =>
+        (Object.keys(SECTION_TITLES) as string[]).includes(k),
+      );
+
+    // Only reorder the currently-visible sections; keep hidden sections stable.
+    const visibleSet = new Set(visibleSectionOrderKeys);
+    let visibleIndex = 0;
+    const mergedFullOrder = sectionOrderKeys.map((key) => {
+      if (!visibleSet.has(key)) return key;
+
+      const next = keys[visibleIndex];
+      visibleIndex += 1;
+      return next ?? key;
+    });
+
+    setResumeData({
+      ...resumeData,
+      content: {
+        ...resumeData.content,
+        sectionOrder: mergedFullOrder,
+      },
+    });
+  };
 
   const columnLayout: "one" | "two" | "mix" = "two";
   const headerPosition: "top" | "left" | "right" = "right";
@@ -125,13 +226,16 @@ export default function CustomizationPanel({
         language={language}
         setLanguage={noop}
         dateFormat={dateFormat}
-        setDateFormat={noop}
+        setDateFormat={setDateFormat}
         pageFormat={pageFormat}
         setPageFormat={noop}
       />
 
       {/* Change Section Order */}
-      <SectionOrder sectionOrder={sectionOrder} setSectionOrder={noop as any} />
+      <SectionOrder
+        sectionOrder={sectionOrder}
+        setSectionOrder={setSectionOrder}
+      />
 
       {/* Layout */}
       <LayoutSection

@@ -1,10 +1,15 @@
 import { ResumeDesign } from "@/types/resumeDesign";
 import { ResumeDocument } from "@/types/resumeDocument";
 import { ResumeValues } from "@/lib/validation";
+import { getResumeDateFormat } from "@/lib/utils";
 
 export const DEFAULT_STYLE_ID = "ats1";
 
 export const defaultResumeDesign: ResumeDesign = {
+  formatting: {
+    // Keep current default look for most templates
+    dateFormat: "MMM yyyy",
+  },
   color: {
     text: "#000000",
     accent: "#41224a",
@@ -37,6 +42,13 @@ export function createEmptyResumeDocument(): ResumeDocument {
 export function deriveDesignFromLegacy(legacy: ResumeValues): ResumeDesign {
   return {
     ...defaultResumeDesign,
+    formatting: {
+      ...defaultResumeDesign.formatting,
+      dateFormat: getResumeDateFormat(
+        legacy.dateFormat,
+        defaultResumeDesign.formatting.dateFormat,
+      ),
+    },
     color: {
       ...defaultResumeDesign.color,
       accent: legacy.colorHex || defaultResumeDesign.color.accent,
@@ -64,6 +76,7 @@ export function applyDesignToLegacy(
 
   return {
     ...legacy,
+    dateFormat: design.formatting.dateFormat,
     ...(isAts
       ? {
           colorHex: design.color.accent,
