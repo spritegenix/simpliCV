@@ -63,7 +63,13 @@ export default function MillieSmithResume({
         {/* Main Content Grid */}
         <div className="grid min-h-[calc(100%-180px)] grid-cols-12">
           {/* Left Column */}
-          <div className="col-span-5 border-r-2 border-gray-300">
+          <div
+            className="col-span-5 border-r border-gray-300"
+            style={{
+              borderRightWidth: "calc(var(--resume-border-width) * 2)",
+              borderStyle: "var(--resume-border-style)" as any,
+            }}
+          >
             <LeftColumn resumeData={resumeData} colorHex={"var(--accent)"} />
           </div>
 

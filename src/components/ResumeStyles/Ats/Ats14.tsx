@@ -95,12 +95,8 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
                     {edu.degree}
                   </h4>
                   <span className="text-sm font-medium text-slate-600">
-                    {edu.startDate &&
-                      safeFormatDate(edu.startDate, dateFormatNumeric)}{" "}
-                    –{" "}
-                    {edu.endDate
-                      ? safeFormatDate(edu.endDate, dateFormatNumeric)
-                      : "now"}
+                    {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} –{" "}
+                    {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "now"}
                   </span>
                 </div>
                 <div className="flex items-baseline justify-between">
@@ -245,16 +241,26 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
       >
         {/* Header Section */}
         <header className="mb-6">
-          <div className="mb-3 flex items-baseline gap-4 border-b-2 border-slate-100 pb-2">
+          <div
+            className="mb-3 flex items-baseline gap-4 border-b border-slate-100 pb-2"
+            style={{
+              borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+              borderStyle: "var(--resume-border-style)" as any,
+            }}
+          >
             <h1
               className="text-4xl font-extrabold tracking-tight"
               style={{ color: colorHex }}
             >
-              {resumeData.firstName} {resumeData.lastName}
+              <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+                {resumeData.firstName} {resumeData.lastName}
+              </span>
             </h1>
             {resumeData.jobTitle && (
               <span className="text-xl font-medium italic text-slate-600">
-                {resumeData.jobTitle}
+                <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+                  {resumeData.jobTitle}
+                </span>
               </span>
             )}
           </div>

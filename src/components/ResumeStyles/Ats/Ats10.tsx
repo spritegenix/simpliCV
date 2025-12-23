@@ -194,10 +194,8 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
               <div className="">
                 <p>
                   {edu.startDate &&
-                    `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
-                  {edu.endDate
-                    ? safeFormatDate(edu.endDate, dateFormat)
-                    : "now"}
+                    `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
+                  {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "now"}
                 </p>
                 <p> {edu.location}</p>
                 <p className="!m-0 flex w-full flex-col justify-between">

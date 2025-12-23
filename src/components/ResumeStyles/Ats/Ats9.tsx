@@ -189,9 +189,9 @@ export default function Ats9({ resumeData, className }: ResumePreviewProps) {
                     {edu.school}{" "}
                     <span>
                       {edu.startDate &&
-                        `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
+                        `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
                       {edu.endDate
-                        ? safeFormatDate(edu.endDate, dateFormat)
+                        ? safeFormatDate(edu.endDate, "yyyy")
                         : "now"}
                     </span>
                   </span>{" "}

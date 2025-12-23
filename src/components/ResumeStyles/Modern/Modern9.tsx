@@ -44,7 +44,13 @@ export default function ModernSidebar({
 
             {/* Contact Section */}
             <div className="mb-10 space-y-5 px-8">
-              <h3 className="mb-4 border-b-2 border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest text-slate-800">
+              <h3
+                className="mb-4 border-b border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest text-slate-800"
+                style={{
+                  fontSize: "calc(1em * var(--heading-scale))",
+                  borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+                }}
+              >
                 Contact
               </h3>
               <ContactSection resumeData={resumeData} colorHex={primaryColor} />
@@ -61,7 +67,12 @@ export default function ModernSidebar({
                   <div className="space-y-6">
                     {resumeData.certifications.map((item, idx) => (
                       <div key={idx}>
-                        <h4 className="text-xs font-bold uppercase text-slate-900">
+                        <h4
+                          className="text-xs font-bold uppercase text-slate-900"
+                          style={{
+                            fontSize: "calc(1em * var(--heading-scale))",
+                          }}
+                        >
                           {item.title}
                         </h4>
                         {item.description && (
@@ -100,15 +111,26 @@ export default function ModernSidebar({
           {/* RIGHT COLUMN - Main Content */}
           <div className="flex-1 bg-white px-10 py-12">
             {/* Header Name (Top of Right Column) */}
-            <div className="mb-12 border-b-2 border-slate-100 pb-8">
-              <h1 className="mb-2 text-5xl font-black uppercase leading-none tracking-tight text-slate-900">
+            <div
+              className="mb-12 border-b border-slate-100 pb-8"
+              style={{
+                borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+              }}
+            >
+              <h1
+                className="mb-2 text-[3rem] font-black uppercase leading-none tracking-tight text-slate-900"
+                style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+              >
                 {resumeData.firstName}{" "}
                 <span style={{ color: primaryColor }}>
                   {resumeData.lastName}
                 </span>
               </h1>
               {resumeData.jobTitle && (
-                <p className="text-xl font-bold uppercase tracking-[0.3em] text-slate-400">
+                <p
+                  className="text-[1.25rem] font-bold uppercase tracking-[0.3em] text-slate-400"
+                  style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                >
                   {resumeData.jobTitle}
                 </p>
               )}
@@ -144,7 +166,12 @@ export default function ModernSidebar({
                       {resumeData.workExperiences.map((exp, idx) => (
                         <div key={idx} className="relative break-inside-avoid">
                           <div className="mb-1 flex items-baseline justify-between">
-                            <h4 className="text-md font-bold uppercase text-slate-800">
+                            <h4
+                              className="text-md font-bold uppercase text-slate-800"
+                              style={{
+                                fontSize: "calc(1em * var(--heading-scale))",
+                              }}
+                            >
                               {exp.position}
                             </h4>
                             <span className="text-xs font-bold text-slate-400">
@@ -182,7 +209,10 @@ export default function ModernSidebar({
                 <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                   {resumeData.educations.map((edu, idx) => (
                     <div key={idx} className="break-inside-avoid">
-                      <h4 className="mb-0.5 text-sm font-bold uppercase text-slate-800">
+                      <h4
+                        className="mb-0.5 text-sm font-bold uppercase text-slate-800"
+                        style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                      >
                         {edu.degree}
                       </h4>
                       <div
@@ -220,7 +250,12 @@ export default function ModernSidebar({
                   {resumeData.skills.map((skill, idx) => (
                     <div key={idx}>
                       <div className="mb-1 flex justify-between">
-                        <h4 className="text-xs font-bold uppercase text-slate-700">
+                        <h4
+                          className="text-xs font-bold uppercase text-slate-700"
+                          style={{
+                            fontSize: "calc(1em * var(--heading-scale))",
+                          }}
+                        >
                           {skill.title}
                         </h4>
                       </div>
@@ -257,8 +292,11 @@ export default function ModernSidebar({
                     colorHex={primaryColor}
                   />
                   <div
-                    className="border-l-4 pl-3 text-xs leading-relaxed text-slate-600"
-                    style={{ borderColor: primaryColor }}
+                    className="border-l pl-3 text-xs leading-relaxed text-slate-600"
+                    style={{
+                      borderColor: primaryColor,
+                      borderLeftWidth: "calc(var(--resume-border-width) * 4)",
+                    }}
                     dangerouslySetInnerHTML={{
                       __html: resumeData.others.description || "",
                     }}
@@ -308,8 +346,12 @@ const PhotoSection = ({
 
   return (
     <div
-      className="h-36 w-36 overflow-hidden border-4 shadow-lg"
-      style={{ borderRadius: getBorderRadius(), borderColor: colorHex }}
+      className="h-36 w-36 overflow-hidden border shadow-lg"
+      style={{
+        borderRadius: getBorderRadius(),
+        borderColor: colorHex,
+        borderWidth: "calc(var(--resume-border-width) * 4)",
+      }}
     >
       <img
         src={photoSrc}
@@ -378,7 +420,13 @@ const SectionHeaderSide = ({
   colorHex: string;
 }) => {
   return (
-    <h3 className="mb-4 border-b-2 border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest text-slate-800">
+    <h3
+      className="mb-4 border-b border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest text-slate-800"
+      style={{
+        fontSize: "calc(1em * var(--heading-scale))",
+        borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+      }}
+    >
       {title}
     </h3>
   );
@@ -394,8 +442,13 @@ const SectionHeaderMain = ({
 }) => {
   return (
     <h3
-      className="mb-6 border-b-2 pb-2 text-lg font-bold uppercase tracking-wide"
-      style={{ borderColor: colorHex, color: colorHex }}
+      className="mb-6 border-b pb-2 text-lg font-bold uppercase tracking-wide"
+      style={{
+        borderColor: colorHex,
+        color: colorHex,
+        fontSize: "calc(1em * var(--heading-scale))",
+        borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+      }}
     >
       {title}
     </h3>
@@ -449,7 +502,9 @@ const Sidebar = ({
             width: "160px",
             height: "160px",
             margin: "0 auto 30px",
-            border: "6px solid #ddd",
+            borderStyle: "solid",
+            borderWidth: "calc(var(--resume-border-width) * 6)",
+            borderColor: "#ddd",
             overflow: "hidden",
             borderRadius: getBorderRadius(),
           }}
@@ -591,7 +646,13 @@ const Sidebar = ({
                   margin: "0 0 4px 0",
                 }}
               >
-                {ref.title}
+                <span
+                  style={{
+                    fontSize: "calc(1em * var(--heading-scale))",
+                  }}
+                >
+                  {ref.title}
+                </span>
               </h4>
               {ref.description && (
                 <p style={{ margin: 0, fontSize: "11px", color: "#555" }}>
@@ -675,8 +736,16 @@ const MainContent = ({
     <main style={{ padding: "40px" }}>
       {/* Header */}
       <header style={{ marginBottom: "20px" }}>
-        <h1 style={{ fontSize: "42px", fontWeight: 700, margin: 0 }}>
-          <span style={{ color: colorHex }}>{firstName}</span> {lastName}
+        <h1
+          style={{
+            fontSize: "42px",
+            fontWeight: 700,
+            margin: 0,
+          }}
+        >
+          <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+            <span style={{ color: colorHex }}>{firstName}</span> {lastName}
+          </span>
         </h1>
         {jobTitle && (
           <h2
@@ -689,7 +758,9 @@ const MainContent = ({
               textTransform: "uppercase",
             }}
           >
-            {jobTitle}
+            <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+              {jobTitle}
+            </span>
           </h2>
         )}
       </header>
@@ -751,7 +822,11 @@ const MainContent = ({
                       fontWeight: 600,
                     }}
                   >
-                    {exp.position}
+                    <span
+                      style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                    >
+                      {exp.position}
+                    </span>
                   </h3>
                   <span
                     style={{
@@ -812,7 +887,11 @@ const MainContent = ({
                       fontWeight: 600,
                     }}
                   >
-                    {edu.degree} {edu.stream}
+                    <span
+                      style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                    >
+                      {edu.degree} {edu.stream}
+                    </span>
                   </h3>
                   <span
                     style={{
@@ -877,7 +956,11 @@ const MainContent = ({
                     fontWeight: 600,
                   }}
                 >
-                  {proj.title}
+                  <span
+                    style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                  >
+                    {proj.title}
+                  </span>
                 </h3>
                 {proj.company && (
                   <span

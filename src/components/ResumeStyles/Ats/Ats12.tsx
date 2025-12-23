@@ -51,11 +51,8 @@ export default function Ats12({ resumeData, className }: ResumePreviewProps) {
                 </div>
                 <div className="text-right">
                   <p className="font-semibold">
-                    {edu.startDate && safeFormatDate(edu.startDate, dateFormat)}{" "}
-                    -{" "}
-                    {edu.endDate
-                      ? safeFormatDate(edu.endDate, dateFormat)
-                      : "now"}
+                    {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} -{" "}
+                    {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "now"}
                   </p>
                   {edu.location && (
                     <p className="text-sm text-gray-600">{edu.location}</p>
@@ -210,16 +207,26 @@ export default function Ats12({ resumeData, className }: ResumePreviewProps) {
         id="resumePreviewContent"
       >
         {/* Header Section */}
-        <header className="mb-4 border-b-2 border-gray-800 pb-4 text-center">
+        <header
+          className="mb-4 border-b border-gray-800 pb-4 text-center"
+          style={{
+            borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+            borderStyle: "var(--resume-border-style)" as any,
+          }}
+        >
           <h1
             className="mb-1 text-3xl font-bold uppercase tracking-wider"
             style={{ color: colorHex }}
           >
-            {resumeData.firstName} {resumeData.lastName}
+            <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+              {resumeData.firstName} {resumeData.lastName}
+            </span>
           </h1>
           {resumeData.jobTitle && (
             <p className="mb-2 text-lg font-medium italic text-gray-700">
-              {resumeData.jobTitle}
+              <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+                {resumeData.jobTitle}
+              </span>
             </p>
           )}
 

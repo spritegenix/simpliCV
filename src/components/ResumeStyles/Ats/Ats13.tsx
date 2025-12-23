@@ -95,11 +95,8 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-500">
-                    {edu.startDate && safeFormatDate(edu.startDate, dateFormat)}{" "}
-                    -{" "}
-                    {edu.endDate
-                      ? safeFormatDate(edu.endDate, dateFormat)
-                      : "now"}
+                    {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} -{" "}
+                    {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "now"}
                   </p>
                   {edu.location && (
                     <p className="text-xs text-gray-400">{edu.location}</p>

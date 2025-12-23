@@ -110,12 +110,8 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
                     {edu.degree}
                   </h4>
                   <span className="text-sm font-medium text-gray-600">
-                    {edu.startDate &&
-                      safeFormatDate(edu.startDate, dateFormatNumeric)}{" "}
-                    –{" "}
-                    {edu.endDate
-                      ? safeFormatDate(edu.endDate, dateFormatNumeric)
-                      : "now"}
+                    {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} –{" "}
+                    {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "now"}
                   </span>
                 </div>
                 <div className="flex items-baseline justify-between">

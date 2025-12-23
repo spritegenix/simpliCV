@@ -16,18 +16,78 @@ export const defaultResumeDesign: ResumeDesign = {
   },
   typography: {
     fontFamily: "inter",
-    baseFontSize: 10,
+    baseFontSize: 12,
     headingWeight: 700,
+    headingScale: 1.15,
   },
   spacing: {
     sectionGap: 12,
     itemGap: 6,
+    density: "normal",
   },
   layout: {
     type: "one-column",
   },
   decorations: {
     borderStyle: "solid",
+    borderWidth: 1,
+  },
+  customization: {
+    languageRegion: {
+      language: "English",
+      dateFormat: "MM/DD/YYYY",
+      pageFormat: "A4",
+    },
+    // Default order follows the editor steps order.
+    sectionOrder: undefined,
+    layout: {
+      columnLayout: "two",
+      headerPosition: "right",
+      leftColumnWidth: 50,
+      rightColumnWidth: 50,
+    },
+    font: {
+      category: "sans",
+      selectedFont: "Lora",
+    },
+    spacing: {
+      lineHeight: 1.3,
+      leftRightMargin: 24,
+      topBottomMargin: 24,
+      spaceBetweenEntries: 12,
+    },
+    sectionHeadings: {
+      headingStyle: 1,
+      headingCapitalization: "uppercase",
+      headingSize: "S",
+      headingIcons: "filled",
+    },
+    entryLayout: {
+      titleSubtitleSize: "S",
+      subtitleStyle: "normal",
+      subtitlePlacement: "next-line",
+      indentBody: false,
+      listStyle: "bullet",
+    },
+    footer: {
+      showPageNumbers: true,
+      showEmail: true,
+      showName: true,
+    },
+    advanced: {
+      linkIcon: "icon1",
+      reduceDateLocationOpacity: false,
+    },
+    personalDetails: {
+      detailsAlign: "center",
+      detailsArrangement: "icon",
+      detailsIconStyle: 0,
+    },
+    name: {
+      nameSize: "L",
+      nameBold: true,
+      nameFont: "body",
+    },
   },
 };
 

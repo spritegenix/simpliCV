@@ -181,10 +181,8 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
               <div className="!m-0">
                 <p>
                   {edu.startDate &&
-                    `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
-                  {edu.endDate
-                    ? safeFormatDate(edu.endDate, dateFormat)
-                    : "now"}
+                    `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
+                  {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "now"}
                 </p>
                 <p className="font-semibold">
                   {edu.school}
@@ -330,8 +328,9 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             width={500}
             height={500}
             alt="Author photo"
-            className="-ml-3 aspect-square h-[120px] w-[120px] border-4 border-white object-cover object-top"
+            className="-ml-3 aspect-square h-[120px] w-[120px] border border-white object-cover object-top"
             style={{
+              borderWidth: "calc(var(--resume-border-width) * 4)",
               borderRadius:
                 borderStyle === BorderStyles.SQUARE
                   ? "0px"

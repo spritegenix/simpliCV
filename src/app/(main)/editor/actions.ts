@@ -2,6 +2,7 @@
 
 import { canCreateResume, canUseCustomizations } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
+import { safeResumeCount } from "@/lib/dbSafe";
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { resumeSchema, ResumeValues } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
@@ -35,7 +36,7 @@ export async function saveResume(values: ResumeValues) {
   const subscriptionLevel = await getUserSubscriptionLevel(userId);
 
   if (!id) {
-    const resumeCount = await prisma.resume.count({ where: { userId } });
+    const resumeCount = await safeResumeCount(userId);
 
     if (!canCreateResume(subscriptionLevel, resumeCount)) {
       throw new Error(

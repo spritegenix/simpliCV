@@ -544,7 +544,9 @@ const RightColumn = ({
                     height: "10px",
                     background: accentColor,
                     borderRadius: "50%",
-                    border: "2px solid white",
+                    borderColor: "white",
+                    borderStyle: "var(--resume-border-style)" as any,
+                    borderWidth: "calc(var(--resume-border-width) * 2)",
                   }}
                 />
                 <div>
@@ -630,7 +632,9 @@ const RightColumn = ({
                     height: "10px",
                     background: accentColor,
                     borderRadius: "50%",
-                    border: "2px solid white",
+                    borderColor: "white",
+                    borderStyle: "var(--resume-border-style)" as any,
+                    borderWidth: "calc(var(--resume-border-width) * 2)",
                   }}
                 />
                 <div>
@@ -742,7 +746,9 @@ const RightColumn = ({
                     height: "10px",
                     background: accentColor,
                     borderRadius: "50%",
-                    border: "2px solid white",
+                    borderColor: "white",
+                    borderStyle: "var(--resume-border-style)" as any,
+                    borderWidth: "calc(var(--resume-border-width) * 2)",
                   }}
                 />
                 <div>

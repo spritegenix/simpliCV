@@ -65,7 +65,12 @@ export default function ATSStyle3({
         }}
         id="resumePreviewContent"
       >
-        <section className="mb-[var(--section-gap)]">
+        <section
+          style={{
+            marginBottom:
+              "calc(var(--section-gap) * var(--density-multiplier))",
+          }}
+        >
           {resumeData.photo ? (
             <PersonalInfoHeader resumeData={resumeData} />
           ) : (
@@ -86,7 +91,12 @@ export default function ATSStyle3({
                 workExperiences:
                   !!resumeData?.workExperiences &&
                   resumeData?.workExperiences?.length > 0 ? (
-                    <section className="mb-[var(--section-gap)]">
+                    <section
+                      style={{
+                        marginBottom:
+                          "calc(var(--section-gap) * var(--density-multiplier))",
+                      }}
+                    >
                       <Heading>Professional Experience</Heading>
                       {resumeData.workExperiences?.map((exp, index) => (
                         <div
@@ -137,7 +147,12 @@ export default function ATSStyle3({
                 projectWorks:
                   !!resumeData.projectWorks &&
                   resumeData.projectWorks?.length > 0 ? (
-                    <section className="mb-[var(--section-gap)]">
+                    <section
+                      style={{
+                        marginBottom:
+                          "calc(var(--section-gap) * var(--density-multiplier))",
+                      }}
+                    >
                       <Heading>Project Work</Heading>
                       {resumeData.projectWorks?.map((item, index) => (
                         <div
@@ -212,7 +227,12 @@ export default function ATSStyle3({
                 workExperiences: null,
                 projectWorks: null,
                 summary: resumeData.summary ? (
-                  <section className="mb-[var(--section-gap)]">
+                  <section
+                    style={{
+                      marginBottom:
+                        "calc(var(--section-gap) * var(--density-multiplier))",
+                    }}
+                  >
                     <Heading>Professional Summary</Heading>
                     <Text>{resumeData.summary}</Text>
                   </section>
@@ -220,7 +240,12 @@ export default function ATSStyle3({
                 educations:
                   !!resumeData.educations &&
                   resumeData.educations?.length > 0 ? (
-                    <section className="mb-[var(--section-gap)]">
+                    <section
+                      style={{
+                        marginBottom:
+                          "calc(var(--section-gap) * var(--density-multiplier))",
+                      }}
+                    >
                       <Heading>Academics</Heading>
 
                       {resumeData.educations?.map((edu, index) => (
@@ -240,9 +265,9 @@ export default function ATSStyle3({
                             <p className="!m-0 flex w-full gap-x-[calc(var(--section-gap)*0.5)]">
                               <span>
                                 {edu.startDate &&
-                                  `${safeFormatDate(edu.startDate, dateFormatText)} -`}{" "}
+                                  `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
                                 {edu.endDate
-                                  ? safeFormatDate(edu.endDate, dateFormatText)
+                                  ? safeFormatDate(edu.endDate, "yyyy")
                                   : "now"}
                               </span>
                               <span> {edu.location}</span>
@@ -255,7 +280,12 @@ export default function ATSStyle3({
                   ) : null,
                 skills:
                   !!resumeData.skills && resumeData.skills?.length > 0 ? (
-                    <section className="mb-[var(--section-gap)]">
+                    <section
+                      style={{
+                        marginBottom:
+                          "calc(var(--section-gap) * var(--density-multiplier))",
+                      }}
+                    >
                       <Heading>Skills</Heading>
                       <div className="grid grid-cols-1 gap-x-[calc(var(--section-gap)*0.25)] gap-y-[calc(var(--section-gap)*0.25)]">
                         {resumeData.skills?.map((skill, index) => (
@@ -280,7 +310,12 @@ export default function ATSStyle3({
                 certifications:
                   !!resumeData.certifications &&
                   resumeData.certifications?.length > 0 ? (
-                    <section className="mb-[var(--section-gap)]">
+                    <section
+                      style={{
+                        marginBottom:
+                          "calc(var(--section-gap) * var(--density-multiplier))",
+                      }}
+                    >
                       <Heading>Certifications</Heading>
                       <div
                         className={`flex flex-wrap gap-x-[calc(var(--section-gap)*0.25)] ${resumeData.certifications.find((skill) => skill.description) && "flex-col"}`}
@@ -305,7 +340,13 @@ export default function ATSStyle3({
                     </section>
                   ) : null,
                 others: !!resumeData.others?.title ? (
-                  <section className="mb-[var(--section-gap)] break-inside-avoid">
+                  <section
+                    className="break-inside-avoid"
+                    style={{
+                      marginBottom:
+                        "calc(var(--section-gap) * var(--density-multiplier))",
+                    }}
+                  >
                     <Heading>{resumeData.others.title}</Heading>
                     <div
                       dangerouslySetInnerHTML={{
@@ -497,7 +538,10 @@ function Heading({ children }: { children: string }) {
   return (
     <>
       <div className="flex break-inside-avoid flex-col space-y-[calc(var(--section-gap)*0.1)] py-[calc(var(--section-gap)*0.25)]">
-        <h1 className="text-nowrap font-semibold text-[var(--accent)]">
+        <h1
+          className="text-nowrap font-semibold text-[var(--accent)]"
+          style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+        >
           {children}
         </h1>
       </div>

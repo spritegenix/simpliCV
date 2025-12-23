@@ -7,6 +7,7 @@ import "./globals.css";
 import "./swiper.css";
 import { ViewTransitions } from "next-view-transitions";
 import DevSwUnregister from "@/components/DevSwUnregister";
+import { resumeFontVariableClassName } from "./fonts";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -38,7 +39,9 @@ export default function RootLayout({
             async
           />
         </head> */}
-        <body className={`${inter.className} antialiased`}>
+        <body
+          className={`${inter.className} ${resumeFontVariableClassName} antialiased`}
+        >
           <ThemeProvider
             attribute="class"
             defaultTheme="light"

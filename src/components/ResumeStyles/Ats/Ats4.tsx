@@ -63,9 +63,11 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
       >
         {/* Top Section  */}
         <div
-          className="border-b-8 bg-[#f4f4f4] px-6 py-3"
+          className="border-b bg-[#f4f4f4] px-6 py-3"
           style={{
             borderColor: colorHex,
+            borderBottomWidth: "calc(var(--resume-border-width) * 8)",
+            borderStyle: "var(--resume-border-style)" as any,
           }}
         >
           <PersonalInfoHeader resumeData={resumeData} />
@@ -85,6 +87,8 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
             className="absolute inset-y-0 left-[41%] h-full w-0 border-l"
             style={{
               borderColor: colorHex,
+              borderLeftWidth: "var(--resume-border-width)",
+              borderStyle: "var(--resume-border-style)" as any,
             }}
           />
           {/* Left Side  */}
@@ -149,9 +153,9 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
                               {edu.marks && <span>{edu.marks}</span>}
                               <span>
                                 {edu.startDate &&
-                                  `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
+                                  `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
                                 {edu.endDate
-                                  ? safeFormatDate(edu.endDate, dateFormat)
+                                  ? safeFormatDate(edu.endDate, "yyyy")
                                   : "now"}
                               </span>
                             </li>

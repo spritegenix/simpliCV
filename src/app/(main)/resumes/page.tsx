@@ -1,6 +1,10 @@
 import prisma from "@/lib/prisma";
-import { getUserSubscriptionLevel } from "@/lib/subscription";
-import { resumeDataInclude } from "@/lib/types";
+import {
+  getUserSubscriptionLevel,
+  type SubscriptionLevel,
+} from "@/lib/subscription";
+import { resumeDataInclude, type ResumeServerData } from "@/lib/types";
+import { safeResumeCount } from "@/lib/dbSafe";
 import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import ResumeItem from "./ResumeItem";
@@ -24,23 +28,31 @@ export default async function Page() {
     return null;
   }
 
-  const [resumes, totalCount] = await Promise.all([
-    prisma.resume.findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        updatedAt: "desc",
-      },
-      include: resumeDataInclude,
-    }),
-    prisma.resume.count({
-      where: {
-        userId,
-      },
-    }),
-    getUserSubscriptionLevel(userId),
-  ]);
+  let resumes: ResumeServerData[] = [];
+  let totalCount = 0;
+  let subscriptionLevel: SubscriptionLevel = "free";
+
+  try {
+    [resumes, totalCount, subscriptionLevel] = await Promise.all([
+      prisma.resume.findMany({
+        where: {
+          userId,
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+        include: resumeDataInclude,
+      }),
+      safeResumeCount(userId),
+      getUserSubscriptionLevel(userId),
+    ]);
+  } catch (error) {
+    console.warn(
+      "[db] Failed to load resumes page; rendering empty state. " +
+        "This usually means DATABASE_URL is unreachable.",
+      error,
+    );
+  }
 
   return (
     <Layout>

@@ -64,9 +64,9 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
                     </span>
                   </span>
                   <span className="whitespace-nowrap text-sm font-medium text-gray-700">
-                    {edu.startDate && safeFormatDate(edu.startDate, dateFormat)}
+                    {edu.startDate && safeFormatDate(edu.startDate, "yyyy")}
                     {edu.endDate
-                      ? ` - ${safeFormatDate(edu.endDate, dateFormat)}`
+                      ? ` - ${safeFormatDate(edu.endDate, "yyyy")}`
                       : ""}
                   </span>
                 </div>
@@ -264,7 +264,9 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
             className="mb-2 text-3xl font-extrabold tracking-wide text-gray-900"
             style={{ color: "var(--accent)" }}
           >
-            {resumeData.firstName} {resumeData.lastName}
+            <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+              {resumeData.firstName} {resumeData.lastName}
+            </span>
           </h1>
 
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm font-medium text-gray-700">

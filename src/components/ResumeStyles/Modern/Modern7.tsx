@@ -157,7 +157,12 @@ export default function PurpleModern({
                     title="Work Experience"
                     colorHex={primaryColor}
                   />
-                  <div className="ml-1 space-y-8 border-l-2 border-slate-200 pl-2">
+                  <div
+                    className="ml-1 space-y-8 border-l border-slate-200 pl-2"
+                    style={{
+                      borderLeftWidth: "calc(var(--resume-border-width) * 2)",
+                    }}
+                  >
                     {resumeData.workExperiences.map((exp, idx) => (
                       <div
                         key={idx}
@@ -165,8 +170,11 @@ export default function PurpleModern({
                       >
                         {/* Timeline Dot */}
                         <div
-                          className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full border-2 border-white shadow-sm"
-                          style={{ backgroundColor: primaryColor }}
+                          className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full border border-white shadow-sm"
+                          style={{
+                            backgroundColor: primaryColor,
+                            borderWidth: "calc(var(--resume-border-width) * 2)",
+                          }}
                         />
 
                         <div className="mb-1 flex items-baseline justify-between">
@@ -205,12 +213,20 @@ export default function PurpleModern({
             {resumeData.educations && resumeData.educations.length > 0 && (
               <div>
                 <SectionTitleMain title="Education" colorHex={primaryColor} />
-                <div className="ml-1 space-y-6 border-l-2 border-slate-200 pl-2">
+                <div
+                  className="ml-1 space-y-6 border-l border-slate-200 pl-2"
+                  style={{
+                    borderLeftWidth: "calc(var(--resume-border-width) * 2)",
+                  }}
+                >
                   {resumeData.educations.map((edu, idx) => (
                     <div key={idx} className="relative break-inside-avoid pl-6">
                       <div
-                        className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full border-2 border-white shadow-sm"
-                        style={{ backgroundColor: primaryColor }}
+                        className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full border border-white shadow-sm"
+                        style={{
+                          backgroundColor: primaryColor,
+                          borderWidth: "calc(var(--resume-border-width) * 2)",
+                        }}
                       />
 
                       <div className="mb-1 flex items-baseline justify-between">
@@ -292,8 +308,11 @@ const PhotoSection = ({ resumeData }: { resumeData: ResumeValues }) => {
 
   return (
     <div
-      className="h-32 w-32 overflow-hidden border-4 border-white shadow-lg"
-      style={{ borderRadius: getBorderRadius() }}
+      className="h-32 w-32 overflow-hidden border border-white shadow-lg"
+      style={{
+        borderRadius: getBorderRadius(),
+        borderWidth: "calc(var(--resume-border-width) * 4)",
+      }}
     >
       <img
         src={photoSrc}
@@ -314,10 +333,17 @@ const SectionTitleSide = ({
 }) => {
   return (
     <h3
-      className="mb-3 border-b-2 pb-1 text-sm font-bold uppercase tracking-wide"
-      style={{ borderColor: colorHex, color: colorHex }}
+      className="mb-3 border-b pb-1 text-sm font-bold uppercase tracking-wide"
+      style={{
+        borderColor: colorHex,
+        borderStyle: "var(--resume-border-style)" as any,
+        borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+        color: colorHex,
+      }}
     >
-      {title}
+      <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+        {title}
+      </span>
     </h3>
   );
 };
@@ -335,7 +361,9 @@ const SectionTitleMain = ({
       className="mb-6 text-lg font-bold uppercase tracking-wide"
       style={{ color: colorHex }}
     >
-      {title}
+      <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+        {title}
+      </span>
     </h3>
   );
 };
@@ -436,7 +464,9 @@ const Header = ({
           style={{
             width: "140px",
             height: "140px",
-            border: "6px solid white",
+            borderColor: "white",
+            borderStyle: "var(--resume-border-style)" as any,
+            borderWidth: "calc(var(--resume-border-width) * 6)",
             overflow: "hidden",
             marginRight: "30px",
             borderRadius: getBorderRadius(),

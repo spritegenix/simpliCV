@@ -32,12 +32,6 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
       ref={containerRef}
     >
       <div
-        className="absolute z-[0] h-[180px] w-screen"
-        style={{
-          backgroundColor: "var(--accent)",
-        }}
-      />
-      <div
         className={cn(
           "mx-10 grid h-full grid-cols-12 space-y-2",
           !width && "invisible",
@@ -99,9 +93,9 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     <div className="!m-0">
                       <p>
                         {edu.startDate &&
-                          `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                          `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
                         {edu.endDate
-                          ? safeFormatDate(edu.endDate, "MMM yyyy")
+                          ? safeFormatDate(edu.endDate, "yyyy")
                           : "Present"}
                       </p>
                       <p className="font-semibold">

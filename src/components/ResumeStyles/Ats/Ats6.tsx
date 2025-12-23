@@ -62,9 +62,7 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                   }}
                 />
                 <div className="!m-0 flex items-center justify-between">
-                  <span className="text-[1.2em] font-semibold text-[var(--accent)]">
-                    {exp.company}
-                  </span>
+                  {exp.company}
                   {exp.jobLocation && <span>{exp.jobLocation}</span>}
                 </div>
                 <div className="flex items-center justify-between">
@@ -183,10 +181,8 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
               <div className="!m-0">
                 <p>
                   {edu.startDate &&
-                    `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
-                  {edu.endDate
-                    ? safeFormatDate(edu.endDate, dateFormat)
-                    : "now"}
+                    `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
+                  {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "now"}
                 </p>
                 <p className="font-semibold">
                   {edu.school}
@@ -276,7 +272,13 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
           <div className="col-span-4 space-y-3 p-3 pr-6">
             {/* Social Links  */}
             {resumeData.photo && (
-              <section className="mb-[var(--section-gap)] break-inside-avoid">
+              <section
+                className="break-inside-avoid"
+                style={{
+                  marginBottom:
+                    "calc(var(--section-gap) * var(--density-multiplier))",
+                }}
+              >
                 <Heading isBorder={false}>Contact</Heading>
                 <div className="!mt-0 space-y-1">
                   {(resumeData.city || resumeData.country) && (
@@ -463,15 +465,19 @@ function Heading({
       <div className="relative break-inside-avoid pb-2">
         {isBorder && (
           <>
-            <div className="absolute inset-x-0 -top-[0.3rem] h-0 w-full border [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
-            <div className="absolute inset-x-0 bottom-[0.25rem] h-0 w-full border [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+            <div className="absolute inset-x-0 -top-[0.3rem] h-0 w-full border-[length:var(--resume-border-width)] [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+            <div className="absolute inset-x-0 bottom-[0.25rem] h-0 w-full border-[length:var(--resume-border-width)] [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
           </>
         )}
         <h1
           className="text-nowrap text-[1.4em] font-bold uppercase tracking-[0.2em]"
-          style={{ color: "var(--accent)" }}
+          style={{
+            color: "var(--accent)",
+          }}
         >
-          {children}
+          <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+            {children}
+          </span>
         </h1>
       </div>
     </>

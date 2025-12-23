@@ -6,10 +6,6 @@ interface SpacingSectionProps {
   setFontSize: (value: number) => void;
   lineHeight: number;
   setLineHeight: (value: number) => void;
-  leftRightMargin: number;
-  setLeftRightMargin: (value: number) => void;
-  topBottomMargin: number;
-  setTopBottomMargin: (value: number) => void;
   spaceBetweenEntries: number;
   setSpaceBetweenEntries: (value: number) => void;
 }
@@ -19,10 +15,6 @@ export default function SpacingSection({
   setFontSize,
   lineHeight,
   setLineHeight,
-  leftRightMargin,
-  setLeftRightMargin,
-  topBottomMargin,
-  setTopBottomMargin,
   spaceBetweenEntries,
   setSpaceBetweenEntries,
 }: SpacingSectionProps) {
@@ -99,88 +91,6 @@ export default function SpacingSection({
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => setLineHeight(Math.min(2, lineHeight + 0.1))}
-              >
-                +
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Left & Right Margin */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Left & Right Margin</label>
-            <span className="text-sm text-primary">{leftRightMargin}mm</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <input
-              type="range"
-              min={10}
-              max={30}
-              step={1}
-              value={leftRightMargin}
-              onChange={(e) => setLeftRightMargin(Number(e.target.value))}
-              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-muted [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
-            />
-            <div className="flex gap-1">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() =>
-                  setLeftRightMargin(Math.max(10, leftRightMargin - 1))
-                }
-              >
-                −
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() =>
-                  setLeftRightMargin(Math.min(30, leftRightMargin + 1))
-                }
-              >
-                +
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Top & Bottom Margin */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Top & Bottom Margin</label>
-            <span className="text-sm text-primary">{topBottomMargin}mm</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <input
-              type="range"
-              min={10}
-              max={30}
-              step={1}
-              value={topBottomMargin}
-              onChange={(e) => setTopBottomMargin(Number(e.target.value))}
-              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-muted [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
-            />
-            <div className="flex gap-1">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() =>
-                  setTopBottomMargin(Math.max(10, topBottomMargin - 1))
-                }
-              >
-                −
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() =>
-                  setTopBottomMargin(Math.min(30, topBottomMargin + 1))
-                }
               >
                 +
               </Button>

@@ -17,13 +17,19 @@ import {
   normalizeSectionOrder,
   type ResumeSectionKey,
 } from "@/lib/sectionOrder";
+import { createSectionOrderIndex } from "../sectionOrder";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
+  sectionOrder?: string[];
 }
 
-export default function Ats1({ resumeData, className }: ResumePreviewProps) {
+export default function Ats1({
+  resumeData,
+  className,
+  sectionOrder,
+}: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
@@ -32,6 +38,7 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
   const ongoingProjectLabel = getOngoingLabel("project");
   const ongoingEducationLabel = getOngoingLabel("education");
   const orderedSections = normalizeSectionOrder(resumeData.sectionOrder);
+  const orderIndex = createSectionOrderIndex(sectionOrder);
 
   return (
     <div
@@ -46,13 +53,18 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
       ref={containerRef}
     >
       <div
-        className={cn("", !width && "invisible")}
+        className={cn("flex flex-col", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
         }}
         id="resumePreviewContent"
       >
-        <section className="mb-[var(--section-gap)]">
+        <section
+          style={{
+            marginBottom:
+              "calc(var(--section-gap) * var(--density-multiplier))",
+          }}
+        >
           {resumeData.photo ? (
             <PersonalInfoHeader resumeData={resumeData} />
           ) : (
@@ -63,7 +75,13 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
         {(() => {
           const sections: Record<ResumeSectionKey, React.ReactNode> = {
             summary: resumeData.summary ? (
-              <section className="mb-[var(--section-gap)]">
+              <section
+                style={{
+                  marginBottom:
+                    "calc(var(--section-gap) * var(--density-multiplier))",
+                  order: orderIndex("summary"),
+                }}
+              >
                 <Heading>Professional Summary</Heading>
                 <Text>{resumeData.summary}</Text>
               </section>
@@ -71,7 +89,13 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
             workExperiences:
               !!resumeData?.workExperiences &&
               resumeData?.workExperiences?.length > 0 ? (
-                <section className="mb-[var(--section-gap)]">
+                <section
+                  style={{
+                    marginBottom:
+                      "calc(var(--section-gap) * var(--density-multiplier))",
+                    order: orderIndex("work-experience"),
+                  }}
+                >
                   <Heading>Professional Experience</Heading>
                   {resumeData.workExperiences?.map((exp, index) => (
                     <div key={index} className="break-inside-avoid">
@@ -107,7 +131,13 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
             projectWorks:
               !!resumeData.projectWorks &&
               resumeData.projectWorks?.length > 0 ? (
-                <section className="mb-[var(--section-gap)]">
+                <section
+                  style={{
+                    marginBottom:
+                      "calc(var(--section-gap) * var(--density-multiplier))",
+                    order: orderIndex("projects"),
+                  }}
+                >
                   <Heading>Project Work</Heading>
                   {resumeData.projectWorks?.map((item, index) => (
                     <div key={index} className="break-inside-avoid">
@@ -161,7 +191,13 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
               ) : null,
             skills:
               !!resumeData.skills && resumeData.skills?.length > 0 ? (
-                <section className="mb-[var(--section-gap)]">
+                <section
+                  style={{
+                    marginBottom:
+                      "calc(var(--section-gap) * var(--density-multiplier))",
+                    order: orderIndex("skills"),
+                  }}
+                >
                   <Heading>Skills</Heading>
                   {resumeData.skills?.map((skill, index) => (
                     <div key={index} className="break-inside-avoid">
@@ -180,7 +216,13 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
               ) : null,
             educations:
               !!resumeData.educations && resumeData.educations?.length > 0 ? (
-                <section className="mb-[var(--section-gap)]">
+                <section
+                  style={{
+                    marginBottom:
+                      "calc(var(--section-gap) * var(--density-multiplier))",
+                    order: orderIndex("education"),
+                  }}
+                >
                   <Heading>Academics</Heading>
                   {resumeData.educations?.map((edu, index) => (
                     <div key={index} className="break-inside-avoid">
@@ -190,9 +232,9 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
                         </span>{" "}
                         <span>
                           {edu.startDate &&
-                            `${safeFormatDate(edu.startDate, dateFormatText)} -`}{" "}
+                            `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
                           {edu.endDate
-                            ? safeFormatDate(edu.endDate, dateFormatText)
+                            ? safeFormatDate(edu.endDate, "yyyy")
                             : ongoingEducationLabel}
                         </span>
                       </p>
@@ -210,7 +252,13 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
             certifications:
               !!resumeData.certifications &&
               resumeData.certifications?.length > 0 ? (
-                <section className="mb-[var(--section-gap)]">
+                <section
+                  style={{
+                    marginBottom:
+                      "calc(var(--section-gap) * var(--density-multiplier))",
+                    order: orderIndex("certification"),
+                  }}
+                >
                   <Heading>Certifications</Heading>
                   <div
                     className={`flex flex-wrap gap-x-[calc(var(--section-gap)*0.5)] ${resumeData.certifications.find((skill) => skill.description) && "flex-col"}`}
@@ -232,7 +280,14 @@ export default function Ats1({ resumeData, className }: ResumePreviewProps) {
                 </section>
               ) : null,
             others: !!resumeData.others?.title ? (
-              <section className="mb-[var(--section-gap)] break-inside-avoid">
+              <section
+                className="break-inside-avoid"
+                style={{
+                  marginBottom:
+                    "calc(var(--section-gap) * var(--density-multiplier))",
+                  order: orderIndex("interests"),
+                }}
+              >
                 <Heading>{resumeData.others.title}</Heading>
                 <div
                   dangerouslySetInnerHTML={{
@@ -421,10 +476,16 @@ function Heading({ children }: { children: string }) {
   return (
     <>
       <div className="flex break-inside-avoid gap-x-[calc(var(--section-gap)*0.1)]">
-        <h1 className="text-nowrap font-semibold text-[var(--accent)]">
+        <h1
+          className="text-nowrap font-semibold text-[var(--accent)]"
+          style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+        >
           {children}
         </h1>
-        <div className="mt-auto h-0 w-full border [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+        <div
+          className="mt-auto h-0 w-full border [border-color:var(--accent)] [border-style:var(--resume-border-style)]"
+          style={{ borderWidth: "var(--resume-border-width)" }}
+        />
       </div>
     </>
   );

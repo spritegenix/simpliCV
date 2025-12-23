@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 import { resumeStyles } from "@/components/ResumeStyles/Styles";
 import { auth } from "@clerk/nextjs/server";
 import { getUserSubscriptionLevel } from "@/lib/subscription";
-import prisma from "@/lib/prisma";
+import { safeResumeCount } from "@/lib/dbSafe";
 import TemplateCard from "./(resumeSample)/templates/TemplateCard";
 import { canCreateResume } from "@/lib/permissions";
 import { PremiumCards } from "@/components/premium/PremiumModal";
@@ -179,9 +179,7 @@ async function Templates() {
 
   if (userId) {
     [totalCount, subscriptionLevel] = await Promise.all([
-      prisma.resume.count({
-        where: { userId },
-      }),
+      safeResumeCount(userId),
       getUserSubscriptionLevel(userId),
     ]);
   }

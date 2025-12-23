@@ -77,10 +77,8 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                 <p className="!m-0 flex w-full gap-x-4">
                   <span>
                     {edu.startDate &&
-                      `${safeFormatDate(edu.startDate, dateFormatText)} -`}{" "}
-                    {edu.endDate
-                      ? safeFormatDate(edu.endDate, dateFormatText)
-                      : "now"}
+                      `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
+                    {edu.endDate ? safeFormatDate(edu.endDate, "yyyy") : "now"}
                   </span>
                   <span> {edu.location}</span>
                 </p>

@@ -53,7 +53,10 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
         id="resumePreviewContent"
       >
         {/* Left Side  */}
-        <div className="col-span-4 space-y-3 border-2 border-black p-6">
+        <div
+          className="col-span-4 space-y-3 border border-black p-6"
+          style={{ borderWidth: "calc(var(--resume-border-width) * 2)" }}
+        >
           <PersonalInfoHeader
             resumeData={resumeData}
             ColorOpacity={ColorOpacity}
@@ -366,8 +369,9 @@ function PersonalInfoHeader({
             width={500}
             height={500}
             alt="Author photo"
-            className="-ml-3 aspect-square h-full w-full border-4 border-white object-cover object-top"
+            className="-ml-3 aspect-square h-full w-full border border-white object-cover object-top"
             style={{
+              borderWidth: "calc(var(--resume-border-width) * 4)",
               borderRadius:
                 borderStyle === BorderStyles.SQUARE
                   ? "0px"

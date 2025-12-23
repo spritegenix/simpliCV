@@ -623,7 +623,7 @@ const Section = ({
         display: "grid",
         gridTemplateColumns: "160px 40px 1fr",
         columnGap: "20px",
-        marginBottom: "var(--section-gap)",
+        marginBottom: "calc(var(--section-gap) * var(--density-multiplier))",
         position: "relative",
       }}
     >

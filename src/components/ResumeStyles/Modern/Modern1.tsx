@@ -44,7 +44,13 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
         {/* Main column */}
         <div className="min-w-0 p-6 pr-0">
           {/* Name And Job Title  */}
-          <section className="mb-[var(--section-gap)] break-inside-avoid">
+          <section
+            className="break-inside-avoid"
+            style={{
+              marginBottom:
+                "calc(var(--section-gap) * var(--density-multiplier))",
+            }}
+          >
             <div
               className="rounded-md p-4"
               style={{
@@ -53,20 +59,30 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
               }}
             >
               <p className="text-[3em] leading-none">
-                <span className="font-bold">{resumeData.firstName}</span>{" "}
-                <span style={{ color: "var(--accent)" }}>
-                  {resumeData.lastName}
+                <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+                  <span className="font-bold">{resumeData.firstName}</span>{" "}
+                  <span style={{ color: "var(--accent)" }}>
+                    {resumeData.lastName}
+                  </span>
                 </span>
               </p>
               <p className="mt-[calc(var(--section-gap)*0.15)] text-[1.6em] font-medium">
-                {resumeData.jobTitle}
+                <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+                  {resumeData.jobTitle}
+                </span>
               </p>
             </div>
           </section>
 
           {/* Summary */}
           {resumeData.summary && (
-            <section className="mb-[var(--section-gap)] break-inside-avoid">
+            <section
+              className="break-inside-avoid"
+              style={{
+                marginBottom:
+                  "calc(var(--section-gap) * var(--density-multiplier))",
+              }}
+            >
               <Heading>Professional Summary</Heading>
               <Text>{resumeData.summary}</Text>
             </section>
@@ -75,10 +91,16 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
           {/* Experience */}
           {!!resumeData?.workExperiences &&
             resumeData?.workExperiences?.length > 0 && (
-              <section className="mb-[var(--section-gap)] break-inside-avoid">
+              <section
+                className="break-inside-avoid"
+                style={{
+                  marginBottom:
+                    "calc(var(--section-gap) * var(--density-multiplier))",
+                }}
+              >
                 <Heading>Professional Experience</Heading>
                 <ul className="relative space-y-[calc(var(--section-gap)*0.25)] pl-4">
-                  <div className="absolute inset-y-0 left-1 h-full w-0 border border-l [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+                  <div className="absolute inset-y-0 left-1 h-full w-0 border-[length:var(--resume-border-width)] [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
                   {resumeData.workExperiences?.map((exp, index) => (
                     <li
                       key={index}
@@ -90,13 +112,25 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                       />
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-[1.2em] font-semibold text-[var(--accent)]">
-                          {exp.company}
+                          <span
+                            style={{
+                              fontSize: "calc(1em * var(--heading-scale))",
+                            }}
+                          >
+                            {exp.company}
+                          </span>
                         </span>
                         {exp.jobLocation && <span>{exp.jobLocation}</span>}
                       </div>
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-[1.1em] font-semibold italic">
-                          {exp.position}
+                          <span
+                            style={{
+                              fontSize: "calc(1em * var(--heading-scale))",
+                            }}
+                          >
+                            {exp.position}
+                          </span>
                         </span>
                         {exp.startDate && (
                           <span>
@@ -121,7 +155,13 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
 
           {/* Projects */}
           {!!resumeData.projectWorks && resumeData.projectWorks?.length > 0 && (
-            <section className="mb-[var(--section-gap)] break-inside-avoid">
+            <section
+              className="break-inside-avoid"
+              style={{
+                marginBottom:
+                  "calc(var(--section-gap) * var(--density-multiplier))",
+              }}
+            >
               <Heading>Project Work</Heading>
               {resumeData.projectWorks?.map((item, index) => (
                 <div key={index} className="break-inside-avoid">
@@ -179,13 +219,19 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
               "color-mix(in srgb, var(--accent) 8%, transparent)",
             borderLeftColor: "var(--accent)",
             borderLeftStyle: "var(--resume-border-style)" as any,
-            borderLeftWidth: "1px",
+            borderLeftWidth: "var(--resume-border-width)",
           }}
         >
           <PersonalInfoHeader resumeData={resumeData} />
           {/* Skills  */}
           {!!resumeData.skills && resumeData.skills?.length > 0 && (
-            <section className="mb-[var(--section-gap)] break-inside-avoid">
+            <section
+              className="break-inside-avoid"
+              style={{
+                marginBottom:
+                  "calc(var(--section-gap) * var(--density-multiplier))",
+              }}
+            >
               <Heading>Skills</Heading>
               {resumeData.skills?.map((skill, index) => (
                 <div key={index} className="!m-0 break-inside-avoid">
@@ -204,7 +250,13 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
           )}
           {/* Academics */}
           {!!resumeData.educations && resumeData.educations?.length > 0 && (
-            <section className="mb-[var(--section-gap)] break-inside-avoid">
+            <section
+              className="break-inside-avoid"
+              style={{
+                marginBottom:
+                  "calc(var(--section-gap) * var(--density-multiplier))",
+              }}
+            >
               <Heading>Education</Heading>
               {resumeData.educations?.map((edu, index) => (
                 <div
@@ -218,9 +270,9 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                   <div className="!m-0">
                     <p>
                       {edu.startDate &&
-                        `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                        `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
                       {edu.endDate
-                        ? safeFormatDate(edu.endDate, "MMM yyyy")
+                        ? safeFormatDate(edu.endDate, "yyyy")
                         : "Present"}
                     </p>
                     <p className="font-semibold">
@@ -244,7 +296,13 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
           {/* Certifications  */}
           {!!resumeData.certifications &&
             resumeData.certifications?.length > 0 && (
-              <section className="mb-[var(--section-gap)] break-inside-avoid">
+              <section
+                className="break-inside-avoid"
+                style={{
+                  marginBottom:
+                    "calc(var(--section-gap) * var(--density-multiplier))",
+                }}
+              >
                 <Heading>Certifications</Heading>
                 <div className={cn("!m-0")}>
                   {resumeData.certifications?.map((skill, index) => (
@@ -271,7 +329,13 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
             )}
           {/* Interest  */}
           {!!resumeData.others?.title && (
-            <section className="mb-[var(--section-gap)] break-inside-avoid">
+            <section
+              className="break-inside-avoid"
+              style={{
+                marginBottom:
+                  "calc(var(--section-gap) * var(--density-multiplier))",
+              }}
+            >
               <Heading>{resumeData.others.title}</Heading>
               <div
                 dangerouslySetInnerHTML={{
@@ -318,10 +382,11 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             width={500}
             height={500}
             alt="Author photo"
-            className="aspect-square h-[120px] w-[120px] border-4 object-cover object-top"
+            className="aspect-square h-[120px] w-[120px] border object-cover object-top"
             style={{
               borderColor: "var(--accent)",
               borderStyle: "var(--resume-border-style)" as any,
+              borderWidth: "calc(var(--resume-border-width) * 4)",
               borderRadius:
                 borderStyle === BorderStyles.SQUARE
                   ? "0px"
@@ -334,7 +399,13 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
       )}
       {/* Social Links  */}
       <div>
-        <section className="mb-[var(--section-gap)] break-inside-avoid">
+        <section
+          className="break-inside-avoid"
+          style={{
+            marginBottom:
+              "calc(var(--section-gap) * var(--density-multiplier))",
+          }}
+        >
           <Heading>Contact</Heading>
           {(city || country) && (
             <p className="flex items-center gap-1">
@@ -401,9 +472,11 @@ function Heading({ children }: { children: string }) {
     <>
       <div className="break-inside-avoid">
         <h1 className="text-nowrap text-[1.2em] font-semibold uppercase text-[var(--accent)]">
-          {children}
+          <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+            {children}
+          </span>
         </h1>
-        <div className="mb-2 mt-auto h-0 w-full border [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+        <div className="mb-2 mt-auto h-0 w-full border-[length:var(--resume-border-width)] [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
       </div>
     </>
   );

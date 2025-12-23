@@ -174,9 +174,9 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
                     </span>{" "}
                     <span>
                       {edu.startDate &&
-                        `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                        `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
                       {edu.endDate
-                        ? safeFormatDate(edu.endDate, "MMM yyyy")
+                        ? safeFormatDate(edu.endDate, "yyyy")
                         : "Present"}
                     </span>
                   </p>

@@ -4,7 +4,7 @@ import { resumeStyles } from "@/components/ResumeStyles/Styles";
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs/server";
 import { canCreateResume } from "@/lib/permissions";
-import prisma from "@/lib/prisma";
+import { safeResumeCount } from "@/lib/dbSafe";
 import TemplateCard from "./TemplateCard";
 import Wrapper from "@/components/Wrappers";
 
@@ -16,9 +16,7 @@ export default async function TemplatesPage() {
 
   if (userId) {
     [totalCount, subscriptionLevel] = await Promise.all([
-      prisma.resume.count({
-        where: { userId },
-      }),
+      safeResumeCount(userId),
       getUserSubscriptionLevel(userId),
     ]);
   }

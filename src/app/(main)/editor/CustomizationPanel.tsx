@@ -10,7 +10,6 @@ import FontSection from "@/components/customisation/FontSection";
 import SectionHeadings from "@/components/customisation/SectionHeadings";
 import SpacingSection from "@/components/customisation/SpacingSection";
 import EntryLayout from "@/components/customisation/EntryLayout";
-import FooterSection from "@/components/customisation/FooterSection";
 import AdvancedSection from "@/components/customisation/AdvancedSection";
 import PersonalDetails from "@/components/customisation/PersonalDetails";
 import NameSection from "@/components/customisation/NameSection";
@@ -21,6 +20,9 @@ import {
   type ResumeSectionKey,
 } from "@/lib/sectionOrder";
 import type { ResumeValues } from "@/lib/validation";
+import DesignTokensSection, {
+  DensityPreset,
+} from "@/components/customisation/DesignTokensSection";
 
 interface CustomizationPanelProps {
   resumeData: ResumeDocument;
@@ -80,6 +82,20 @@ export default function CustomizationPanel({
     }
   };
 
+  const setCustomization = (
+    patch: NonNullable<ResumeDocument["design"]["customization"]>,
+  ) =>
+    setResumeData({
+      ...resumeData,
+      design: {
+        ...resumeData.design,
+        customization: {
+          ...resumeData.design.customization,
+          ...patch,
+        },
+      },
+    });
+
   // Phase 2: ONLY these are wired (ATS-safe)
   const fontSize = resumeData.design.typography.baseFontSize;
   const setFontSize = (value: number) =>
@@ -94,23 +110,6 @@ export default function CustomizationPanel({
       },
     });
 
-  const fontCategory: "serif" | "sans" | "mono" =
-    resumeData.design.typography.fontFamily === "inter"
-      ? "sans"
-      : resumeData.design.typography.fontFamily;
-
-  const setFontCategory = (value: "serif" | "sans" | "mono") =>
-    setResumeData({
-      ...resumeData,
-      design: {
-        ...resumeData.design,
-        typography: {
-          ...resumeData.design.typography,
-          fontFamily: value === "sans" ? "inter" : value,
-        },
-      },
-    });
-
   const spaceBetweenEntries = resumeData.design.spacing.sectionGap;
   const setSpaceBetweenEntries = (value: number) =>
     setResumeData({
@@ -120,6 +119,46 @@ export default function CustomizationPanel({
         spacing: {
           ...resumeData.design.spacing,
           sectionGap: value,
+        },
+      },
+    });
+
+  const headingScale = resumeData.design.typography.headingScale ?? 1.15;
+  const setHeadingScale = (value: number) =>
+    setResumeData({
+      ...resumeData,
+      design: {
+        ...resumeData.design,
+        typography: {
+          ...resumeData.design.typography,
+          headingScale: value,
+        },
+      },
+    });
+
+  const borderWidth = resumeData.design.decorations.borderWidth ?? 1;
+  const setBorderWidth = (value: number) =>
+    setResumeData({
+      ...resumeData,
+      design: {
+        ...resumeData.design,
+        decorations: {
+          ...resumeData.design.decorations,
+          borderWidth: value,
+        },
+      },
+    });
+
+  const density = (resumeData.design.spacing.density ??
+    "normal") as DensityPreset;
+  const setDensity = (value: DensityPreset) =>
+    setResumeData({
+      ...resumeData,
+      design: {
+        ...resumeData.design,
+        spacing: {
+          ...resumeData.design.spacing,
+          density: value,
         },
       },
     });
@@ -139,78 +178,189 @@ export default function CustomizationPanel({
       },
     });
   const pageFormat = "A4";
-  const sectionOrderKeys = normalizeSectionOrder(
-    resumeData.content.sectionOrder,
-  );
-  const visibleSectionOrderKeys = sectionOrderKeys.filter((key) =>
-    sectionHasContent(key, resumeData.content),
+  const orderableSteps = steps.filter(
+    (step) => step.key !== "general-info" && step.key !== "personal-info",
   );
 
-  const sectionOrder = visibleSectionOrderKeys.map((key) => ({
-    key,
-    title: getSectionTitle(key, {
-      othersTitle: resumeData.content.others?.title,
-    }),
-  }));
+  const sectionOrder = (
+    resumeData.design.customization?.sectionOrder ??
+    orderableSteps.map((s) => s.key)
+  ).map((key) => {
+    const step = orderableSteps.find((s) => s.key === key);
+    return {
+      key,
+      title: step?.title ?? key,
+    };
+  });
 
-  const setSectionOrder = (sections: { key: string; title: string }[]) => {
-    const keys = sections
-      .map((s) => s.key)
-      .filter((k): k is ResumeSectionKey =>
-        (Object.keys(SECTION_TITLES) as string[]).includes(k),
-      );
+  const setSectionOrder = (sections: { key: string; title: string }[]) =>
+    setCustomization({ sectionOrder: sections.map((s) => s.key) });
 
-    // Only reorder the currently-visible sections; keep hidden sections stable.
-    const visibleSet = new Set(visibleSectionOrderKeys);
-    let visibleIndex = 0;
-    const mergedFullOrder = sectionOrderKeys.map((key) => {
-      if (!visibleSet.has(key)) return key;
-
-      const next = keys[visibleIndex];
-      visibleIndex += 1;
-      return next ?? key;
-    });
-
-    setResumeData({
-      ...resumeData,
-      content: {
-        ...resumeData.content,
-        sectionOrder: mergedFullOrder,
+  const columnLayout: "one" | "two" | "mix" =
+    resumeData.design.customization?.layout?.columnLayout ?? "two";
+  const setColumnLayout = (value: "one" | "two" | "mix") =>
+    setCustomization({
+      layout: {
+        ...resumeData.design.customization?.layout,
+        columnLayout: value,
       },
     });
-  };
 
-  const columnLayout: "one" | "two" | "mix" = "two";
-  const headerPosition: "top" | "left" | "right" = "right";
-  const leftColumnWidth = 50;
-  const rightColumnWidth = 50;
+  const headerPosition: "top" | "left" | "right" =
+    resumeData.design.customization?.layout?.headerPosition ?? "top";
+  const setHeaderPosition = (value: "top" | "left" | "right") =>
+    setCustomization({
+      layout: {
+        ...resumeData.design.customization?.layout,
+        headerPosition: value,
+      },
+    });
 
-  const lineHeight = 1.3;
-  const leftRightMargin = 18;
-  const topBottomMargin = 16;
+  const lineHeight =
+    resumeData.design.customization?.spacing?.lineHeight ?? 1.3;
+  const setLineHeight = (value: number) =>
+    setCustomization({
+      spacing: {
+        ...resumeData.design.customization?.spacing,
+        lineHeight: value,
+      },
+    });
 
-  const selectedFont = "Lora";
-  const headingStyle = 1;
-  const headingCapitalization: "capitalize" | "uppercase" = "uppercase";
-  const headingSize: "S" | "M" | "L" | "XL" = "M";
-  const headingIcons: "none" | "outline" | "filled" = "filled";
+  const selectedFont =
+    resumeData.design.customization?.font?.selectedFont ?? "Lora";
+  const setSelectedFont = (value: string) =>
+    setCustomization({
+      font: {
+        ...resumeData.design.customization?.font,
+        selectedFont: value,
+      },
+    });
 
-  const titleSubtitleSize: "S" | "M" | "L" = "S";
-  const subtitleStyle: "normal" | "bold" | "italic" = "normal";
-  const subtitlePlacement: "same-line" | "next-line" = "next-line";
-  const indentBody = false;
-  const listStyle: "bullet" | "hyphen" = "bullet";
+  const headingStyle =
+    resumeData.design.customization?.sectionHeadings?.headingStyle ?? 1;
+  const setHeadingStyle = (value: number) =>
+    setCustomization({
+      sectionHeadings: {
+        ...resumeData.design.customization?.sectionHeadings,
+        headingStyle: value,
+      },
+    });
 
-  const showPageNumbers = true;
-  const showEmail = true;
-  const showName = true;
+  const headingCapitalization: "capitalize" | "uppercase" =
+    resumeData.design.customization?.sectionHeadings?.headingCapitalization ??
+    "uppercase";
+  const setHeadingCapitalization = (value: "capitalize" | "uppercase") =>
+    setCustomization({
+      sectionHeadings: {
+        ...resumeData.design.customization?.sectionHeadings,
+        headingCapitalization: value,
+      },
+    });
+
+  const headingSize: "S" | "M" | "L" | "XL" =
+    resumeData.design.customization?.sectionHeadings?.headingSize ?? "S";
+  const setHeadingSize = (value: "S" | "M" | "L" | "XL") =>
+    setCustomization({
+      sectionHeadings: {
+        ...resumeData.design.customization?.sectionHeadings,
+        headingSize: value,
+      },
+    });
+
+  const headingIcons: "none" | "outline" | "filled" =
+    resumeData.design.customization?.sectionHeadings?.headingIcons ?? "filled";
+  const setHeadingIcons = (value: "none" | "outline" | "filled") =>
+    setCustomization({
+      sectionHeadings: {
+        ...resumeData.design.customization?.sectionHeadings,
+        headingIcons: value,
+      },
+    });
+
+  const titleSubtitleSize: "S" | "M" | "L" =
+    resumeData.design.customization?.entryLayout?.titleSubtitleSize ?? "S";
+  const setTitleSubtitleSize = (value: "S" | "M" | "L") =>
+    setCustomization({
+      entryLayout: {
+        ...resumeData.design.customization?.entryLayout,
+        titleSubtitleSize: value,
+      },
+    });
+
+  const subtitleStyle: "normal" | "bold" | "italic" =
+    resumeData.design.customization?.entryLayout?.subtitleStyle ?? "normal";
+  const setSubtitleStyle = (value: "normal" | "bold" | "italic") =>
+    setCustomization({
+      entryLayout: {
+        ...resumeData.design.customization?.entryLayout,
+        subtitleStyle: value,
+      },
+    });
+
+  const subtitlePlacement: "same-line" | "next-line" =
+    resumeData.design.customization?.entryLayout?.subtitlePlacement ??
+    "next-line";
+  const setSubtitlePlacement = (value: "same-line" | "next-line") =>
+    setCustomization({
+      entryLayout: {
+        ...resumeData.design.customization?.entryLayout,
+        subtitlePlacement: value,
+      },
+    });
+
+  const indentBody =
+    resumeData.design.customization?.entryLayout?.indentBody ?? false;
+  const setIndentBody = (value: boolean) =>
+    setCustomization({
+      entryLayout: {
+        ...resumeData.design.customization?.entryLayout,
+        indentBody: value,
+      },
+    });
+
+  const listStyle: "bullet" | "hyphen" =
+    resumeData.design.customization?.entryLayout?.listStyle ?? "bullet";
+  const setListStyle = (value: "bullet" | "hyphen") =>
+    setCustomization({
+      entryLayout: {
+        ...resumeData.design.customization?.entryLayout,
+        listStyle: value,
+      },
+    });
 
   const linkIcon: "none" | "icon1" | "icon2" = "icon1";
   const reduceDateLocationOpacity = false;
 
-  const detailsAlign: "left" | "center" | "right" = "center";
-  const detailsArrangement: "icon" | "bullet" | "bar" = "icon";
-  const detailsIconStyle = 0;
+  const detailsAlign: "left" | "center" | "right" =
+    resumeData.design.customization?.personalDetails?.detailsAlign ?? "center";
+  const setDetailsAlign = (value: "left" | "center" | "right") =>
+    setCustomization({
+      personalDetails: {
+        ...resumeData.design.customization?.personalDetails,
+        detailsAlign: value,
+      },
+    });
+
+  const detailsArrangement: "icon" | "bullet" | "bar" =
+    resumeData.design.customization?.personalDetails?.detailsArrangement ??
+    "icon";
+  const setDetailsArrangement = (value: "icon" | "bullet" | "bar") =>
+    setCustomization({
+      personalDetails: {
+        ...resumeData.design.customization?.personalDetails,
+        detailsArrangement: value,
+      },
+    });
+
+  const detailsIconStyle =
+    resumeData.design.customization?.personalDetails?.detailsIconStyle ?? 0;
+  const setDetailsIconStyle = (value: number) =>
+    setCustomization({
+      personalDetails: {
+        ...resumeData.design.customization?.personalDetails,
+        detailsIconStyle: value,
+      },
+    });
 
   const nameSize: "XS" | "S" | "M" | "L" | "XL" = "L";
   const nameBold = true;
@@ -240,33 +390,27 @@ export default function CustomizationPanel({
       {/* Layout */}
       <LayoutSection
         columnLayout={columnLayout}
-        setColumnLayout={noop as any}
+        setColumnLayout={setColumnLayout}
         headerPosition={headerPosition}
-        setHeaderPosition={noop as any}
-        leftColumnWidth={leftColumnWidth}
-        setLeftColumnWidth={noop}
-        rightColumnWidth={rightColumnWidth}
-        setRightColumnWidth={noop}
+        setHeaderPosition={setHeaderPosition}
       />
 
       {/* Font */}
       <FontSection
-        fontCategory={fontCategory}
-        setFontCategory={setFontCategory}
         selectedFont={selectedFont}
-        setSelectedFont={noop}
+        setSelectedFont={setSelectedFont}
       />
 
       {/* Section Headings */}
       <SectionHeadings
         headingStyle={headingStyle}
-        setHeadingStyle={noop}
+        setHeadingStyle={setHeadingStyle}
         headingCapitalization={headingCapitalization}
-        setHeadingCapitalization={noop as any}
+        setHeadingCapitalization={setHeadingCapitalization}
         headingSize={headingSize}
-        setHeadingSize={noop as any}
+        setHeadingSize={setHeadingSize}
         headingIcons={headingIcons}
-        setHeadingIcons={noop as any}
+        setHeadingIcons={setHeadingIcons}
       />
 
       {/* Spacing */}
@@ -274,37 +418,33 @@ export default function CustomizationPanel({
         fontSize={fontSize}
         setFontSize={setFontSize}
         lineHeight={lineHeight}
-        setLineHeight={noop}
-        leftRightMargin={leftRightMargin}
-        setLeftRightMargin={noop}
-        topBottomMargin={topBottomMargin}
-        setTopBottomMargin={noop}
+        setLineHeight={setLineHeight}
         spaceBetweenEntries={spaceBetweenEntries}
         setSpaceBetweenEntries={setSpaceBetweenEntries}
+      />
+
+      {/* Design tokens */}
+      <DesignTokensSection
+        headingScale={headingScale}
+        setHeadingScale={setHeadingScale}
+        borderWidth={borderWidth}
+        setBorderWidth={setBorderWidth}
+        density={density}
+        setDensity={setDensity}
       />
 
       {/* Entry Layout */}
       <EntryLayout
         titleSubtitleSize={titleSubtitleSize}
-        setTitleSubtitleSize={noop as any}
+        setTitleSubtitleSize={setTitleSubtitleSize}
         subtitleStyle={subtitleStyle}
-        setSubtitleStyle={noop as any}
+        setSubtitleStyle={setSubtitleStyle}
         subtitlePlacement={subtitlePlacement}
-        setSubtitlePlacement={noop as any}
+        setSubtitlePlacement={setSubtitlePlacement}
         indentBody={indentBody}
-        setIndentBody={noop}
+        setIndentBody={setIndentBody}
         listStyle={listStyle}
-        setListStyle={noop as any}
-      />
-
-      {/* Footer */}
-      <FooterSection
-        showPageNumbers={showPageNumbers}
-        setShowPageNumbers={noop}
-        showEmail={showEmail}
-        setShowEmail={noop}
-        showName={showName}
-        setShowName={noop}
+        setListStyle={setListStyle}
       />
 
       {/* Advanced */}
@@ -318,11 +458,11 @@ export default function CustomizationPanel({
       {/* Personal Details */}
       <PersonalDetails
         detailsAlign={detailsAlign}
-        setDetailsAlign={noop as any}
+        setDetailsAlign={setDetailsAlign}
         detailsArrangement={detailsArrangement}
-        setDetailsArrangement={noop as any}
+        setDetailsArrangement={setDetailsArrangement}
         detailsIconStyle={detailsIconStyle}
-        setDetailsIconStyle={noop}
+        setDetailsIconStyle={setDetailsIconStyle}
       />
 
       {/* Name */}
