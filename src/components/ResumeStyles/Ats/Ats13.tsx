@@ -32,7 +32,10 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
   const sections: Record<ResumeSectionKey, React.ReactNode> = {
     summary: resumeData.summary ? (
       <section>
-        <h3 className="mb-2 text-sm font-bold uppercase tracking-widest text-gray-400">
+        <h3
+          data-resume-section-heading
+          className="mb-2 text-sm font-bold tracking-widest text-gray-400"
+        >
           Summary
         </h3>
         <p className="whitespace-pre-line text-justify leading-relaxed text-gray-700">
@@ -43,7 +46,10 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
     workExperiences:
       resumeData.workExperiences && resumeData.workExperiences.length > 0 ? (
         <section>
-          <h3 className="mb-4 border-b border-gray-100 pb-1 text-sm font-bold uppercase tracking-widest text-gray-400">
+          <h3
+            data-resume-section-heading
+            className="mb-4 pb-1 text-sm font-bold tracking-widest text-gray-400"
+          >
             Experience
           </h3>
           <div className="space-y-5">
@@ -83,7 +89,10 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
     educations:
       resumeData.educations && resumeData.educations.length > 0 ? (
         <section>
-          <h3 className="mb-4 border-b border-gray-100 pb-1 text-sm font-bold uppercase tracking-widest text-gray-400">
+          <h3
+            data-resume-section-heading
+            className="mb-4 pb-1 text-sm font-bold tracking-widest text-gray-400"
+          >
             Education
           </h3>
           <div className="space-y-4">
@@ -110,7 +119,10 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
     projectWorks:
       resumeData.projectWorks && resumeData.projectWorks.length > 0 ? (
         <section>
-          <h3 className="mb-4 border-b border-gray-100 pb-1 text-sm font-bold uppercase tracking-widest text-gray-400">
+          <h3
+            data-resume-section-heading
+            className="mb-4 pb-1 text-sm font-bold tracking-widest text-gray-400"
+          >
             Projects
           </h3>
           <div className="grid grid-cols-1 gap-4">
@@ -155,7 +167,10 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
     skills:
       resumeData.skills && resumeData.skills.length > 0 ? (
         <section>
-          <h3 className="mb-3 border-b border-gray-100 pb-1 text-sm font-bold uppercase tracking-widest text-gray-400">
+          <h3
+            data-resume-section-heading
+            className="mb-3 pb-1 text-sm font-bold tracking-widest text-gray-400"
+          >
             Technical Skills
           </h3>
           <div className="flex flex-wrap gap-2">
@@ -178,7 +193,10 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
     certifications:
       resumeData.certifications && resumeData.certifications.length > 0 ? (
         <section>
-          <h3 className="mb-3 border-b border-gray-100 pb-1 text-sm font-bold uppercase tracking-widest text-gray-400">
+          <h3
+            data-resume-section-heading
+            className="mb-3 pb-1 text-sm font-bold tracking-widest text-gray-400"
+          >
             Certifications
           </h3>
           <ul className="list-inside list-disc space-y-1 text-sm text-gray-700">
@@ -196,7 +214,10 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
     others:
       resumeData.others?.title || resumeData.others?.description ? (
         <section>
-          <h3 className="mb-3 border-b border-gray-100 pb-1 text-sm font-bold uppercase tracking-widest text-gray-400">
+          <h3
+            data-resume-section-heading
+            className="mb-3 pb-1 text-sm font-bold tracking-widest text-gray-400"
+          >
             {resumeData.others?.title || "Other"}
           </h3>
           <div

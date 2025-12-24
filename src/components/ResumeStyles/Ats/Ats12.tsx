@@ -280,8 +280,11 @@ export default function Ats12({ resumeData, className }: ResumePreviewProps) {
 
 function SectionTitle({ title }: { title: string }) {
   return (
-    <div className="mb-3 mt-4 border-b-[1px] border-black">
-      <h2 className="mb-1 text-xl font-bold uppercase tracking-widest">
+    <div data-resume-section-heading-wrap className="mb-3 mt-4">
+      <h2
+        data-resume-section-heading
+        className="mb-1 text-xl font-bold tracking-widest"
+      >
         {title}
       </h2>
     </div>

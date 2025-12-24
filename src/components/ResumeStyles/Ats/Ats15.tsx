@@ -39,7 +39,8 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
     summary: resumeData.summary ? (
       <section>
         <h3
-          className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
+          data-resume-section-heading
+          className="mb-2 text-sm font-bold"
           style={{ borderColor: colorHex }}
         >
           Profile
@@ -53,7 +54,8 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
       resumeData.workExperiences && resumeData.workExperiences.length > 0 ? (
         <section>
           <h3
-            className="mb-3 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            data-resume-section-heading
+            className="mb-3 text-sm font-bold"
             style={{ borderColor: colorHex }}
           >
             Professional Experience
@@ -97,7 +99,8 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
       resumeData.educations && resumeData.educations.length > 0 ? (
         <section>
           <h3
-            className="mb-3 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            data-resume-section-heading
+            className="mb-3 text-sm font-bold"
             style={{ borderColor: colorHex }}
           >
             Education
@@ -131,7 +134,8 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
       resumeData.skills && resumeData.skills.length > 0 ? (
         <section>
           <h3
-            className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            data-resume-section-heading
+            className="mb-2 text-sm font-bold"
             style={{ borderColor: colorHex }}
           >
             Skills
@@ -154,7 +158,8 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
       resumeData.projectWorks && resumeData.projectWorks.length > 0 ? (
         <section>
           <h3
-            className="mb-3 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            data-resume-section-heading
+            className="mb-3 text-sm font-bold"
             style={{ borderColor: colorHex }}
           >
             Projects
@@ -198,7 +203,8 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
       resumeData.certifications && resumeData.certifications.length > 0 ? (
         <section>
           <h3
-            className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            data-resume-section-heading
+            className="mb-2 text-sm font-bold"
             style={{ borderColor: colorHex }}
           >
             Awards & Certifications
@@ -221,7 +227,8 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
       resumeData.others?.title || resumeData.others?.description ? (
         <section>
           <h3
-            className="mb-2 border-b-2 border-gray-800 text-sm font-bold uppercase"
+            data-resume-section-heading
+            className="mb-2 text-sm font-bold"
             style={{ borderColor: colorHex }}
           >
             {resumeData.others?.title || "Other"}

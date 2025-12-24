@@ -408,8 +408,9 @@ function Heading({
 }) {
   return (
     <>
-      <div className="break-inside-avoid">
+      <div data-resume-section-heading-wrap className="break-inside-avoid">
         <h1
+          data-resume-section-heading
           className="text-nowrap text-[1.3em] font-semibold capitalize"
           style={{
             color: colorHex,

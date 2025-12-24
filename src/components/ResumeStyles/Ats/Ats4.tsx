@@ -490,8 +490,12 @@ function Heading({
 }) {
   return (
     <>
-      <div className={cn("break-inside-avoid", className)}>
+      <div
+        data-resume-section-heading-wrap
+        className={cn("break-inside-avoid", className)}
+      >
         <h1
+          data-resume-section-heading
           className={cn(
             "text-nowrap text-[1.2em] uppercase",
             isCenter && "text-center",
@@ -502,12 +506,6 @@ function Heading({
         >
           {children}
         </h1>
-        <div
-          className="mb-2 mt-auto h-0 w-full border-b"
-          style={{
-            borderColor: colorHex,
-          }}
-        />
       </div>
     </>
   );

@@ -111,8 +111,10 @@ function adaptLegacyTemplateComponent(
     const detailsIconStyle =
       resumeData.design.customization?.personalDetails?.detailsIconStyle ?? 0;
 
-    const sectionHeadingStyle =
+    const rawSectionHeadingStyle =
       resumeData.design.customization?.sectionHeadings?.headingStyle ?? 1;
+    const sectionHeadingStyle =
+      rawSectionHeadingStyle === 6 ? 5 : rawSectionHeadingStyle;
     const sectionHeadingCapitalization =
       resumeData.design.customization?.sectionHeadings?.headingCapitalization ??
       "uppercase";
@@ -275,12 +277,55 @@ function adaptLegacyTemplateComponent(
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"3\"] [data-resume-section-heading],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"4\"] [data-resume-section-heading],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"5\"] [data-resume-section-heading],\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"6\"] [data-resume-section-heading] {\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading] {\n` +
           `  border-bottom: 0 !important;\n` +
           `  border-bottom-width: 0 !important;\n` +
           `  border-bottom-style: none !important;\n` +
           `  background: transparent !important;\n` +
+          `  box-shadow: none !important;\n` +
           `}\n` +
+          // Style 7: no line + tight spacing
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading]::before,\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading]::after {\n` +
+          `  content: none !important;\n` +
+          `  border: 0 !important;\n` +
+          `}\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading-decoration] {\n` +
+          `  display: none !important;\n` +
+          `}\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading-wrap] {\n` +
+          `  padding: 0 !important;\n` +
+          `  margin: 0 !important;\n` +
+          `  border: 0 !important;\n` +
+          `  border-bottom: 0 !important;\n` +
+          `  border-bottom-width: 0 !important;\n` +
+          `  border-bottom-style: none !important;\n` +
+          `  background: transparent !important;\n` +
+          `  box-shadow: none !important;\n` +
+          `}\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading] {\n` +
+          `  padding: 0 !important;\n` +
+          `  margin: 0 !important;\n` +
+          `}\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading] + * {\n` +
+          `  margin-top: 0 !important;\n` +
+          `}\n` +
+          // Default style (1): provide a consistent, customizable look for ATS templates
+          // without relying on template-hardcoded borders/lines.
+          (isAts
+            ? `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"1\"] [data-resume-section-heading] {\n` +
+              `  padding-bottom: 0.25em;\n` +
+              `}\n` +
+              `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"1\"] [data-resume-section-heading]::after {\n` +
+              `  content: \"\";\n` +
+              `  position: absolute;\n` +
+              `  left: 0;\n` +
+              `  right: 0;\n` +
+              `  bottom: 0;\n` +
+              `  border-bottom: calc(var(--resume-border-width) * 1) solid currentColor;\n` +
+              `  opacity: 0.5;\n` +
+              `}\n`
+            : "") +
           // Style decorations via pseudo-elements
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"2\"] [data-resume-section-heading] {\n` +
           `  padding-bottom: 0.25em;\n` +
@@ -326,11 +371,7 @@ function adaptLegacyTemplateComponent(
           `}\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"5\"] [data-resume-section-heading]::before { left: 0; }\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"5\"] [data-resume-section-heading]::after { left: 28%; }\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"6\"] [data-resume-section-heading] {\n` +
-          `  background: color-mix(in srgb, currentColor 10%, transparent);\n` +
-          `  padding: 0.15em 0.35em;\n` +
-          `  display: inline-block;\n` +
-          `}\n`
+          ``
         : "";
 
     const scopedEntryLayoutCss =

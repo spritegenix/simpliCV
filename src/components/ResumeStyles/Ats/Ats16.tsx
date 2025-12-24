@@ -26,10 +26,9 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
     summary: resumeData.summary ? (
       <section className="mb-[var(--section-gap)] break-inside-avoid">
         <h3
-          className="mb-3 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider"
+          data-resume-section-heading
+          className="mb-3 text-sm font-bold tracking-wider"
           style={{
-            borderColor: "var(--accent)",
-            borderStyle: "var(--resume-border-style)" as any,
             color: "var(--accent)",
           }}
         >
@@ -44,10 +43,9 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
       resumeData.educations && resumeData.educations.length > 0 ? (
         <section className="mb-[var(--section-gap)] break-inside-avoid">
           <h3
-            className="mb-4 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider"
+            data-resume-section-heading
+            className="mb-4 text-sm font-bold tracking-wider"
             style={{
-              borderColor: "var(--accent)",
-              borderStyle: "var(--resume-border-style)" as any,
               color: "var(--accent)",
             }}
           >
@@ -82,10 +80,9 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
       resumeData.workExperiences && resumeData.workExperiences.length > 0 ? (
         <section className="mb-[var(--section-gap)] break-inside-avoid">
           <h3
-            className="mb-4 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider"
+            data-resume-section-heading
+            className="mb-4 text-sm font-bold tracking-wider"
             style={{
-              borderColor: "var(--accent)",
-              borderStyle: "var(--resume-border-style)" as any,
               color: "var(--accent)",
             }}
           >
@@ -132,10 +129,9 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
       resumeData.skills && resumeData.skills.length > 0 ? (
         <section className="mb-[var(--section-gap)] break-inside-avoid">
           <h3
-            className="mb-3 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider"
+            data-resume-section-heading
+            className="mb-3 text-sm font-bold tracking-wider"
             style={{
-              borderColor: "var(--accent)",
-              borderStyle: "var(--resume-border-style)" as any,
               color: "var(--accent)",
             }}
           >
@@ -153,7 +149,10 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
     projectWorks:
       resumeData.projectWorks && resumeData.projectWorks.length > 0 ? (
         <section>
-          <h3 className="mb-3 border-b-2 border-black pb-1 text-sm font-bold uppercase tracking-wider">
+          <h3
+            data-resume-section-heading
+            className="mb-3 text-sm font-bold tracking-wider"
+          >
             Projects
           </h3>
           <div className="space-y-4">
@@ -196,7 +195,10 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
     certifications:
       resumeData.certifications && resumeData.certifications.length > 0 ? (
         <section>
-          <h3 className="mb-3 border-b-2 border-black pb-1 text-sm font-bold uppercase tracking-wider">
+          <h3
+            data-resume-section-heading
+            className="mb-3 text-sm font-bold tracking-wider"
+          >
             Awards & Certifications
           </h3>
           <div className="space-y-2">
@@ -219,10 +221,9 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
       resumeData.others?.title || resumeData.others?.description ? (
         <section className="break-inside-avoid">
           <h3
-            className="mb-3 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider"
+            data-resume-section-heading
+            className="mb-3 text-sm font-bold tracking-wider"
             style={{
-              borderColor: "var(--accent)",
-              borderStyle: "var(--resume-border-style)" as any,
               color: "var(--accent)",
             }}
           >

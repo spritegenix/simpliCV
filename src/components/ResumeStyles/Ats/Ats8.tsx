@@ -511,8 +511,12 @@ export function Heading({
 }) {
   return (
     <>
-      <div className="flex-w flex break-inside-avoid flex-col space-y-1 text-base">
+      <div
+        data-resume-section-heading-wrap
+        className="flex-w flex break-inside-avoid flex-col space-y-1 text-base"
+      >
         <h1
+          data-resume-section-heading
           className="text-wrap text-[1.1em] font-semibold"
           style={{
             color: colorHex,

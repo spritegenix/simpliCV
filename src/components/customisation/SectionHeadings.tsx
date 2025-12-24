@@ -33,7 +33,7 @@ export default function SectionHeadings({
         <div className="space-y-3">
           <label className="text-sm font-medium">Style</label>
           <div className="grid grid-cols-4 gap-2">
-            {[0, 1, 2, 3, 4, 5, 6, 7].map((style) => (
+            {[0, 1, 2, 3, 4, 5, 7].map((style) => (
               <button
                 key={style}
                 onClick={() => setHeadingStyle(style)}
@@ -77,13 +77,6 @@ export default function SectionHeadings({
                     <div className="flex items-center gap-1">
                       <div className="h-1 w-1/4 bg-muted-foreground/40" />
                       <div className="h-1 w-1/4 bg-muted-foreground/40" />
-                    </div>
-                  )}
-                  {style === 6 && (
-                    <div className="space-y-1">
-                      <div className="h-1 w-full bg-muted-foreground/20 px-1">
-                        <div className="h-full w-1/3 bg-muted-foreground/60" />
-                      </div>
                     </div>
                   )}
                   {style === 7 && (

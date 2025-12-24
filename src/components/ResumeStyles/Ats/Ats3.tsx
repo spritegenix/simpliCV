@@ -537,8 +537,12 @@ function Text({ children }: { children: string }) {
 function Heading({ children }: { children: string }) {
   return (
     <>
-      <div className="flex break-inside-avoid flex-col space-y-[calc(var(--section-gap)*0.1)] py-[calc(var(--section-gap)*0.25)]">
+      <div
+        data-resume-section-heading-wrap
+        className="flex break-inside-avoid flex-col space-y-[calc(var(--section-gap)*0.1)] py-[calc(var(--section-gap)*0.25)]"
+      >
         <h1
+          data-resume-section-heading
           className="text-nowrap font-semibold text-[var(--accent)]"
           style={{ fontSize: "calc(1em * var(--heading-scale))" }}
         >

@@ -462,14 +462,12 @@ function Heading({
 }) {
   return (
     <>
-      <div className="relative break-inside-avoid pb-2">
-        {isBorder && (
-          <>
-            <div className="absolute inset-x-0 -top-[0.3rem] h-0 w-full border-[length:var(--resume-border-width)] [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
-            <div className="absolute inset-x-0 bottom-[0.25rem] h-0 w-full border-[length:var(--resume-border-width)] [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
-          </>
-        )}
+      <div
+        data-resume-section-heading-wrap
+        className="relative break-inside-avoid pb-2"
+      >
         <h1
+          data-resume-section-heading={isBorder ? true : undefined}
           className="text-nowrap text-[1.4em] font-bold uppercase tracking-[0.2em]"
           style={{
             color: "var(--accent)",

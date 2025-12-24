@@ -475,17 +475,17 @@ function Text({ children }: { children: string }) {
 function Heading({ children }: { children: string }) {
   return (
     <>
-      <div className="flex break-inside-avoid gap-x-[calc(var(--section-gap)*0.1)]">
+      <div
+        data-resume-section-heading-wrap
+        className="flex break-inside-avoid gap-x-[calc(var(--section-gap)*0.1)]"
+      >
         <h1
+          data-resume-section-heading
           className="text-nowrap font-semibold text-[var(--accent)]"
           style={{ fontSize: "calc(1em * var(--heading-scale))" }}
         >
           {children}
         </h1>
-        <div
-          className="mt-auto h-0 w-full border [border-color:var(--accent)] [border-style:var(--resume-border-style)]"
-          style={{ borderWidth: "var(--resume-border-width)" }}
-        />
       </div>
     </>
   );

@@ -520,12 +520,14 @@ function Heading({
   return (
     <>
       <div
+        data-resume-section-heading-wrap
         className="flex break-inside-avoid flex-col items-center justify-center space-y-1 text-base"
         style={{
           backgroundColor: hexToRgbaPercent(colorHex, 20),
         }}
       >
         <h1
+          data-resume-section-heading
           className="flex items-center gap-x-2 text-nowrap text-[1.2em] font-semibold"
           style={{
             color: hexToRgbaPercent(colorHex, 80),

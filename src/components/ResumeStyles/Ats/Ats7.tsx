@@ -494,8 +494,12 @@ function Heading({
 }) {
   return (
     <>
-      <div className="flex break-inside-avoid flex-col space-y-1 py-2 text-base">
+      <div
+        data-resume-section-heading-wrap
+        className="flex break-inside-avoid flex-col space-y-1 py-2 text-base"
+      >
         <h1
+          data-resume-section-heading
           className="text-nowrap text-[1.2em] font-semibold"
           style={{
             color: colorHex,
@@ -503,12 +507,6 @@ function Heading({
         >
           {children}
         </h1>
-        <div
-          className="border-1 mb-[5px] mt-auto h-0 w-full border"
-          style={{
-            borderColor: colorHex,
-          }}
-        ></div>
       </div>
     </>
   );
