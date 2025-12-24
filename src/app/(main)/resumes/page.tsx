@@ -62,19 +62,42 @@ export default async function Page() {
             <h1 className="text-3xl font-bold">Your Resumes</h1>
             <p>Total: {totalCount}</p>
           </div>
-          <Button asChild className="flex w-fit gap-2">
-            <Link href={`/templates`}>
-              <PlusSquare className="size-5" />
-              New Resumes
-            </Link>
-            {/* <CreateResumeButton canCreate={canCreateResume(subscriptionLevel, totalCount)} /> */}
-          </Button>
+          {resumes.length > 0 && (
+            <Button asChild className="flex w-fit gap-2">
+              <Link href={`/templates`}>
+                <PlusSquare className="size-5" />
+                New Resumes
+              </Link>
+              {/* <CreateResumeButton canCreate={canCreateResume(subscriptionLevel, totalCount)} /> */}
+            </Button>
+          )}
         </div>
-        <div className="flex w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4">
-          {resumes.map((resume) => (
-            <ResumeItem key={resume.id} resume={resume} />
-          ))}
-        </div>
+        {resumes.length === 0 ? (
+          <div className="flex min-h-[400px] flex-col items-center justify-center py-24 text-center">
+            <div className="rounded-full bg-white/10 p-6 backdrop-blur-sm">
+              <PlusSquare className="h-16 w-16 text-white" />
+            </div>
+            <h2 className="mt-6 text-2xl font-semibold text-white">
+              No resumes yet
+            </h2>
+            <p className="mt-2 max-w-md text-white/80">
+              Create your first professional resume to get started. Choose from
+              our beautiful templates and stand out.
+            </p>
+            <Button asChild className="mt-6" size="lg">
+              <Link href="/templates" className="gap-2">
+                <PlusSquare className="h-5 w-5" />
+                Create Your First Resume
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="flex w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4">
+            {resumes.map((resume) => (
+              <ResumeItem key={resume.id} resume={resume} />
+            ))}
+          </div>
+        )}
       </Wrapper>
       <GeneratingPdfModal />
     </Layout>

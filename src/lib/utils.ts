@@ -31,22 +31,22 @@ export function getResumeDateFormat(
   return value.length > 0 ? value : fallback;
 }
 
-export type OngoingLabel = "now" | "present";
+export type OngoingLabel = "Present" | "present";
 
 export function getOngoingLabel(
   section: "education" | "experience" | "project",
 ): OngoingLabel {
-  return section === "education" ? "now" : "present";
+  return section === "education" ? "Present" : "present";
 }
 
 export function fileReplacer(key: unknown, value: unknown) {
   return value instanceof File
     ? {
-        name: value.name,
-        size: value.size,
-        type: value.type,
-        lastModified: value.lastModified,
-      }
+      name: value.name,
+      size: value.size,
+      type: value.type,
+      lastModified: value.lastModified,
+    }
     : value;
 }
 
@@ -104,6 +104,7 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
       startDate: edu.startDate?.toISOString().split("T")[0],
       endDate: edu.endDate?.toISOString().split("T")[0],
       description: edu.description || undefined,
+      isPresent: edu.isPresent,
     })),
     projectWorks: data.projectWorks?.map((proj) => ({
       company: proj.company || undefined,
@@ -124,9 +125,9 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
     })),
     others: data.others
       ? {
-          title: data.others.title || undefined,
-          description: data.others.description || undefined,
-        }
+        title: data.others.title || undefined,
+        description: data.others.description || undefined,
+      }
       : undefined,
     borderStyle: data.borderStyle,
     colorHex: data.colorHex,

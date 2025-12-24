@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Breadcrumbs from "./Breadcrumbs";
 import Footer from "./Footer";
-import ResumePreviewSection from "./ResumePreviewSection";
+import dynamic from "next/dynamic";
 import { steps } from "./steps";
 import useAutoSaveResume from "./useAutoSaveResume";
 import AddContentModal from "@/components/AddContentModal";
@@ -20,6 +20,11 @@ import {
   toResumeDocument,
 } from "@/lib/resumeDocument";
 import { ResumeDocument } from "@/types/resumeDocument";
+
+// Client-only resume preview to avoid hydration mismatch from dynamic styles
+const ResumePreviewSection = dynamic(() => import("./ResumePreviewSection"), {
+  ssr: false,
+});
 
 interface ResumeEditorProps {
   resumeToEdit: ResumeServerData | null;
@@ -41,6 +46,14 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
   //   useAutoSavePhoto(resumeData, setResumeData);
 
   useUnloadWarning(hasUnsavedChanges);
+
+  // Prevent body scroll - only editor panel should scroll
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
 
   const currentStep = searchParams.get("step") || steps[0].key;
   const currentStyleId = searchParams.get("styleId") || resumeData.styleId;
@@ -66,15 +79,18 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
   )?.component;
 
   return (
-    <div className="flex h-screen grow flex-col pt-20">
-      <main className="relative grow font-rubik">
-        <div className="absolute bottom-0 top-0 flex w-full">
-          <div
-            className={cn(
-              "w-full space-y-6 overflow-y-auto px-3 pb-5 md:block md:w-1/2",
-              showSmResumePreview && "hidden",
-            )}
-          >
+    <div className="flex h-screen flex-col pt-20">
+      {/* Main content area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left editor panel */}
+        <div
+          className={cn(
+            "flex w-full flex-col md:w-1/2",
+            showSmResumePreview && "hidden md:flex",
+          )}
+        >
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-y-auto px-3 pb-6">
             <div className="mb-4">
               <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
               <div className="mt-4 flex items-center gap-2 px-3">
@@ -117,24 +133,35 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
               )
             )}
           </div>
-          <div className="grow md:border-r" />
-          <ResumePreviewSection
-            resumeData={resumeData}
-            setResumeData={setResumeData}
-            className={cn(showSmResumePreview && "flex")}
-          />
         </div>
-      </main>
-      <ResumeTemplateAside
-        resumeData={resumeData}
-        setResumeData={setResumeData}
-        isSaving={isSaving}
-      />
+
+        {/* Divider */}
+        <div className="hidden md:block md:border-r" />
+
+        {/* Right preview panel */}
+        <ResumePreviewSection
+          resumeData={resumeData}
+          setResumeData={setResumeData}
+          className={cn(
+            "hidden md:flex md:w-1/2",
+            showSmResumePreview && "flex w-full",
+          )}
+        />
+      </div>
+
+      {/* Fixed Footer - outside scroll */}
       <Footer
         currentStep={currentStep}
         setCurrentStep={setStep}
         showSmResumePreview={showSmResumePreview}
         setShowSmResumePreview={setShowSmResumePreview}
+        isSaving={isSaving}
+      />
+
+      {/* Template Aside */}
+      <ResumeTemplateAside
+        resumeData={resumeData}
+        setResumeData={setResumeData}
         isSaving={isSaving}
       />
     </div>

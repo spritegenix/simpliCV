@@ -59,9 +59,10 @@ export async function saveResume(values: ResumeValues) {
     (resumeValues.colorHex &&
       resumeValues.colorHex !== existingResume?.colorHex);
 
-  if (hasCustomizations && !canUseCustomizations(subscriptionLevel)) {
-    throw new Error("Customizations not allowed for this subscription level");
-  }
+  // TODO: Re-enable when premium subscription is implemented
+  // if (hasCustomizations && !canUseCustomizations(subscriptionLevel)) {
+  //   throw new Error("Customizations not allowed for this subscription level");
+  // }
 
   let newPhotoUrl: string | undefined | null = undefined;
 
@@ -192,11 +193,11 @@ export async function saveResume(values: ResumeValues) {
         },
         others: others
           ? {
-              upsert: {
-                update: { ...others },
-                create: { ...others },
-              },
-            }
+            upsert: {
+              update: { ...others },
+              create: { ...others },
+            },
+          }
           : undefined,
       },
     });

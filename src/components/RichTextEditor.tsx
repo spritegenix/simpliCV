@@ -379,7 +379,27 @@ function MenuButtons({
           "h-8 px-2 py-1",
           editor.isActive("bulletList") && "bg-muted",
         )}
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        onClick={() => {
+          const { from, to } = editor.state.selection;
+          const isRangeSelected = from !== to;
+
+          if (editor.isActive("bulletList")) {
+            // If already in bullet list, toggle it off
+            editor.chain().focus().toggleBulletList().run();
+          } else if (isRangeSelected) {
+            // If text is selected, wrap selection in bullet list
+            editor.chain().focus().toggleBulletList().run();
+          } else {
+            // If nothing selected, select all content and wrap in bullets
+            const { doc } = editor.state;
+            editor
+              .chain()
+              .focus()
+              .setTextSelection({ from: 0, to: doc.content.size })
+              .toggleBulletList()
+              .run();
+          }
+        }}
       >
         <List className="size-4" />
       </Button>
@@ -392,7 +412,27 @@ function MenuButtons({
           "h-8 px-2 py-1",
           editor.isActive("orderedList") && "border bg-muted",
         )}
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        onClick={() => {
+          const { from, to } = editor.state.selection;
+          const isRangeSelected = from !== to;
+
+          if (editor.isActive("orderedList")) {
+            // If already in ordered list, toggle it off
+            editor.chain().focus().toggleOrderedList().run();
+          } else if (isRangeSelected) {
+            // If text is selected, wrap selection in ordered list
+            editor.chain().focus().toggleOrderedList().run();
+          } else {
+            // If nothing selected, select all content and wrap in numbered list
+            const { doc } = editor.state;
+            editor
+              .chain()
+              .focus()
+              .setTextSelection({ from: 0, to: doc.content.size })
+              .toggleOrderedList()
+              .run();
+          }
+        }}
       >
         <ListOrdered className="size-4" />
       </Button>
