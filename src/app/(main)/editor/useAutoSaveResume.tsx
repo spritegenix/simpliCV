@@ -66,7 +66,7 @@ export default function useAutoSaveResume(resumeData: ResumeDocument) {
           ...(skipPhotoUpload && { photo: undefined }),
           id: resumeId,
           styleId: newData.styleId,
-        });
+        }, newData.design);
 
         setResumeId(updatedResume.id);
         setLastSavedData(newData);
@@ -106,30 +106,26 @@ export default function useAutoSaveResume(resumeData: ResumeDocument) {
     }
 
     function compareData() {
-      // Special case for when photo is a File
-      const debouncedLegacy = toLegacyResumeValues(debouncedResumeData);
-      const lastSavedLegacy = toLegacyResumeValues(lastSavedData);
+      // Compare the full resume document including design
+      const current = structuredClone(debouncedResumeData);
+      const previous = structuredClone(lastSavedData);
 
-      if (debouncedLegacy.photo instanceof File) {
+      // Handle photo separately since it might be a File object
+      if (current.content.photo instanceof File) {
         if (!photoUploadedRef.current) {
           // If we haven't uploaded this photo yet, then yes, we have changes
           return true;
         }
 
         // If we've uploaded the photo, compare everything else except the photo
-        const current = { ...debouncedLegacy, photo: null };
-        const previous = { ...lastSavedLegacy, photo: null };
-
-        return (
-          JSON.stringify(current, fileReplacer) !==
-          JSON.stringify(previous, fileReplacer)
-        );
+        current.content.photo = null;
+        previous.content.photo = null;
       }
 
-      // Standard comparison for everything else
+      // Standard comparison for everything including design
       return (
-        JSON.stringify(debouncedLegacy, fileReplacer) !==
-        JSON.stringify(lastSavedLegacy, fileReplacer)
+        JSON.stringify(current, fileReplacer) !==
+        JSON.stringify(previous, fileReplacer)
       );
     }
 
@@ -163,7 +159,7 @@ export default function useAutoSaveResume(resumeData: ResumeDocument) {
   return {
     isSaving,
     hasUnsavedChanges:
-      JSON.stringify(toLegacyResumeValues(resumeData), fileReplacer) !==
-      JSON.stringify(toLegacyResumeValues(lastSavedData), fileReplacer),
+      JSON.stringify(resumeData, fileReplacer) !==
+      JSON.stringify(lastSavedData, fileReplacer),
   };
 }

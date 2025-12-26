@@ -50,7 +50,12 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
         {resumeData.summary && (
           <>
             <Heading>Professional Summary</Heading>
-            <Text>{resumeData.summary}</Text>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: resumeData.summary || "",
+              }}
+              className="richTextEditorStyle !m-0 whitespace-pre-line"
+            />
           </>
         )}
         {/* Experience */}
@@ -317,17 +322,20 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         >
           <div className="my-auto">
             <p
-              className="text-[3em] font-bold"
+              className="font-bold"
               style={{
                 color: "var(--accent)",
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
               }}
             >
               {firstName} {lastName}
             </p>
             <p
-              className="text-[1.6em] font-medium"
+              className="font-medium"
               style={{
                 color: "var(--accent)",
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
               }}
             >
               {jobTitle}
@@ -385,17 +393,19 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
         className="cursor-pointer text-center"
       >
         <p
-          className="text-[3em] font-bold"
+          className="font-bold"
           style={{
             color: "var(--accent)",
+            fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
           }}
         >
           {firstName} {lastName}
         </p>
         <p
-          className="text-[1.6em] font-medium"
+          className="font-medium"
           style={{
             color: "var(--accent)",
+            fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
           }}
         >
           {jobTitle}
@@ -471,7 +481,12 @@ function Heading({ children }: { children: string }) {
           backgroundColor: "color-mix(in srgb, var(--accent) 16%, transparent)",
         }}
       >
-        <h1 className="text-nowrap text-[1.2em] font-bold tracking-[0.2em] text-[var(--accent)]">
+        <h1
+          className="text-nowrap text-[1.2em] font-bold tracking-[0.2em] text-[var(--accent)]"
+          style={{
+            fontSize: "calc(1em * var(--heading-scale))",
+          }}
+        >
           {children}
         </h1>
       </div>

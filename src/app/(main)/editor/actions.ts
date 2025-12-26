@@ -11,7 +11,9 @@ import { auth } from "@clerk/nextjs/server";
 import { deleteFromS3 } from "@/lib/s3";
 // import path from "path";
 
-export async function saveResume(values: ResumeValues) {
+import { ResumeDesign } from "@/types/resumeDesign";
+
+export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
   const { id } = values;
 
   // console.log("received values", values);
@@ -145,6 +147,7 @@ export async function saveResume(values: ResumeValues) {
     portfolioLink: resumeValues.portfolioLink || undefined,
     styleId: resumeValues.styleId || undefined,
     baseFontSize: resumeValues.baseFontSize || undefined,
+    design: design || undefined,
   };
 
   if (id) {

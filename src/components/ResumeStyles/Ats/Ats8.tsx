@@ -23,10 +23,6 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
 
   const { width } = useDimensions(containerRef);
 
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-
   const dateFormatNumeric = getResumeDateFormat(
     resumeData.dateFormat,
     "MM/yyyy",
@@ -36,20 +32,19 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
   const orderedSections = normalizeSectionOrder(resumeData.sectionOrder);
   const sections: Record<ResumeSectionKey, React.ReactNode> = {
     summary: resumeData.summary ? (
-      <LineStyle
-        colorHex={resumeData.colorHex ?? "#ccccc"}
-        header="Professional Summary"
-      >
-        <Text>{resumeData.summary}</Text>
+      <LineStyle colorHex={"var(--accent)"} header="Professional Summary">
+        <div
+          dangerouslySetInnerHTML={{
+            __html: resumeData.summary || "",
+          }}
+          className="richTextEditorStyle !m-0 whitespace-pre-line pt-1"
+        />
       </LineStyle>
     ) : null,
     workExperiences:
       !!resumeData?.workExperiences &&
       resumeData?.workExperiences?.length > 0 ? (
-        <LineStyle
-          header="Professional Experience"
-          colorHex={resumeData.colorHex ?? "#cccc"}
-        >
+        <LineStyle header="Professional Experience" colorHex={"var(--accent)"}>
           {resumeData.workExperiences?.map((exp, index) => (
             <div key={index} className="!m-0 break-inside-avoid pb-2">
               <div className="flex justify-between">
@@ -58,7 +53,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                     data-resume-entry-title
                     className="text-[1em] font-semibold"
                     style={{
-                      color: resumeData.colorHex,
+                      color: "var(--accent)",
                     }}
                   >
                     {exp.company}
@@ -115,10 +110,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
       ) : null,
     projectWorks:
       !!resumeData.projectWorks && resumeData.projectWorks?.length > 0 ? (
-        <LineStyle
-          colorHex={resumeData.colorHex ?? "#ccccc"}
-          header="Project Work"
-        >
+        <LineStyle colorHex={"var(--accent)"} header="Project Work">
           {resumeData.projectWorks?.map((item, index) => (
             <div key={index} className="!m-0 break-inside-avoid space-y-1 pb-2">
               <div className="flex justify-between">
@@ -132,7 +124,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                       target="_blank"
                       className="text-[1.2em] font-semibold"
                       style={{
-                        color: resumeData.colorHex,
+                        color: "var(--accent)",
                       }}
                     >
                       {item.title}
@@ -192,7 +184,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
       ) : null,
     educations:
       !!resumeData.educations && resumeData.educations?.length > 0 ? (
-        <LineStyle colorHex={resumeData.colorHex ?? "#cccc"} header="Academics">
+        <LineStyle colorHex={"var(--accent)"} header="Academics">
           {resumeData.educations?.map((edu, index) => (
             <div key={index} className="!m-0 break-inside-avoid">
               <div className="">
@@ -222,7 +214,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
       ) : null,
     skills:
       resumeData.skills && resumeData.skills.length > 0 ? (
-        <LineStyle colorHex={resumeData.colorHex ?? "#cccc"} header="Skills">
+        <LineStyle colorHex={"var(--accent)"} header="Skills">
           <div className="grid grid-cols-3 gap-x-2 gap-y-2">
             {resumeData.skills?.map((skill, index) => (
               <div key={index} className="!m-0 break-inside-avoid">
@@ -242,10 +234,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
       ) : null,
     certifications:
       !!resumeData.certifications && resumeData.certifications?.length > 0 ? (
-        <LineStyle
-          colorHex={resumeData.colorHex ?? "#cccc"}
-          header="Certifications"
-        >
+        <LineStyle colorHex={"var(--accent)"} header="Certifications">
           <div
             className={`flex flex-wrap justify-center gap-x-2 ${resumeData.certifications.find((skill) => skill.description) && "flex-col"}`}
           >
@@ -270,7 +259,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
       ) : null,
     others: !!resumeData.others?.title ? (
       <LineStyle
-        colorHex={resumeData.colorHex ?? "#cccc"}
+        colorHex={"var(--accent)"}
         header={`${resumeData.others.title}`}
       >
         <div
@@ -285,30 +274,25 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
 
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white text-zinc-900",
-        className,
-      )}
+      className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
+      style={{
+        color: "var(--text)",
+      }}
       ref={containerRef}
     >
       <div
         className={cn(
           "h-full gap-x-4 space-y-2 font-inter",
-          BaseFontSize,
           !width && "invisible",
         )}
         style={{
           zoom: (1 / 794) * width,
+          fontSize: "var(--base-font)",
         }}
         id="resumePreviewContent"
       >
         {/* left side */}
-        <div
-          className="col-span-3 p-10"
-          // style={{
-          //   backgroundColor: hexToRgbaPercent(resumeData.colorHex, 30),
-          // }}
-        >
+        <div className="col-span-3 p-10">
           {resumeData.photo ? (
             <PersonalInfoHeader resumeData={resumeData} />
           ) : (
@@ -341,6 +325,7 @@ export function PersonalInfoHeader({
     email,
     colorHex,
     borderStyle,
+    detailsArrangement,
   } = resumeData;
 
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
@@ -353,9 +338,9 @@ export function PersonalInfoHeader({
   }, [photo]);
 
   return (
-    <div className="flex flex-col justify-between gap-y-3">
+    <div className="flex flex-col justify-between gap-y-3" data-resume-header>
       {/* Social Links  */}
-      <div className="flex justify-center gap-x-10 text-center">
+      <div className="flex justify-center gap-x-10">
         <div className="flex h-max gap-6">
           {photoSrc && (
             <Image
@@ -378,17 +363,20 @@ export function PersonalInfoHeader({
         <div className={`flex flex-col justify-between`}>
           <div className="my-auto">
             <p
-              className="text-[3em] font-bold"
+              className="font-bold"
               style={{
                 color: colorHex,
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
               }}
             >
               {firstName} {lastName}
             </p>
             <p
-              className="text-[1.6em] font-medium"
+              className="font-medium"
               style={{
                 color: colorHex,
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
               }}
             >
               {jobTitle}
@@ -396,23 +384,31 @@ export function PersonalInfoHeader({
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap justify-center gap-x-2 pb-4 text-center">
+      <div
+        className={cn(
+          "gap-x-2 pb-4",
+          detailsArrangement === "stacked" 
+            ? "flex flex-col items-center gap-y-1"
+            : "flex flex-wrap justify-center"
+        )}
+        data-resume-personal-details
+      >
         {(city || country) && (
           <p className="flex items-center gap-1">
             <BiSolidMap />
             {city}
             {city && country ? ", " : ""}
-            {country} |
+            {country} {detailsArrangement !== "stacked" && "|"}
           </p>
         )}
         {phone && (
           <>
-            <ContactLinks text={phone} href={`tel:${phone}`} /> |
+            <ContactLinks text={phone} href={`tel:${phone}`} /> {detailsArrangement !== "stacked" && "|"}
           </>
         )}
         {email && (
           <>
-            <ContactLinks text={email} href={`mailto:${email}`} /> |
+            <ContactLinks text={email} href={`mailto:${email}`} /> {detailsArrangement !== "stacked" && "|"}
           </>
         )}
         {!!socialLinks &&
@@ -421,7 +417,7 @@ export function PersonalInfoHeader({
             <span key={index} className="flex items-center gap-1">
               <ContactLinks text={link.split("://")?.[1]} href={link} />
 
-              {(index !== socialLinks.length - 1 || portfolioLink) && (
+              {detailsArrangement !== "stacked" && (index !== socialLinks.length - 1 || portfolioLink) && (
                 <span>|</span>
               )}
             </span>
@@ -452,29 +448,34 @@ export function PersonalInfoHeader1({
   } = resumeData;
 
   return (
-    <div className="mb-2 space-y-2 text-center">
+    <div className="mb-2 space-y-2" data-resume-header>
       <div className="flex flex-col gap-y-2">
         <div className={`flex flex-col justify-between`}>
           <div className="my-auto">
             <p
-              className="text-[3em] font-bold"
+              className="font-bold"
               style={{
                 color: colorHex,
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
               }}
             >
               {firstName} {lastName}
             </p>
             <p
-              className="text-[1.6em] font-medium"
+              className="font-medium"
               style={{
                 color: colorHex,
+                fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
               }}
             >
               {jobTitle}
             </p>
           </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-x-2 pb-4 text-center">
+        <div
+          className="flex flex-wrap justify-center gap-x-2 pb-4"
+          data-resume-personal-details
+        >
           {(city || country) && (
             <p className="flex items-center gap-1">
               <BiSolidMap />

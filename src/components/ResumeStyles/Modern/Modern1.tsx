@@ -58,18 +58,26 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                   "color-mix(in srgb, var(--accent) 8%, transparent)",
               }}
             >
-              <p className="text-[3em] leading-none">
-                <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
-                  <span className="font-bold">{resumeData.firstName}</span>{" "}
-                  <span style={{ color: "var(--accent)" }}>
-                    {resumeData.lastName}
-                  </span>
+              <p
+                className="leading-none"
+                style={{
+                  fontSize:
+                    "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                }}
+              >
+                <span className="font-bold">{resumeData.firstName}</span>{" "}
+                <span style={{ color: "var(--accent)" }}>
+                  {resumeData.lastName}
                 </span>
               </p>
-              <p className="mt-[calc(var(--section-gap)*0.15)] text-[1.6em] font-medium">
-                <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
-                  {resumeData.jobTitle}
-                </span>
+              <p
+                className="mt-[calc(var(--section-gap)*0.15)] font-medium"
+                style={{
+                  fontSize:
+                    "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                }}
+              >
+                {resumeData.jobTitle}
               </p>
             </div>
           </section>
@@ -84,7 +92,12 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
               }}
             >
               <Heading>Professional Summary</Heading>
-              <Text>{resumeData.summary}</Text>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: resumeData.summary || "",
+                }}
+                className="richTextEditorStyle !m-0 whitespace-pre-line"
+              />
             </section>
           )}
 

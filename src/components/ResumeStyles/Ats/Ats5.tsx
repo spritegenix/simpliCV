@@ -23,13 +23,6 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
 
   const { width } = useDimensions(containerRef);
 
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#3f63ad" : resumeData.colorHex;
-
   const dateFormat = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
 
   const orderedSections = normalizeSectionOrder(resumeData.sectionOrder);
@@ -50,15 +43,20 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
   const sections: Record<ResumeSectionKey, React.ReactNode> = {
     summary: resumeData.summary ? (
       <>
-        <Heading colorHex={colorHex}>Professional Summary</Heading>
-        <Text>{resumeData.summary}</Text>
+        <Heading>Professional Summary</Heading>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: resumeData.summary || "",
+          }}
+          className="richTextEditorStyle !m-0 whitespace-pre-line"
+        />
       </>
     ) : null,
     workExperiences:
       !!resumeData?.workExperiences &&
       resumeData?.workExperiences?.length > 0 ? (
         <>
-          <Heading colorHex={colorHex}>Professional Experience</Heading>
+          <Heading>Professional Experience</Heading>
           <ul className="space-y-1">
             {resumeData.workExperiences?.map((exp, index) => (
               <li key={index} className="z-10 break-inside-avoid">
@@ -68,7 +66,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
                       data-resume-entry-title
                       className="text-[1.2em] font-semibold"
                       style={{
-                        color: colorHex,
+                        color: "var(--accent)",
                       }}
                     >
                       {exp.company}
@@ -120,7 +118,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
     projectWorks:
       !!resumeData.projectWorks && resumeData.projectWorks?.length > 0 ? (
         <>
-          <Heading colorHex={colorHex}>Project Work</Heading>
+          <Heading>Project Work</Heading>
           {resumeData.projectWorks?.map((item, index) => (
             <div key={index} className="!m-0 break-inside-avoid">
               <div className="!m-0 flex justify-between gap-1">
@@ -133,7 +131,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
                     target="_blank"
                     className="text-[1.2em] font-semibold"
                     style={{
-                      color: colorHex,
+                      color: "var(--accent)",
                     }}
                   >
                     {item.title}
@@ -188,7 +186,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
     skills:
       !!resumeData.skills && resumeData.skills?.length > 0 ? (
         <>
-          <Heading colorHex={colorHex}>Skills</Heading>
+          <Heading>Skills</Heading>
           {resumeData.skills?.map((skill, index) => (
             <div key={index} className="!m-0 break-inside-avoid">
               <div className="!m-0 flex items-center justify-between">
@@ -207,7 +205,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
     educations:
       !!resumeData.educations && resumeData.educations?.length > 0 ? (
         <>
-          <Heading colorHex={colorHex}>Education</Heading>
+          <Heading>Education</Heading>
           {resumeData.educations?.map((edu, index) => (
             <div
               key={index}
@@ -243,7 +241,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
     certifications:
       !!resumeData.certifications && resumeData.certifications?.length > 0 ? (
         <>
-          <Heading colorHex={colorHex}>Certifications</Heading>
+          <Heading>Certifications</Heading>
           <div className={cn("!m-0")}>
             {resumeData.certifications?.map((skill, index) => (
               <div
@@ -268,7 +266,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
       ) : null,
     others: !!resumeData.others?.title ? (
       <>
-        <Heading colorHex={colorHex}>{resumeData.others.title}</Heading>
+        <Heading>{resumeData.others.title}</Heading>
         <div
           dangerouslySetInnerHTML={{
             __html: resumeData.others.description || "",
@@ -282,39 +280,52 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
   return (
     <div
       className={cn(
-        "aspect-[210/297] h-fit w-full bg-white font-arial text-[#545454]",
+        "aspect-[210/297] h-fit w-full bg-white font-arial",
         className,
       )}
+      style={{
+        color: "var(--text)",
+      }}
       ref={containerRef}
     >
       <div
         className={cn(
           "grid h-full grid-cols-12 space-y-2",
-          BaseFontSize,
           !width && "invisible",
         )}
         style={{
           zoom: (1 / 794) * width,
+          fontSize: "var(--base-font)",
         }}
         id="resumePreviewContent"
       >
         {/* Left Side  */}
         <div className="col-span-8 space-y-3 p-3 pl-6">
           {/* Name And Job Title  */}
-          <div className="my-auto">
-            <p className="text-[3em]">
-              <span className="font-bold text-[#545454]">
-                {resumeData.firstName}
-              </span>{" "}
+          <div className="my-auto" data-resume-header>
+            <p
+              style={{
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              }}
+            >
+              <span className="font-bold">{resumeData.firstName}</span>{" "}
               <span
                 style={{
-                  color: colorHex,
+                  color: "var(--accent)",
                 }}
               >
                 {resumeData.lastName}
               </span>
             </p>
-            <p className="text-[1.6em] font-medium">{resumeData.jobTitle}</p>
+            <p
+              className="font-medium"
+              style={{
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+              }}
+            >
+              {resumeData.jobTitle}
+            </p>
           </div>
           {leftOrder.map((key) => (
             <React.Fragment key={key}>{sections[key]}</React.Fragment>
@@ -344,9 +355,6 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
     borderStyle,
   } = resumeData;
 
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#3f63ad" : resumeData.colorHex;
-
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
   useEffect(() => {
@@ -357,7 +365,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
   }, [photo]);
 
   return (
-    <div>
+    <div data-resume-header>
       {/* Photo  */}
       {photoSrc && (
         <div className="mb-4 flex w-full justify-end">
@@ -380,8 +388,8 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         </div>
       )}
       {/* Social Links  */}
-      <div>
-        <Heading colorHex={colorHex}>Contact</Heading>
+      <div data-resume-personal-details>
+        <Heading>Contact</Heading>
         {(city || country) && (
           <p className="flex items-center gap-1">
             <BiSolidMap />
@@ -437,13 +445,7 @@ function Text({ children }: { children: string }) {
   return <p className="!m-0 whitespace-pre-line">{children}</p>;
 }
 
-function Heading({
-  children,
-  colorHex,
-}: {
-  children: string;
-  colorHex: string | undefined;
-}) {
+function Heading({ children }: { children: string }) {
   return (
     <>
       <div data-resume-section-heading-wrap className="break-inside-avoid">
@@ -451,7 +453,7 @@ function Heading({
           data-resume-section-heading
           className="text-nowrap text-[1.3em] font-semibold capitalize"
           style={{
-            color: colorHex,
+            color: "var(--accent)",
           }}
         >
           {children}

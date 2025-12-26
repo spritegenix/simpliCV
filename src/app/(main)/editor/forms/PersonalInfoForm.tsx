@@ -57,6 +57,19 @@ export default function PersonalInfoForm({
 
   const photoInputRef = useRef<HTMLInputElement>(null);
 
+  const isImageFieldDisabled = [
+    "ats2",
+    "ats4",
+    "ats5",
+    "ats6",
+    "ats8",
+    "ats11",
+    "ats12",
+    "ats13",
+    "ats14",
+    "ats15",
+  ].includes(resumeData.styleId);
+
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
@@ -77,6 +90,12 @@ export default function PersonalInfoForm({
                       {...fieldValues}
                       type="file"
                       accept="image/*"
+                      disabled={isImageFieldDisabled}
+                      className={
+                        isImageFieldDisabled
+                          ? "cursor-not-allowed opacity-50"
+                          : ""
+                      }
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         fieldValues.onChange(file);
@@ -87,6 +106,12 @@ export default function PersonalInfoForm({
                   <Button
                     variant="secondary"
                     type="button"
+                    disabled={isImageFieldDisabled}
+                    className={
+                      isImageFieldDisabled
+                        ? "cursor-not-allowed opacity-50"
+                        : ""
+                    }
                     onClick={() => {
                       fieldValues.onChange(null);
                       if (photoInputRef.current) {

@@ -11,15 +11,35 @@ import SectionHeadings from "@/components/customisation/SectionHeadings";
 import SpacingSection from "@/components/customisation/SpacingSection";
 import EntryLayout from "@/components/customisation/EntryLayout";
 import PersonalDetails from "@/components/customisation/PersonalDetails";
-import NameSection from "@/components/customisation/NameSection";
-import {
-  SECTION_TITLES,
-  getSectionTitle,
-  normalizeSectionOrder,
-  type ResumeSectionKey,
-} from "@/lib/sectionOrder";
 import type { ResumeValues } from "@/lib/validation";
 import DesignTokensSection from "@/components/customisation/DesignTokensSection";
+import { RESUME_CUSTOMIZATION_TOKENS_BY_ID } from "@/lib/resumeCustomizationTokens";
+import {
+  normalizeSectionOrder,
+  type ResumeSectionKey,
+} from "@/components/ResumeStyles/sectionOrder";
+
+function PanelGroup({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="space-y-4">
+      <header className="space-y-1">
+        <h3 className="text-sm font-semibold">{title}</h3>
+        {description ? (
+          <p className="text-xs text-muted-foreground">{description}</p>
+        ) : null}
+      </header>
+      <div className="space-y-6">{children}</div>
+    </section>
+  );
+}
 
 interface CustomizationPanelProps {
   resumeData: ResumeDocument;
@@ -39,12 +59,19 @@ export default function CustomizationPanel({
     switch (key) {
       case "summary":
         return isNonEmptyString(content.summary);
-      case "workExperiences":
+      case "work-experience":
         return (
           Array.isArray(content.workExperiences) &&
-          content.workExperiences.length > 0
+          content.workExperiences.some(
+            (w) =>
+              isNonEmptyString(w?.position) ||
+              isNonEmptyString(w?.company) ||
+              isNonEmptyString(w?.description) ||
+              isNonEmptyString(w?.startDate) ||
+              isNonEmptyString(w?.endDate),
+          )
         );
-      case "projectWorks":
+      case "projects":
         return (
           Array.isArray(content.projectWorks) && content.projectWorks.length > 0
         );
@@ -57,11 +84,18 @@ export default function CustomizationPanel({
               (Array.isArray(s?.skillName) && s.skillName.length > 0),
           )
         );
-      case "educations":
+      case "education":
         return (
-          Array.isArray(content.educations) && content.educations.length > 0
+          Array.isArray(content.educations) &&
+          content.educations.some(
+            (e) =>
+              isNonEmptyString(e?.degree) ||
+              isNonEmptyString(e?.school) ||
+              isNonEmptyString(e?.stream) ||
+              isNonEmptyString(e?.description),
+          )
         );
-      case "certifications":
+      case "certification":
         return (
           Array.isArray(content.certifications) &&
           content.certifications.some(
@@ -69,7 +103,7 @@ export default function CustomizationPanel({
               isNonEmptyString(c?.title) || isNonEmptyString(c?.description),
           )
         );
-      case "others":
+      case "interests":
         return (
           isNonEmptyString(content.others?.title) ||
           isNonEmptyString(content.others?.description)
@@ -171,17 +205,17 @@ export default function CustomizationPanel({
       case "summary":
         return "summary";
       case "work-experience":
-        return "workExperiences";
+        return "work-experience";
       case "projects":
-        return "projectWorks";
+        return "projects";
       case "skills":
         return "skills";
       case "education":
-        return "educations";
+        return "education";
       case "certification":
-        return "certifications";
+        return "certification";
       case "interests":
-        return "others";
+        return "interests";
       default:
         return null;
     }
@@ -235,8 +269,22 @@ export default function CustomizationPanel({
       return aIndex - bIndex;
     });
 
-  const setSectionOrder = (sections: { key: string; title: string }[]) =>
-    setCustomization({ sectionOrder: sections.map((s) => s.key) });
+  const setSectionOrder = (sections: { key: string; title: string }[]) => {
+    const nextEligibleKeys = sections.map((s) => s.key) as ResumeSectionKey[];
+    const nextIter = nextEligibleKeys[Symbol.iterator]();
+
+    const normalized = normalizeSectionOrder(
+      resumeData.design.customization?.sectionOrder
+    );
+    
+    const merged = normalized.map((key) => {
+      if (!sectionHasContent(key, resumeData.content)) return key;
+      const next = nextIter.next();
+      return (next.done ? key : next.value) as ResumeSectionKey;
+    });
+
+    setCustomization({ sectionOrder: merged });
+  };
 
   const columnLayout: "one" | "two" | "mix" =
     resumeData.design.customization?.layout?.columnLayout ?? "two";
@@ -353,15 +401,75 @@ export default function CustomizationPanel({
   const linkIcon: "none" | "icon1" | "icon2" = "icon1";
   const reduceDateLocationOpacity = false;
 
-  const detailsAlign: "left" | "center" | "right" =
-    resumeData.design.customization?.personalDetails?.detailsAlign ?? "center";
-  const setDetailsAlign = (value: "left" | "center" | "right") =>
+  const isAts5 = resumeData.styleId === "ats5";
+  const isAts8 = resumeData.styleId === "ats8";
+  const isAts10 = resumeData.styleId === "ats10";
+  const isAts14 = resumeData.styleId === "ats14";
+  const isAts15 = resumeData.styleId === "ats15";
+  const detailsAlign: "left" | "center" | "right" = isAts5
+    ? "left"
+    : isAts10
+      ? "left"
+      : isAts14
+        ? "center"
+        : isAts15
+          ? "center"
+          : (resumeData.design.customization?.personalDetails?.detailsAlign ??
+            "center");
+  const setDetailsAlign = (value: "left" | "center" | "right") => {
+    if (isAts5 && (value === "center" || value === "right")) return; // Prevent setting to center or right for ats5
+    if (isAts10 && (value === "center" || value === "right")) return; // Prevent setting to center or right for ats10
+    if (isAts14 && (value === "left" || value === "right")) return; // Prevent setting to left or right for ats14
+    if (isAts15 && (value === "left" || value === "right")) return; // Prevent setting to left or right for ats15
     setCustomization({
       personalDetails: {
         ...resumeData.design.customization?.personalDetails,
         detailsAlign: value,
       },
     });
+  };
+
+  const rawDetailsLayout = resumeData.design.customization?.personalDetails
+    ?.detailsLayout as string | undefined;
+  const isAts1 = resumeData.styleId === "ats1";
+  const isAts4 = resumeData.styleId === "ats4";
+  const isAts6 = resumeData.styleId === "ats6";
+  const isAts7 = resumeData.styleId === "ats7";
+  const detailsLayout: "stacked" | "compact" = isAts1
+    ? "compact"
+    : isAts4
+      ? "stacked"
+      : isAts5
+        ? "stacked"
+        : isAts6
+          ? "stacked"
+          : isAts7
+            ? "stacked"
+            : isAts8
+              ? "compact"
+              : isAts10
+                ? "compact"
+                : isAts14
+                  ? "compact"
+                  : isAts15
+                    ? "compact"
+                    : rawDetailsLayout === "compact"
+                      ? "compact"
+                      : "stacked";
+  const setDetailsLayout = (value: "stacked" | "compact") => {
+    if (isAts1 && value === "stacked") return; // Prevent setting to stacked for ats1
+    if ((isAts4 || isAts5 || isAts6 || isAts7) && value === "compact") return; // Prevent setting to compact for ats4, ats5, ats6, and ats7
+    if (isAts8 && value === "stacked") return; // Prevent setting to stacked for ats8
+    if (isAts10 && value === "stacked") return; // Prevent setting to stacked for ats10
+    if (isAts14 && value === "stacked") return; // Prevent setting to stacked for ats14
+    if (isAts15 && value === "stacked") return; // Prevent setting to stacked for ats15
+    setCustomization({
+      personalDetails: {
+        ...resumeData.design.customization?.personalDetails,
+        detailsLayout: value,
+      },
+    });
+  };
 
   const detailsArrangement: "icon" | "bullet" | "bar" =
     resumeData.design.customization?.personalDetails?.detailsArrangement ??
@@ -374,98 +482,155 @@ export default function CustomizationPanel({
       },
     });
 
-  const nameSize: "XS" | "S" | "M" | "L" | "XL" = "L";
-  const nameBold = true;
+  const nameSize: "XS" | "S" | "M" | "L" | "XL" =
+    resumeData.design.customization?.name?.nameSize ?? "L";
+  const setNameSize = (value: "XS" | "S" | "M" | "L" | "XL") =>
+    setCustomization({
+      name: {
+        ...resumeData.design.customization?.name,
+        nameSize: value,
+      },
+    });
+
+  const nameBold: boolean =
+    resumeData.design.customization?.name?.nameBold ?? true;
+  const setNameBold = (value: boolean) =>
+    setCustomization({
+      name: {
+        ...resumeData.design.customization?.name,
+        nameBold: value,
+      },
+    });
+
+  // Source of truth for classification lives in src/lib/resumeCustomizationTokens.ts.
+  // These IDs reflect which token-backed controls are present in this panel.
+  const bestEffortTokenIds = [
+    "data.headerPosition",
+    "data.detailsAlign",
+    "data.detailsArrangement",
+    "data.sectionHeadingStyle",
+    "data.sectionHeadingCap",
+    "data.sectionHeadingSize",
+    "data.sectionHeadingIcons",
+    "data.entryTitleSize",
+    "data.entrySubtitleStyle",
+    "data.entrySubtitlePlacement",
+    "data.entryListStyle",
+  ] as const;
+
+  const hasBestEffortControls = bestEffortTokenIds.some(
+    (id) =>
+      RESUME_CUSTOMIZATION_TOKENS_BY_ID.get(id)?.category === "best-effort",
+  );
 
   return (
     <div className="w-full space-y-6 overflow-y-auto px-3 pb-5">
       {/* Apply a Design Template */}
       <DesignTemplate resumeData={resumeData} setResumeData={setResumeData} />
 
-      {/* Language & Region */}
-      <LanguageRegion
-        language={language}
-        setLanguage={noop}
-        dateFormat={dateFormat}
-        setDateFormat={setDateFormat}
-        pageFormat={pageFormat}
-        setPageFormat={noop}
-      />
+      <PanelGroup title="Basic (Global)">
+        {/* Font */}
+        <FontSection
+          selectedFont={selectedFont}
+          setSelectedFont={setSelectedFont}
+        />
 
-      {/* Change Section Order */}
-      <SectionOrder
-        sectionOrder={sectionOrder}
-        setSectionOrder={setSectionOrder}
-      />
+        {/* Spacing */}
+        <SpacingSection
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          lineHeight={lineHeight}
+          setLineHeight={setLineHeight}
+          spaceBetweenEntries={spaceBetweenEntries}
+          setSpaceBetweenEntries={setSpaceBetweenEntries}
+          borderWidth={borderWidth}
+          setBorderWidth={setBorderWidth}
+        />
 
-      {/* Layout */}
-      <LayoutSection
-        columnLayout={columnLayout}
-        setColumnLayout={setColumnLayout}
-        headerPosition={headerPosition}
-        setHeaderPosition={setHeaderPosition}
-      />
+        {/* Design tokens */}
+        <DesignTokensSection
+          headingScale={headingScale}
+          setHeadingScale={setHeadingScale}
+          borderWidth={borderWidth}
+          setBorderWidth={setBorderWidth}
+        />
+      </PanelGroup>
 
-      {/* Font */}
-      <FontSection
-        selectedFont={selectedFont}
-        setSelectedFont={setSelectedFont}
-      />
+      <PanelGroup
+        title="Layout & Style (Template-dependent)"
+        description={
+          hasBestEffortControls
+            ? "These options rely on template structure and runtime tagging; results can vary between templates and some settings may not apply everywhere."
+            : undefined
+        }
+      >
+        {/* Layout */}
+        <LayoutSection
+          columnLayout={columnLayout}
+          setColumnLayout={setColumnLayout}
+          headerPosition={headerPosition}
+          setHeaderPosition={setHeaderPosition}
+          styleId={resumeData.styleId}
+        />
 
-      <SectionHeadings
-        headingStyle={headingStyle}
-        setHeadingStyle={setHeadingStyle}
-        headingCapitalization={headingCapitalization}
-        setHeadingCapitalization={setHeadingCapitalization}
-        headingSize={headingSize}
-        setHeadingSize={setHeadingSize}
-      />
+        <SectionHeadings
+          headingStyle={headingStyle}
+          setHeadingStyle={setHeadingStyle}
+          headingCapitalization={headingCapitalization}
+          setHeadingCapitalization={setHeadingCapitalization}
+          headingSize={headingSize}
+          setHeadingSize={setHeadingSize}
+          styleId={resumeData.styleId}
+        />
 
-      {/* Spacing */}
-      <SpacingSection
-        fontSize={fontSize}
-        setFontSize={setFontSize}
-        lineHeight={lineHeight}
-        setLineHeight={setLineHeight}
-        spaceBetweenEntries={spaceBetweenEntries}
-        setSpaceBetweenEntries={setSpaceBetweenEntries}
-      />
+        {/* Entry Layout */}
+        <EntryLayout
+          titleSubtitleSize={titleSubtitleSize}
+          setTitleSubtitleSize={setTitleSubtitleSize}
+          subtitleStyle={subtitleStyle}
+          setSubtitleStyle={setSubtitleStyle}
+          subtitlePlacement={subtitlePlacement}
+          setSubtitlePlacement={setSubtitlePlacement}
+          listStyle={listStyle}
+          setListStyle={setListStyle}
+        />
 
-      {/* Design tokens */}
-      <DesignTokensSection
-        headingScale={headingScale}
-        setHeadingScale={setHeadingScale}
-        borderWidth={borderWidth}
-        setBorderWidth={setBorderWidth}
-      />
+        {/* Personal Details */}
+        <PersonalDetails
+          detailsAlign={detailsAlign}
+          setDetailsAlign={setDetailsAlign}
+          detailsLayout={detailsLayout}
+          setDetailsLayout={setDetailsLayout}
+          detailsArrangement={detailsArrangement}
+          setDetailsArrangement={setDetailsArrangement}
+          nameSize={nameSize}
+          setNameSize={setNameSize}
+          nameBold={nameBold}
+          setNameBold={setNameBold}
+          styleId={resumeData.styleId}
+        />
+      </PanelGroup>
 
-      {/* Entry Layout */}
-      <EntryLayout
-        titleSubtitleSize={titleSubtitleSize}
-        setTitleSubtitleSize={setTitleSubtitleSize}
-        subtitleStyle={subtitleStyle}
-        setSubtitleStyle={setSubtitleStyle}
-        subtitlePlacement={subtitlePlacement}
-        setSubtitlePlacement={setSubtitlePlacement}
-        listStyle={listStyle}
-        setListStyle={setListStyle}
-      />
+      <PanelGroup
+        title="Content & Region"
+        description="These options affect formatting and ordering, not the template’s visual token contract."
+      >
+        {/* Language & Region */}
+        <LanguageRegion
+          language={language}
+          setLanguage={noop}
+          dateFormat={dateFormat}
+          setDateFormat={setDateFormat}
+          pageFormat={pageFormat}
+          setPageFormat={noop}
+        />
 
-      {/* Personal Details */}
-      <PersonalDetails
-        detailsAlign={detailsAlign}
-        setDetailsAlign={setDetailsAlign}
-        detailsArrangement={detailsArrangement}
-        setDetailsArrangement={setDetailsArrangement}
-      />
-
-      {/* Name */}
-      <NameSection
-        nameSize={nameSize}
-        setNameSize={noop as any}
-        nameBold={nameBold}
-        setNameBold={noop}
-      />
+        {/* Change Section Order */}
+        <SectionOrder
+          sectionOrder={sectionOrder}
+          setSectionOrder={setSectionOrder}
+        />
+      </PanelGroup>
     </div>
   );
 }

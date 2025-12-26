@@ -15,19 +15,21 @@ interface ResumePreviewProps {
   className?: string;
 }
 
-export default function Modern1({ resumeData, className }: ResumePreviewProps) {
+export default function Modern3({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
   return (
     <div
       className={cn(
-        "resume-root modern relative aspect-[210/297] h-fit w-full overflow-hidden bg-white font-poppins",
+        "resume-root modern relative aspect-[210/297] h-fit w-full overflow-hidden bg-white",
         className,
       )}
       style={{
         color: "var(--text)",
         fontSize: "var(--base-font)",
+        fontFamily: "var(--resume-font-family)",
+        lineHeight: "var(--resume-line-height)",
       }}
       ref={containerRef}
     >
@@ -165,20 +167,37 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
         {/* Right Side  */}
         <div className="z-[1] col-span-8 space-y-3 p-6 pl-3">
           {/* Name And Job Title  */}
-          <div className="my-16 text-end text-white">
-            <p className="text-[40px]">
+          <div className="my-16 text-end" style={{ color: "var(--text)" }}>
+            <p
+              style={{
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                color: "var(--accent)",
+              }}
+            >
               <span className="font-bold">{resumeData.firstName}</span>{" "}
               <span className="font-semibold">{resumeData.lastName}</span>
             </p>
-            <p className="text-[16px] font-medium">{resumeData.jobTitle}</p>
+            <p
+              className="font-medium"
+              style={{
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                color: "var(--text)",
+              }}
+            >
+              {resumeData.jobTitle}
+            </p>
           </div>
           {/* Summary */}
           {resumeData.summary && (
             <div className="space-y-2">
               <Heading>Professional Summary</Heading>
-              <div>
-                <Text>{resumeData.summary}</Text>
-              </div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: resumeData.summary || "",
+                }}
+                className="richTextEditorStyle !m-0 whitespace-pre-line"
+              />
             </div>
           )}
           {/* Experience */}
@@ -191,7 +210,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     {resumeData.workExperiences?.map((exp, index) => (
                       <li
                         key={index}
-                        className="relative z-10 break-inside-avoid before:absolute before:-left-4 before:top-0 before:z-10 before:h-3 before:w-3 before:rounded-full before:border-[1px] before:bg-white before:[border-color:var(--accent)] after:absolute after:-left-[11px] after:top-0 after:z-0 after:h-full after:w-px after:bg-[var(--accent)]"
+                        className="relative z-10 break-inside-avoid before:absolute before:-left-4 before:top-0 before:z-10 before:h-3 before:w-3 before:rounded-full before:border-[length:var(--resume-border-width)] before:bg-white before:[border-color:var(--accent)] before:[border-style:var(--resume-border-style)] after:absolute after:-left-[11px] after:top-0 after:z-0 after:h-full after:w-0 after:border-l-[length:var(--resume-border-width)] after:[border-left-color:var(--accent)] after:[border-left-style:var(--resume-border-style)]"
                       >
                         <div className="!m-0 flex items-center justify-between">
                           <span className="text-[1.2em] font-semibold">
@@ -410,11 +429,24 @@ function Heading({ children }: { children: string }) {
   return (
     <>
       <div className="grid break-inside-avoid grid-cols-6 items-center">
-        <h1 className="col-span-3 text-wrap text-[1.2em] font-semibold uppercase text-[var(--accent)]">
+        <h1
+          className="col-span-3 text-wrap font-semibold uppercase"
+          style={{
+            color: "var(--accent)",
+            fontSize: "calc(1em * var(--heading-scale))",
+          }}
+        >
           {children}
         </h1>
         <div className="col-span-3 flex items-center justify-end">
-          <div className="h-0.5 w-10/12 bg-[var(--accent)]" />
+          <div
+            className="h-0 w-10/12"
+            style={{
+              borderTopWidth: "var(--resume-border-width)",
+              borderStyle: "var(--resume-border-style)",
+              borderColor: "var(--accent)",
+            }}
+          />
         </div>
       </div>
     </>

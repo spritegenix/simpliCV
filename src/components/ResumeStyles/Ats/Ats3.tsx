@@ -273,7 +273,12 @@ export default function ATSStyle3({
                     }}
                   >
                     <Heading>Professional Summary</Heading>
-                    <Text>{resumeData.summary}</Text>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: resumeData.summary || "",
+                      }}
+                      className="richTextEditorStyle whitespace-pre-line"
+                    />
                   </section>
                 ) : null,
                 educations:
@@ -433,18 +438,34 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
   }, [photo]);
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between" data-resume-header>
       {/* Social Links  */}
       <div className="flex flex-col">
         <div className={`flex flex-col justify-between`}>
           <div className="my-auto">
-            <p className="font-bold text-[var(--accent)]">
+            <p
+              className="font-bold text-[var(--accent)]"
+              style={{
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              }}
+            >
               {firstName} {lastName}
             </p>
-            <p className="font-medium text-[var(--accent)]">{jobTitle}</p>
+            <p
+              className="font-medium text-[var(--accent)]"
+              style={{
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+              }}
+            >
+              {jobTitle}
+            </p>
           </div>
         </div>
-        <div className="flex flex-wrap gap-x-[calc(var(--section-gap)*0.25)]">
+        <div
+          className="flex flex-wrap gap-x-[calc(var(--section-gap)*0.25)]"
+          data-resume-personal-details
+        >
           {(city || country) && (
             <p className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
               <BiSolidMap />
@@ -505,17 +526,33 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
   } = resumeData;
 
   return (
-    <div className="space-y-[calc(var(--section-gap)*0.25)]">
+    <div className="space-y-[calc(var(--section-gap)*0.25)]" data-resume-header>
       <div className="flex w-[90%] flex-col">
         <div className={`flex flex-col justify-between`}>
           <div className="my-auto">
-            <p className="font-bold text-[var(--accent)]">
+            <p
+              className="font-bold text-[var(--accent)]"
+              style={{
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              }}
+            >
               {firstName} {lastName}
             </p>
-            <p className="font-medium text-[var(--accent)]">{jobTitle}</p>
+            <p
+              className="font-medium text-[var(--accent)]"
+              style={{
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+              }}
+            >
+              {jobTitle}
+            </p>
           </div>
         </div>
-        <div className="flex flex-wrap gap-x-[calc(var(--section-gap)*0.25)]">
+        <div
+          className="flex flex-wrap gap-x-[calc(var(--section-gap)*0.25)]"
+          data-resume-personal-details
+        >
           {(city || country) && (
             <p className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
               <BiSolidMap />

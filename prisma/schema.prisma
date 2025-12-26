@@ -38,6 +38,7 @@ model Resume {
   certifications  Certification[]
   others          Other?
   styleId         String?
+  design          Json?
 
   @@map("resumes")
 }

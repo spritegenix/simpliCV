@@ -18,17 +18,12 @@ interface ResumePreviewProps {
   className?: string;
 }
 
-export default function Ats8({ resumeData, className }: ResumePreviewProps) {
+export default function Ats7({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
 
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-
-  const colorHex =
-    resumeData.colorHex === undefined ? "#354b3f" : resumeData.colorHex;
+  const colorHex = "var(--accent)";
 
   const dateFormatNumeric = getResumeDateFormat(
     resumeData.dateFormat,
@@ -55,7 +50,12 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
     summary: resumeData.summary ? (
       <>
         <Heading colorHex={colorHex}>Professional Summary</Heading>
-        <Text>{resumeData.summary}</Text>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: resumeData.summary || "",
+          }}
+          className="richTextEditorStyle !m-0 whitespace-pre-line pt-1"
+        />
       </>
     ) : null,
     educations:
@@ -284,20 +284,18 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
   };
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white text-zinc-900",
-        className,
-      )}
+      className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
+      style={{ color: "var(--text)" }}
       ref={containerRef}
     >
       <div
         className={cn(
           "grid h-full grid-cols-6 gap-x-4 space-y-2 font-inter",
-          BaseFontSize,
           !width && "invisible",
         )}
         style={{
           zoom: (1 / 794) * width,
+          fontSize: "var(--base-font)",
         }}
         id="resumePreviewContent"
       >
@@ -305,7 +303,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
         <div
           className="col-span-3 p-10"
           style={{
-            backgroundColor: hexToRgbaPercent(colorHex, 30),
+            backgroundColor: "color-mix(in srgb, var(--accent) 30%, white)",
           }}
         >
           {resumeData.photo ? (
@@ -343,8 +341,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
     email,
     borderStyle,
   } = resumeData;
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#354b3f" : resumeData.colorHex;
+  const colorHex = "var(--accent)";
 
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
@@ -356,7 +353,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
   }, [photo]);
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between" data-resume-header>
       {/* Social Links  */}
       <div className="flex flex-col">
         <div className="flex h-max gap-6">
@@ -381,24 +378,30 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         <div className={`flex flex-col justify-between`}>
           <div className="my-auto">
             <p
-              className="text-[3em] font-bold"
+              className="font-bold"
               style={{
                 color: colorHex,
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
               }}
             >
               {firstName} {lastName}
             </p>
             <p
-              className="text-[1.6em] font-medium"
+              className="font-medium"
               style={{
                 color: colorHex,
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
               }}
             >
               {jobTitle}
             </p>
           </div>
         </div>
-        <div className="flex flex-col flex-wrap gap-x-2">
+        <div
+          className="flex flex-col flex-wrap gap-x-2"
+          data-resume-personal-details
+        >
           {(city || country) && (
             <p className="flex items-center gap-1">
               <BiSolidMap />
@@ -438,33 +441,37 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
     phone,
     email,
   } = resumeData;
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#354b3f" : resumeData.colorHex;
+  const colorHex = "var(--accent)";
 
   return (
-    <div className="mb-2 space-y-2">
+    <div className="mb-2 space-y-2" data-resume-header>
       <div className="flex w-[90%] flex-col gap-y-2">
         <div className={`flex flex-col justify-between`}>
           <div className="my-auto">
             <p
-              className="text-[3em] font-bold"
+              className="font-bold"
               style={{
                 color: colorHex,
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
               }}
             >
               {firstName} {lastName}
             </p>
             <p
-              className="text-[1.6em] font-medium"
+              className="font-medium"
               style={{
                 color: colorHex,
+                fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
               }}
             >
               {jobTitle}
             </p>
           </div>
         </div>
-        <div className="flex flex-col flex-wrap gap-x-2 space-y-1">
+        <div
+          className="flex flex-col flex-wrap gap-x-2 space-y-1"
+          data-resume-personal-details
+        >
           {(city || country) && (
             <p className="flex items-center gap-1">
               <BiSolidMap />
@@ -539,7 +546,7 @@ function Heading({
           data-resume-section-heading
           className="text-nowrap text-[1.2em] font-semibold"
           style={{
-            color: colorHex,
+            color: "var(--accent)",
           }}
         >
           {children}

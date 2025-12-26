@@ -8,6 +8,8 @@ interface SpacingSectionProps {
   setLineHeight: (value: number) => void;
   spaceBetweenEntries: number;
   setSpaceBetweenEntries: (value: number) => void;
+  borderWidth: number;
+  setBorderWidth: (value: number) => void;
 }
 
 export default function SpacingSection({
@@ -17,6 +19,8 @@ export default function SpacingSection({
   setLineHeight,
   spaceBetweenEntries,
   setSpaceBetweenEntries,
+  borderWidth,
+  setBorderWidth,
 }: SpacingSectionProps) {
   return (
     <Card>
@@ -134,6 +138,43 @@ export default function SpacingSection({
                 onClick={() =>
                   setSpaceBetweenEntries(Math.min(20, spaceBetweenEntries + 1))
                 }
+              >
+                +
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Border Thickness */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">Border Thickness</label>
+            <span className="text-sm text-primary">{borderWidth}px</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              type="range"
+              min={0}
+              max={4}
+              step={1}
+              value={borderWidth}
+              onChange={(e) => setBorderWidth(Number(e.target.value))}
+              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-muted [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
+            />
+            <div className="flex gap-1">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setBorderWidth(Math.max(0, borderWidth - 1))}
+              >
+                −
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setBorderWidth(Math.min(4, borderWidth + 1))}
               >
                 +
               </Button>

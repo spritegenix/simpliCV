@@ -58,12 +58,23 @@ export default function PurpleModern({
 
           {/* Name & Title Content */}
           <div className="relative z-10 flex h-full flex-col items-end justify-center px-12 pb-10 text-white">
-            <h1 className="mb-1 text-right text-3xl font-extrabold uppercase tracking-widest">
+            <h1
+              className="mb-1 text-right font-extrabold uppercase tracking-widest"
+              style={{
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              }}
+            >
               {resumeData.firstName}{" "}
               <span className="font-light">{resumeData.lastName}</span>
             </h1>
             {resumeData.jobTitle && (
-              <p className="text-right text-sm font-medium uppercase tracking-[0.2em] opacity-90">
+              <p
+                className="text-right font-medium uppercase tracking-[0.2em] opacity-90"
+                style={{
+                  fontSize:
+                    "calc(var(--base-font) * 1.05 * var(--heading-scale))",
+                }}
+              >
                 {resumeData.jobTitle}
               </p>
             )}
@@ -83,9 +94,12 @@ export default function PurpleModern({
             {resumeData.summary && (
               <div className="relative">
                 <SectionTitleSide title="About Me" colorHex={primaryColor} />
-                <p className="text-justify text-xs font-medium leading-relaxed text-slate-600">
-                  {resumeData.summary}
-                </p>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: resumeData.summary || "",
+                  }}
+                  className="richTextEditorStyle !m-0 whitespace-pre-line text-justify text-xs font-medium leading-relaxed text-slate-600"
+                />
               </div>
             )}
 
@@ -161,6 +175,9 @@ export default function PurpleModern({
                     className="ml-1 space-y-8 border-l border-slate-200 pl-2"
                     style={{
                       borderLeftWidth: "calc(var(--resume-border-width) * 2)",
+                      borderColor:
+                        "color-mix(in srgb, var(--text) 25%, transparent)",
+                      borderStyle: "var(--resume-border-style)" as any,
                     }}
                   >
                     {resumeData.workExperiences.map((exp, idx) => (
@@ -234,6 +251,9 @@ export default function PurpleModern({
                   className="ml-1 space-y-6 border-l border-slate-200 pl-2"
                   style={{
                     borderLeftWidth: "calc(var(--resume-border-width) * 2)",
+                    borderColor:
+                      "color-mix(in srgb, var(--text) 25%, transparent)",
+                    borderStyle: "var(--resume-border-style)" as any,
                   }}
                 >
                   {resumeData.educations.map((edu, idx) => (
@@ -504,7 +524,7 @@ const Header = ({
       <div>
         <h1
           style={{
-            fontSize: "32px",
+            fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
             fontWeight: 700,
             margin: 0,
             textTransform: "uppercase",
@@ -515,7 +535,7 @@ const Header = ({
         {jobTitle && (
           <h2
             style={{
-              fontSize: "14px",
+              fontSize: "calc(var(--base-font) * 1.05 * var(--heading-scale))",
               opacity: 0.9,
               marginBottom: "10px",
               marginTop: "4px",
@@ -527,16 +547,16 @@ const Header = ({
           </h2>
         )}
         {summary && (
-          <p
+          <div
             style={{
               fontSize: "12px",
               maxWidth: "420px",
               margin: 0,
               lineHeight: "1.6",
             }}
-          >
-            {summary}
-          </p>
+            dangerouslySetInnerHTML={{ __html: summary || "" }}
+            className="richTextEditorStyle !m-0 whitespace-pre-line"
+          />
         )}
       </div>
     </header>
@@ -574,16 +594,16 @@ const LeftColumn = ({
           >
             ABOUT ME
           </div>
-          <p
+          <div
+            dangerouslySetInnerHTML={{ __html: summary || "" }}
+            className="richTextEditorStyle !m-0 whitespace-pre-line"
             style={{
               fontSize: "12px",
               color: "#555",
               lineHeight: "1.6",
               margin: "0 0 20px 0",
             }}
-          >
-            {summary}
-          </p>
+          />
         </>
       )}
 

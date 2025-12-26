@@ -1,68 +1,84 @@
-import { renderHook, act } from '@testing-library/react'
-import { usePrintPdf } from '@/hooks/usePrintPdf'
+import { renderHook, act } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { usePrintPdf } from "@/hooks/usePrintPdf";
 
-// Mock functions
-const setOpenMock = jest.fn()
-const toastMock = jest.fn()
-const openMock = jest.fn()
-const createObjectURLMock = jest.fn(() => 'mock-url')
-const revokeObjectURLMock = jest.fn()
+const setOpenCalls: unknown[][] = [];
+const toastCalls: unknown[][] = [];
 
-// Mocks for dependencies
-jest.mock('@/components/GeneratingPdfModal', () => ({
+mock.module("@/components/GeneratingPdfModal", () => ({
   usePdfGeneratingModalState: () => ({
-    setOpen: setOpenMock,
+    setOpen: (...args: unknown[]) => {
+      setOpenCalls.push(args);
+    },
   }),
-}))
+}));
 
-jest.mock('@/hooks/use-toast', () => ({
+mock.module("@/hooks/use-toast", () => ({
   useToast: () => ({
-    toast: toastMock,
+    toast: (...args: unknown[]) => {
+      toastCalls.push(args);
+    },
   }),
-}))
+}));
 
-describe('usePrintPdf', () => {
+describe("usePrintPdf", () => {
+  let fetchCalls: unknown[][] = [];
+  let createObjectURLCalls: unknown[][] = [];
+  let clickCalls = 0;
+
   beforeEach(() => {
-    global.fetch = jest.fn()
-    global.URL.createObjectURL = createObjectURLMock
-    global.URL.revokeObjectURL = revokeObjectURLMock
-  })
+    fetchCalls = [];
+    createObjectURLCalls = [];
+    clickCalls = 0;
+    setOpenCalls.length = 0;
+    toastCalls.length = 0;
+
+    globalThis.fetch = (async (...args: unknown[]) => {
+      fetchCalls.push(args);
+      return {
+        ok: true,
+        blob: async () => new Blob(["PDF content"], { type: "application/pdf" }),
+      } as any;
+    }) as any;
+
+    globalThis.URL.createObjectURL = ((...args: unknown[]) => {
+      createObjectURLCalls.push(args);
+      return "mock-url";
+    }) as any;
+
+    globalThis.URL.revokeObjectURL = (() => {}) as any;
+
+    HTMLAnchorElement.prototype.click = (() => {
+      clickCalls += 1;
+    }) as any;
+  });
 
   afterEach(() => {
-    jest.clearAllMocks()
-  })
+    // no-op; state reset in beforeEach
+  });
 
-  it('should handle successful PDF generation', async () => {
-    const clickSpy = jest
-      .spyOn(HTMLAnchorElement.prototype, 'click')
-      .mockImplementation(() => {})
-
-    const mockBlob = new Blob(['PDF content'], { type: 'application/pdf' })
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      blob: async () => mockBlob,
-    })
-
-    const { result } = renderHook(() => usePrintPdf())
+  it("should handle successful PDF generation", async () => {
+    const { result } = renderHook(() => usePrintPdf());
 
     await act(async () => {
-      await result.current.handlePrintPdf('https://simplicv.com/')
-    })
+      await result.current.handlePrintPdf("https://simplicv.com/");
+    });
 
-    expect(setOpenMock).toHaveBeenCalledWith(true)
-    expect(global.fetch).toHaveBeenCalledWith(
-      '/api/generate-pdf',
-      expect.objectContaining({
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: 'https://simplicv.com/' }),
-        signal: expect.any(Object),
-      }),
-    )
-    expect(createObjectURLMock).toHaveBeenCalledWith(mockBlob)
-    expect(clickSpy).toHaveBeenCalled()
-    expect(setOpenMock).toHaveBeenCalledWith(false)
+    expect(setOpenCalls.some((a) => a[0] === true)).toBe(true);
 
-    clickSpy.mockRestore()
-  })
-})
+    const hasGeneratePdfCall = fetchCalls.some((args) => {
+      const [url, init] = args as [unknown, any];
+      return (
+        url === "/api/generate-pdf" &&
+        init?.method === "POST" &&
+        init?.headers?.["Content-Type"] === "application/json" &&
+        init?.body === JSON.stringify({ url: "https://simplicv.com/" }) &&
+        init?.signal
+      );
+    });
+    expect(hasGeneratePdfCall).toBe(true);
+    expect(createObjectURLCalls.length).toBe(1);
+    expect(clickCalls).toBeGreaterThan(0);
+    expect(setOpenCalls.some((a) => a[0] === false)).toBe(true);
+  });
+});

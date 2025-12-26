@@ -72,11 +72,13 @@ export default function ModernTimeline({
 
   return (
     <div
-      className={`resume-root modern aspect-[210/297] h-fit w-full bg-white font-sans ${className}`}
+      className={`resume-root modern aspect-[210/297] h-fit w-full bg-white ${className}`}
       ref={containerRef}
       style={{
         color: "var(--text)",
         fontSize: "var(--base-font)",
+        fontFamily: "var(--resume-font-family)",
+        lineHeight: "var(--resume-line-height)",
       }}
     >
       <div
@@ -94,8 +96,10 @@ export default function ModernTimeline({
           <div
             style={{
               margin: "var(--section-gap) 0",
-              height: "1px",
-              backgroundColor: "var(--accent)",
+              height: "0px",
+              borderTopWidth: "var(--resume-border-width)",
+              borderStyle: "var(--resume-border-style)",
+              borderColor: "var(--accent)",
             }}
           />
 
@@ -115,15 +119,15 @@ export default function ModernTimeline({
                         label="PROFILE"
                         isFirst={isFirst}
                         content={
-                          <p
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: resumeData.summary || "",
+                            }}
+                            className="richTextEditorStyle !m-0 whitespace-pre-line"
                             style={{
                               color: "var(--text)",
-                              margin: 0,
-                              whiteSpace: "pre-line",
                             }}
-                          >
-                            {resumeData.summary}
-                          </p>
+                          />
                         }
                       />
                     );
@@ -148,7 +152,8 @@ export default function ModernTimeline({
                               >
                                 <h3
                                   style={{
-                                    fontSize: "14px",
+                                    fontSize:
+                                      "calc(1em * var(--heading-scale))",
                                     fontWeight: 600,
                                     textTransform: "uppercase",
                                     margin: 0,
@@ -171,7 +176,6 @@ export default function ModernTimeline({
                                 <span
                                   style={{
                                     display: "block",
-                                    fontSize: "12px",
                                     color:
                                       "color-mix(in srgb, var(--text) 70%, transparent)",
                                     marginBottom: "10px",
@@ -201,7 +205,7 @@ export default function ModernTimeline({
                                 )}
                                 {exp.description && (
                                   <div
-                                    className="richTextEditorStyle whitespace-pre-line pl-[18px] text-[14px] leading-[1.7]"
+                                    className="richTextEditorStyle whitespace-pre-line pl-[18px]"
                                     dangerouslySetInnerHTML={{
                                       __html: exp.description || "",
                                     }}
@@ -234,7 +238,8 @@ export default function ModernTimeline({
                               >
                                 <h3
                                   style={{
-                                    fontSize: "14px",
+                                    fontSize:
+                                      "calc(1em * var(--heading-scale))",
                                     fontWeight: 600,
                                     textTransform: "uppercase",
                                     margin: 0,
@@ -257,7 +262,6 @@ export default function ModernTimeline({
                                 <span
                                   style={{
                                     display: "block",
-                                    fontSize: "12px",
                                     color:
                                       "color-mix(in srgb, var(--text) 70%, transparent)",
                                     marginBottom: "10px",
@@ -287,7 +291,7 @@ export default function ModernTimeline({
                                 )}
                                 {project.description && (
                                   <div
-                                    className="richTextEditorStyle whitespace-pre-line pl-[18px] text-[14px] leading-[1.7]"
+                                    className="richTextEditorStyle whitespace-pre-line pl-[18px]"
                                     dangerouslySetInnerHTML={{
                                       __html: project.description || "",
                                     }}
@@ -308,7 +312,6 @@ export default function ModernTimeline({
                                         rel="noreferrer"
                                         style={{
                                           display: "block",
-                                          fontSize: "11px",
                                           color: "var(--accent)",
                                           textDecoration: "underline",
                                           marginBottom: "2px",
@@ -349,7 +352,8 @@ export default function ModernTimeline({
                               >
                                 <h3
                                   style={{
-                                    fontSize: "14px",
+                                    fontSize:
+                                      "calc(1em * var(--heading-scale))",
                                     fontWeight: 600,
                                     textTransform: "uppercase",
                                     margin: 0,
@@ -361,7 +365,6 @@ export default function ModernTimeline({
                                 <span
                                   style={{
                                     display: "block",
-                                    fontSize: "12px",
                                     color:
                                       "color-mix(in srgb, var(--text) 70%, transparent)",
                                     marginBottom: "10px",
@@ -378,7 +381,7 @@ export default function ModernTimeline({
                                 </span>
                                 {edu.description && (
                                   <div
-                                    className="richTextEditorStyle whitespace-pre-line pl-[18px] text-[14px] leading-[1.7]"
+                                    className="richTextEditorStyle whitespace-pre-line pl-[18px]"
                                     dangerouslySetInnerHTML={{
                                       __html: edu.description || "",
                                     }}
@@ -411,7 +414,8 @@ export default function ModernTimeline({
                               >
                                 <h3
                                   style={{
-                                    fontSize: "14px",
+                                    fontSize:
+                                      "calc(1em * var(--heading-scale))",
                                     fontWeight: 600,
                                     textTransform: "uppercase",
                                     margin: 0,
@@ -423,7 +427,6 @@ export default function ModernTimeline({
                                 {cert.description && (
                                   <p
                                     style={{
-                                      fontSize: "12px",
                                       color:
                                         "color-mix(in srgb, var(--text) 70%, transparent)",
                                       margin: 0,
@@ -441,7 +444,6 @@ export default function ModernTimeline({
                                     rel="noreferrer"
                                     style={{
                                       display: "block",
-                                      fontSize: "11px",
                                       color: "var(--accent)",
                                       textDecoration: "underline",
                                       paddingLeft: "18px",
@@ -491,7 +493,7 @@ export default function ModernTimeline({
                         isFirst={isFirst}
                         content={
                           <div
-                            className="richTextEditorStyle whitespace-pre-line pl-[18px] text-[14px] leading-[1.7]"
+                            className="richTextEditorStyle whitespace-pre-line pl-[18px]"
                             dangerouslySetInnerHTML={{
                               __html: resumeData.others!.description || "",
                             }}
@@ -576,7 +578,7 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
       <div>
         <h1
           style={{
-            fontSize: "42px",
+            fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
             fontWeight: 600,
             textTransform: "uppercase",
             letterSpacing: "3px",
@@ -591,7 +593,6 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
             display: "flex",
             flexWrap: "wrap",
             gap: "20px",
-            fontSize: "15px",
             color: "var(--text)",
           }}
         >
@@ -630,9 +631,7 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
                 }}
               >
                 <SocialMediaIconFinder url={link} />
-                <span style={{ fontSize: "13px" }}>
-                  {link.split("://")?.[1]?.split("/")[0]}
-                </span>
+                <span>{link.split("://")?.[1]?.split("/")[0]}</span>
               </a>
             ))}
           {portfolioLink && (
@@ -648,7 +647,7 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
                 color: "var(--text)",
               }}
             >
-              <span style={{ fontSize: "13px" }}>Portfolio</span>
+              <span>Portfolio</span>
             </a>
           )}
         </div>
@@ -680,7 +679,7 @@ const Section = ({
       {/* Label */}
       <div
         style={{
-          fontSize: "14px",
+          fontSize: "calc(1em * var(--heading-scale))",
           fontWeight: 600,
           textTransform: "uppercase",
           letterSpacing: "2px",
@@ -705,9 +704,11 @@ const Section = ({
               position: "absolute",
               top: "-40px",
               left: "50%",
-              width: "2px",
+              width: "0px",
               height: "50px",
-              backgroundColor: "var(--accent)",
+              borderLeftWidth: "var(--resume-border-width)",
+              borderLeftStyle: "var(--resume-border-style)" as any,
+              borderLeftColor: "var(--accent)",
               transform: "translateX(-50%)",
             }}
           />
@@ -732,16 +733,18 @@ const Section = ({
             position: "absolute",
             top: "22px",
             left: "50%",
-            width: "2px",
+            width: "0px",
             height: "100%",
-            backgroundColor: "var(--accent)",
+            borderLeftWidth: "var(--resume-border-width)",
+            borderLeftStyle: "var(--resume-border-style)" as any,
+            borderLeftColor: "var(--accent)",
             transform: "translateX(-50%)",
           }}
         />
       </div>
 
       {/* Content */}
-      <div style={{ fontSize: "14px", lineHeight: "1.7" }}>{content}</div>
+      <div style={{ lineHeight: "var(--resume-line-height)" }}>{content}</div>
     </div>
   );
 };

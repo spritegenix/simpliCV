@@ -57,14 +57,25 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
 
           {/* Right Side Name + Role */}
           <div className="ml-16">
-            <h1 className="text-5xl font-bold text-slate-900">
+            <h1
+              className="font-bold text-slate-900 leading-tight"
+              style={{
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              }}
+            >
               {resumeData.firstName}{" "}
               <span className="font-light text-slate-600">
                 {resumeData.lastName}
               </span>
             </h1>
             {resumeData.jobTitle && (
-              <p className="mt-1 text-xl font-medium text-slate-500">
+              <p
+                className="mt-1 font-medium text-slate-500"
+                style={{
+                  fontSize:
+                    "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                }}
+              >
                 {resumeData.jobTitle}
               </p>
             )}
@@ -103,9 +114,12 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                   title="Professional Summary"
                   colorHex={accentColor}
                 />
-                <div className="whitespace-pre-line text-sm text-slate-700">
-                  {resumeData.summary}
-                </div>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: resumeData.summary || "",
+                  }}
+                  className="richTextEditorStyle !m-0 whitespace-pre-line text-sm text-slate-700"
+                />
               </div>
             )}
 
@@ -393,8 +407,11 @@ const SectionTitle = ({
   <div
     className="mb-3 border-b-[2px] pb-1 text-[1rem] font-bold uppercase tracking-wide"
     style={{
-      borderColor: "#1f2937", // dark gray (almost black)
       color: colorHex,
+      borderColor: "color-mix(in srgb, var(--text) 30%, transparent)",
+      borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+      borderStyle: "var(--resume-border-style)" as any,
+      fontSize: "calc(1em * var(--heading-scale))",
     }}
   >
     {title}

@@ -23,33 +23,21 @@ export default function Ats2({ resumeData, className }: ResumePreviewProps) {
 
   const { width } = useDimensions(containerRef);
 
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-
-  const colorHex =
-    resumeData.colorHex === "#000000"
-      ? "#000000"
-      : resumeData.colorHex || undefined;
+  const colorHex = "var(--accent)";
 
   const dateFormat = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
   const orderedSections = normalizeSectionOrder(resumeData.sectionOrder);
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white p-6 text-zinc-900",
-        className,
-      )}
+      className={cn("aspect-[210/297] h-fit w-full bg-white p-6", className)}
       ref={containerRef}
+      style={{ color: "var(--text)" }}
     >
       <div
-        className={cn(
-          "space-y-2 font-inter",
-          BaseFontSize,
-          !width && "invisible",
-        )}
+        className={cn("space-y-2 font-inter", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
+          fontSize: "var(--base-font)",
         }}
         id="resumePreviewContent"
       >
@@ -64,7 +52,12 @@ export default function Ats2({ resumeData, className }: ResumePreviewProps) {
             summary: resumeData.summary ? (
               <>
                 <Heading colorHex={colorHex}>Professional Summary</Heading>
-                <Text>{resumeData.summary}</Text>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: resumeData.summary || "",
+                  }}
+                  className="richTextEditorStyle !m-0 whitespace-pre-line pt-1"
+                />
               </>
             ) : null,
             workExperiences:
@@ -329,8 +322,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
     email,
     borderStyle,
   } = resumeData;
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#000000" : resumeData.colorHex;
+  const colorHex = "var(--accent)";
 
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
@@ -342,7 +334,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
   }, [photo]);
 
   return (
-    <div className="mb-2 grid grid-cols-2">
+    <div data-resume-header className="mb-2 grid grid-cols-2">
       <div className="flex h-max gap-6">
         {photoSrc && (
           <Image
@@ -366,17 +358,20 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         >
           <div className="my-auto">
             <p
-              className="text-[3em] font-bold"
+              className="font-bold"
               style={{
                 color: colorHex,
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
               }}
             >
               {firstName} {lastName}
             </p>
             <p
-              className="text-[1.6em] font-medium"
+              className="font-medium"
               style={{
                 color: colorHex,
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
               }}
             >
               {jobTitle}
@@ -385,7 +380,10 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         </div>
       </div>
       {/* Social Links  */}
-      <div className="my-auto ml-auto grid grid-cols-2">
+      <div
+        data-resume-personal-details
+        className="my-auto ml-auto grid grid-cols-2"
+      >
         {(city || country) && (
           <p className="flex items-center gap-1">
             <BiSolidMap />
@@ -424,22 +422,23 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
     phone,
     email,
   } = resumeData;
-  const colorHex =
-    resumeData.colorHex === "#000000"
-      ? "#000000"
-      : resumeData.colorHex || undefined;
+  const colorHex = "var(--accent)";
 
   return (
-    <div className="mb-2 space-y-1">
+    <div data-resume-header className="mb-2 space-y-1">
       <Link
         href={resumeData.portfolioLink || "#"}
-        className="cursor-pointer text-center"
+        className="block w-full cursor-pointer"
       >
-        <div className="flex items-end gap-x-3">
+        <div
+          data-resume-header-title-row
+          className="flex w-full items-end gap-x-3"
+        >
           <p
-            className="text-2xl font-bold"
+            className="font-bold"
             style={{
               color: colorHex,
+              fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
             }}
           >
             {firstName &&
@@ -447,9 +446,10 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
             {lastName}
           </p>
           <p
-            className="text-xl"
+            className="font-medium"
             style={{
               color: colorHex,
+              fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
             }}
           >
             {jobTitle}
@@ -457,7 +457,10 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
         </div>
       </Link>
       {/* Social Links  */}
-      <div className="grid grid-cols-3 flex-wrap gap-x-8 gap-y-1">
+      <div
+        data-resume-personal-details
+        className="grid grid-cols-3 flex-wrap gap-x-8 gap-y-1"
+      >
         {(city || country) && (
           <p className="flex items-center gap-1">
             <BiSolidMap />
@@ -530,7 +533,7 @@ function Heading({
           data-resume-section-heading
           className="text-nowrap text-[1.2em] font-semibold"
           style={{
-            color: colorHex,
+            color: "var(--accent)",
           }}
         >
           {children}

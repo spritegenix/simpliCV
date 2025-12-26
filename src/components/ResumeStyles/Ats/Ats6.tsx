@@ -43,7 +43,12 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
     summary: resumeData.summary ? (
       <section className="mb-[var(--section-gap)] break-inside-avoid">
         <Heading isBorder={false}>Profile</Heading>
-        <Text className="text-justify">{resumeData.summary}</Text>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: resumeData.summary || "",
+          }}
+          className="richTextEditorStyle whitespace-pre-line text-justify"
+        />
       </section>
     ) : null,
     workExperiences:
@@ -317,7 +322,7 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                 }}
               >
                 <Heading isBorder={false}>Contact</Heading>
-                <div className="!mt-0 space-y-1">
+                <div className="!mt-0 space-y-1" data-resume-personal-details>
                   {(resumeData.city || resumeData.country) && (
                     <p className="flex items-center gap-1">
                       <BiSolidMap />
@@ -387,16 +392,29 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
   }, [photo]);
 
   return (
-    <div className="grid grid-cols-12">
+    <div className="grid grid-cols-12" data-resume-header>
       <div className={"col-span-8 flex h-max gap-6"}>
         <div
           className={`flex ${photoSrc ? "h-[100px]" : ""} flex-col justify-between`}
         >
           <div className="my-auto">
-            <p className="text-[2.5rem] font-bold text-[var(--accent)]">
+            <p
+              className="font-bold text-[var(--accent)]"
+              style={{
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              }}
+            >
               {firstName} {lastName}
             </p>
-            <p className="text-[1.6em] font-medium">{jobTitle}</p>
+            <p
+              className="font-medium"
+              style={{
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+              }}
+            >
+              {jobTitle}
+            </p>
           </div>
         </div>
       </div>
@@ -424,7 +442,10 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             }}
           />
         ) : (
-          <div className="flex h-full flex-col justify-between pl-7">
+          <div
+            className="flex h-full flex-col justify-between pl-7"
+            data-resume-personal-details
+          >
             {(city || country) && (
               <p className="flex items-center gap-1">
                 <BiSolidMap />

@@ -19,12 +19,7 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
 
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10.5px]";
-
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#000000" : resumeData.colorHex;
+  const colorHex = "var(--accent)";
 
   const dateFormat = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
 
@@ -35,12 +30,16 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
         <h3
           data-resume-section-heading
           className="mb-2 text-sm font-bold tracking-widest text-gray-400"
+          style={{ color: colorHex }}
         >
           Summary
         </h3>
-        <p className="whitespace-pre-line text-justify leading-relaxed text-gray-700">
-          {resumeData.summary}
-        </p>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: resumeData.summary || "",
+          }}
+          className="richTextEditorStyle !m-0 whitespace-pre-line text-justify leading-relaxed text-gray-700 pt-1"
+        />
       </section>
     ) : null,
     workExperiences:
@@ -49,6 +48,7 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
           <h3
             data-resume-section-heading
             className="mb-4 pb-1 text-sm font-bold tracking-widest text-gray-400"
+            style={{ color: colorHex }}
           >
             Experience
           </h3>
@@ -117,6 +117,7 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
           <h3
             data-resume-section-heading
             className="mb-4 pb-1 text-sm font-bold tracking-widest text-gray-400"
+            style={{ color: colorHex }}
           >
             Education
           </h3>
@@ -147,6 +148,7 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
           <h3
             data-resume-section-heading
             className="mb-4 pb-1 text-sm font-bold tracking-widest text-gray-400"
+            style={{ color: colorHex }}
           >
             Projects
           </h3>
@@ -219,6 +221,7 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
           <h3
             data-resume-section-heading
             className="mb-3 pb-1 text-sm font-bold tracking-widest text-gray-400"
+            style={{ color: colorHex }}
           >
             Technical Skills
           </h3>
@@ -245,6 +248,7 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
           <h3
             data-resume-section-heading
             className="mb-3 pb-1 text-sm font-bold tracking-widest text-gray-400"
+            style={{ color: colorHex }}
           >
             Certifications
           </h3>
@@ -266,6 +270,7 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
           <h3
             data-resume-section-heading
             className="mb-3 pb-1 text-sm font-bold tracking-widest text-gray-400"
+            style={{ color: colorHex }}
           >
             {resumeData.others?.title || "Other"}
           </h3>
@@ -281,38 +286,50 @@ export default function Ats13({ resumeData, className }: ResumePreviewProps) {
 
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white text-gray-800",
-        className,
-      )}
+      className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
+      style={{
+        color: "var(--text)",
+      }}
       ref={containerRef}
     >
       <div
-        className={cn(
-          "space-y-5 p-10 font-sans",
-          BaseFontSize,
-          !width && "invisible",
-        )}
+        className={cn("space-y-5 p-10 font-sans", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
+          fontSize: "var(--base-font)",
         }}
         id="resumePreviewContent"
       >
         {/* Header Section */}
-        <header className="border-b-[1px] border-gray-300 pb-5">
+        <header
+          className="border-b-[1px] border-gray-300 pb-5"
+          data-resume-header
+        >
           <h1
-            className="mb-1 text-4xl font-extrabold uppercase tracking-tight"
-            style={{ color: colorHex }}
+            className="mb-1 font-extrabold uppercase tracking-tight"
+            style={{
+              color: colorHex,
+              fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            }}
           >
             {resumeData.firstName} {resumeData.lastName}
           </h1>
           {resumeData.jobTitle && (
-            <p className="mb-3 text-xl font-medium text-gray-600">
+            <p
+              className="mb-3 font-medium text-gray-600"
+              style={{
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+              }}
+            >
               {resumeData.jobTitle}
             </p>
           )}
 
-          <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm font-medium text-gray-500">
+          <div
+            className="flex flex-wrap gap-x-6 gap-y-1 text-sm font-medium text-gray-500"
+            data-resume-personal-details
+          >
             {resumeData.email && (
               <ContactLink
                 href={`mailto:${resumeData.email}`}

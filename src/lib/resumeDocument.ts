@@ -42,7 +42,7 @@ export const defaultResumeDesign: ResumeDesign = {
     sectionOrder: undefined,
     layout: {
       columnLayout: "two",
-      headerPosition: "right",
+      headerPosition: "left",
       leftColumnWidth: 50,
       rightColumnWidth: 50,
     },
@@ -80,6 +80,7 @@ export const defaultResumeDesign: ResumeDesign = {
     },
     personalDetails: {
       detailsAlign: "center",
+      detailsLayout: "stacked",
       detailsArrangement: "icon",
       detailsIconStyle: 0,
     },
@@ -139,9 +140,9 @@ export function applyDesignToLegacy(
     dateFormat: design.formatting.dateFormat,
     ...(isAts
       ? {
-          colorHex: design.color.accent,
-          baseFontSize: design.typography.baseFontSize,
-        }
+        colorHex: design.color.accent,
+        baseFontSize: design.typography.baseFontSize,
+      }
       : null),
     styleId,
   };
@@ -153,7 +154,12 @@ export function toLegacyResumeValues(doc: ResumeDocument): ResumeValues {
 
 export function toResumeDocument(legacy: ResumeValues): ResumeDocument {
   const styleId = legacy.styleId || DEFAULT_STYLE_ID;
-  const design = deriveDesignFromLegacy(legacy);
+
+  // If the resume has a saved design object, use it
+  // Otherwise, derive it from legacy fields for backwards compatibility
+  const design = (legacy as any).design
+    ? ((legacy as any).design as ResumeDesign)
+    : deriveDesignFromLegacy(legacy);
 
   return {
     content: applyDesignToLegacy(legacy, design, styleId),
@@ -161,3 +167,4 @@ export function toResumeDocument(legacy: ResumeValues): ResumeDocument {
     styleId,
   };
 }
+

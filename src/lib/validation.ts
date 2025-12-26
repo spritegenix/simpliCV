@@ -190,6 +190,7 @@ export const resumeSchema = z.object({
     .max(20, "Must be at most 20")
     .optional(),
   styleId: optionalString,
+  detailsArrangement: z.enum(["compact", "stacked"]).optional(),
 });
 
 export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {

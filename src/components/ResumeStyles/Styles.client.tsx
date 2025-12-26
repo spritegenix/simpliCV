@@ -75,6 +75,24 @@ function adaptLegacyTemplateComponent(
     const isModern = styleId.startsWith("modern");
     const resumeScope = deriveResumeScopeFromStyleId(styleId);
 
+    // Hide photo for ATS templates that don't support images
+    const photoRestrictedAtsTemplates = [
+      "ats1",
+      "ats4",
+      "ats5",
+      "ats6",
+      "ats8",
+      "ats11",
+      "ats12",
+      "ats13",
+      "ats14",
+      "ats15",
+    ];
+    const shouldHidePhoto = photoRestrictedAtsTemplates.includes(styleId);
+    if (shouldHidePhoto && legacy.photo) {
+      legacy.photo = null;
+    }
+
     const selectedFontLabel =
       resumeData.design.customization?.font?.selectedFont?.trim() ?? "";
 
@@ -105,6 +123,10 @@ function adaptLegacyTemplateComponent(
     const detailsAlign =
       resumeData.design.customization?.personalDetails?.detailsAlign ??
       "center";
+    const rawDetailsLayout = resumeData.design.customization?.personalDetails
+      ?.detailsLayout as string | undefined;
+    const detailsLayout =
+      rawDetailsLayout === "compact" ? "compact" : "stacked";
     const detailsArrangement =
       resumeData.design.customization?.personalDetails?.detailsArrangement ??
       "icon";
@@ -136,6 +158,9 @@ function adaptLegacyTemplateComponent(
     const entryListStyle =
       resumeData.design.customization?.entryLayout?.listStyle ?? "bullet";
 
+    const nameSize = resumeData.design.customization?.name?.nameSize ?? "L";
+    const nameBold = resumeData.design.customization?.name?.nameBold ?? true;
+
     const lineHeight =
       resumeData.design.customization?.spacing?.lineHeight ?? 1.3;
 
@@ -149,6 +174,15 @@ function adaptLegacyTemplateComponent(
     // - headingScale defaults to 1.15 but should behave as a no-op at defaults
     // - sectionGap stays raw; density is applied by templates where appropriate
     const headingScaleNormalized = headingScale / 1.15;
+
+    const nameSizeMap: Record<string, string> = {
+      XS: "0.9em",
+      S: "1.1em",
+      M: "1.3em",
+      L: "1.5em",
+      XL: "1.8em",
+    };
+    const nameFontSize = nameSizeMap[nameSize] || nameSizeMap["L"];
 
     const scopedSharedVarsCss = RESUME_SCOPES.map((scope) => {
       return (
@@ -172,6 +206,8 @@ function adaptLegacyTemplateComponent(
                 ? 16
                 : 18
         }px;\n` +
+        `  --name-font-size: ${nameFontSize};\n` +
+        `  --name-font-weight: ${nameBold ? "bold" : "normal"};\n` +
         `}`
       );
     }).join("\n\n");
@@ -197,32 +233,100 @@ function adaptLegacyTemplateComponent(
           `}`
         : "";
 
+    // ATS-specific font sizing standards
+    const atsTypographyCss = isAts
+      ? `\n` +
+        `/* ATS Font Size Standards */\n` +
+        // Name: respects name size and name bold settings
+        `[data-resume-scope="${resumeScope}"] [data-resume-header] > p:first-child,\n` +
+        `[data-resume-scope="${resumeScope}"] [data-resume-header] > h1 {\n` +
+        `  font-size: calc(${nameFontSize} * var(--heading-scale)) !important;\n` +
+        `  font-weight: var(--name-font-weight) !important;\n` +
+        `}\n` +
+        // Job Title/Role: respects name size but NOT name bold (always medium weight)
+        `[data-resume-scope="${resumeScope}"] [data-resume-header] > p:nth-child(2),\n` +
+        `[data-resume-scope="${resumeScope}"] [data-resume-header] > h2,\n` +
+        `[data-resume-scope="${resumeScope}"] [data-resume-header] p:has(+ [data-resume-personal-details]) {\n` +
+        `  font-size: calc(${nameFontSize} * 0.7 * var(--heading-scale)) !important;\n` +
+        `  font-weight: 500 !important;\n` +
+        `}\n` +
+        // Demographics: relative size, scales with base font
+        `[data-resume-scope="${resumeScope}"] [data-resume-personal-details],\n` +
+        `[data-resume-scope="${resumeScope}"] [data-resume-personal-details] * {\n` +
+        `  font-size: 0.85em !important; /* Scales with base font */\n` +
+        `  font-weight: 400 !important;\n` +
+        `}\n`
+      : "";
+
+
+
     const scopedPanelCss =
       `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-header-position=\"left\"] [data-resume-header] { text-align: left; }\n` +
       `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-header-position=\"right\"] [data-resume-header] { text-align: right; }\n` +
       `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-header-position=\"top\"] [data-resume-header] { text-align: center; }\n` +
       `\n` +
+      // Align should affect the top personal-details block as a group when possible.
+      // This is also responsible for name + role alignment.
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"left\"] [data-resume-header] { text-align: left !important; justify-content: flex-start; justify-items: start; }\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"center\"] [data-resume-header] { text-align: center !important; justify-content: center; justify-items: center; }\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"right\"] [data-resume-header] { text-align: right !important; justify-content: flex-end; justify-items: end; }\n` +
+      // Ats2 (and any template that opts-in) can tag the name/role row for true group alignment.
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent [data-resume-header-title-row] { width: 100%; }\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"left\"] [data-resume-header-title-row] { justify-content: flex-start !important; }\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"center\"] [data-resume-header-title-row] { justify-content: center !important; }\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"right\"] [data-resume-header-title-row] { justify-content: flex-end !important; }\n` +
       `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"left\"] [data-resume-personal-details] { text-align: left; justify-content: flex-start; }\n` +
       `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"center\"] [data-resume-personal-details] { text-align: center; justify-content: center; }\n` +
       `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"right\"] [data-resume-personal-details] { text-align: right; justify-content: flex-end; }\n` +
+      // Some templates position the details block with ml-auto / grid self alignment.
+      // Override that so the control actually takes effect.
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"left\"] [data-resume-personal-details] { margin-left: 0 !important; margin-right: auto !important; justify-self: start; }\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"center\"] [data-resume-personal-details] { margin-left: auto !important; margin-right: auto !important; justify-self: center; }\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-align=\"right\"] [data-resume-personal-details] { margin-left: auto !important; margin-right: 0 !important; justify-self: end; }\n` +
+      // For grid-based layouts, justify-items controls horizontal alignment of children.
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-layout=\"stacked\"][data-details-align=\"left\"] [data-resume-personal-details] { justify-items: start; }\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-layout=\"stacked\"][data-details-align=\"center\"] [data-resume-personal-details] { justify-items: center; }\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-layout=\"stacked\"][data-details-align=\"right\"] [data-resume-personal-details] { justify-items: end; }\n` +
       `\n` +
-      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-arrangement=\"bullet\"] [data-resume-personal-details],\n` +
-      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-arrangement=\"bar\"] [data-resume-personal-details] {\n` +
-      `  display: flex;\n` +
+      // Arrangement (Layout) — best-effort across ATS/Modern.
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-layout=\"stacked\"] [data-resume-personal-details] {\n` +
+      `  display: grid !important;\n` +
+      `  grid-template-columns: repeat(auto-fit, minmax(10em, 1fr)) !important;\n` +
+      `  gap: 0.25em 0.8em;\n` +
+      `}\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-layout=\"compact\"] [data-resume-personal-details] {\n` +
+      `  display: inline-flex !important;\n` +
       `  flex-wrap: wrap;\n` +
       `  align-items: center;\n` +
+      `  row-gap: 0.15em;\n` +
+      `  column-gap: 0.5em;\n` +
       `}\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-has-photo=\"true\"][data-details-layout=\"stacked\"] [data-resume-personal-details] {\n` +
+      `  grid-template-columns: repeat(auto-fit, minmax(12em, 1fr)) !important;\n` +
+      `}\n` +
+      `\n` +
+      // Separator style (Icon/Bullet/Bar) should not override the chosen layout.
       `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-arrangement=\"bullet\"] [data-resume-personal-details] > *,\n` +
       `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-arrangement=\"bar\"] [data-resume-personal-details] > * {\n` +
-      `  display: inline-flex;\n` +
+      `  display: inline-flex !important;\n` +
       `  align-items: center;\n` +
       `}\n` +
-      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-arrangement=\"bullet\"] [data-resume-personal-details] > *:not(:first-child)::before {\n` +
-      `  content: "•";\n` +
+      // Stacked layout: apply bullet/bar to ALL items (including first child)\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-layout=\"stacked\"][data-details-arrangement=\"bullet\"] [data-resume-personal-details] > *::before {\n` +
+      `  content: \"•\";\n` +
+      `  margin-right: 0.35em;\n` +
+      `}\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-layout=\"stacked\"][data-details-arrangement=\"bar\"] [data-resume-personal-details] > *::before {\n` +
+      `  content: \"|\";\n` +
+      `  margin-right: 0.35em;\n` +
+      `}\n` +
+      // Compact layout: use bullet/bar as separator between items (not before first)\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-layout=\"compact\"][data-details-arrangement=\"bullet\"] [data-resume-personal-details] > *:not(:first-child)::before {\n` +
+      `  content: \"•\";\n` +
       `  margin: 0 0.35em;\n` +
       `}\n` +
-      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-arrangement=\"bar\"] [data-resume-personal-details] > *:not(:first-child)::before {\n` +
-      `  content: "|";\n` +
+      `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-layout=\"compact\"][data-details-arrangement=\"bar\"] [data-resume-personal-details] > *:not(:first-child)::before {\n` +
+      `  content: \"|\";\n` +
       `  margin: 0 0.35em;\n` +
       `}\n` +
       `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-details-arrangement=\"bullet\"] [data-resume-personal-details] svg,\n` +
@@ -232,6 +336,17 @@ function adaptLegacyTemplateComponent(
       `[data-resume-scope=\"${resumeScope}\"] [data-resume-personal-details] svg {\n` +
       `  width: var(--details-icon-size) !important;\n` +
       `  height: var(--details-icon-size) !important;\n` +
+      `}\n` +
+      `\n` +
+      // Name and role font size - apply to both name and job title
+      `[data-resume-scope="${resumeScope}"] #resumePreviewContent [data-resume-header] div:not([data-resume-personal-details]) p,\n` +
+      `[data-resume-scope="${resumeScope}"] #resumePreviewContent [data-resume-header] a:not([data-resume-personal-details] a) p {\n` +
+      `  font-size: var(--name-font-size) !important;\n` +
+      `}\n` +
+      // Name bold - apply only to the first p tag (name, not role)
+      `[data-resume-scope="${resumeScope}"] #resumePreviewContent [data-resume-header] div:not([data-resume-personal-details]) p:first-of-type,\n` +
+      `[data-resume-scope="${resumeScope}"] #resumePreviewContent [data-resume-header] a:not([data-resume-personal-details] a) p:first-of-type {\n` +
+      `  font-weight: var(--name-font-weight) !important;\n` +
       `}`;
 
     const scopedSectionHeadingsCss =
@@ -276,40 +391,14 @@ function adaptLegacyTemplateComponent(
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"2\"] [data-resume-section-heading],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"3\"] [data-resume-section-heading],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"4\"] [data-resume-section-heading],\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"5\"] [data-resume-section-heading],\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading] {\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"5\"] [data-resume-section-heading] {\n` +
           `  border-bottom: 0 !important;\n` +
           `  border-bottom-width: 0 !important;\n` +
           `  border-bottom-style: none !important;\n` +
           `  background: transparent !important;\n` +
           `  box-shadow: none !important;\n` +
           `}\n` +
-          // Style 7: no line + tight spacing
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading]::before,\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading]::after {\n` +
-          `  content: none !important;\n` +
-          `  border: 0 !important;\n` +
-          `}\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading-decoration] {\n` +
-          `  display: none !important;\n` +
-          `}\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading-wrap] {\n` +
-          `  padding: 0 !important;\n` +
-          `  margin: 0 !important;\n` +
-          `  border: 0 !important;\n` +
-          `  border-bottom: 0 !important;\n` +
-          `  border-bottom-width: 0 !important;\n` +
-          `  border-bottom-style: none !important;\n` +
-          `  background: transparent !important;\n` +
-          `  box-shadow: none !important;\n` +
-          `}\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading] {\n` +
-          `  padding: 0 !important;\n` +
-          `  margin: 0 !important;\n` +
-          `}\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"7\"] [data-resume-section-heading] + * {\n` +
-          `  margin-top: 0 !important;\n` +
-          `}\n` +
+ +
           // Default style (1): provide a consistent, customizable look for ATS templates
           // without relying on template-hardcoded borders/lines.
           (isAts
@@ -540,7 +629,9 @@ function adaptLegacyTemplateComponent(
         // Apply header + personal-details hooks (so CSS selectors work reliably).
         root.dataset.headerPosition = headerPosition;
         root.dataset.detailsAlign = detailsAlign;
+        root.dataset.detailsLayout = detailsLayout;
         root.dataset.detailsArrangement = detailsArrangement;
+        root.dataset.hasPhoto = legacy.photo ? "true" : "false";
 
         // Apply section heading hooks (ATS + Modern only).
         root.dataset.sectionHeadingStyle = String(sectionHeadingStyle);
@@ -554,6 +645,10 @@ function adaptLegacyTemplateComponent(
         root.dataset.entrySubtitlePlacement = entrySubtitlePlacement;
         root.dataset.entryIndentBody = entryIndentBody ? "true" : "false";
         root.dataset.entryListStyle = entryListStyle;
+
+        // Apply name styling hooks (ATS + Modern only).
+        root.dataset.nameSize = nameSize;
+        root.dataset.nameBold = nameBold ? "true" : "false";
 
         const ensureHeaderTagged = () => {
           if (root.querySelector("[data-resume-header]")) return;
@@ -817,6 +912,7 @@ function adaptLegacyTemplateComponent(
       sectionOrderIndex,
       headerPosition,
       detailsAlign,
+      detailsLayout,
       detailsArrangement,
       detailsIconStyle,
       sectionHeadingStyle,
@@ -847,6 +943,8 @@ function adaptLegacyTemplateComponent(
           {scopedLineHeightCss}
           {scopedFontCss ? "\n\n" : ""}
           {scopedFontCss}
+          {atsTypographyCss ? "\n\n" : ""}
+          {atsTypographyCss}
         </style>
         <LegacyComponent
           resumeData={legacy}

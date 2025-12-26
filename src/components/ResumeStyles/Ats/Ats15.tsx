@@ -20,14 +20,9 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
 
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10.5px]";
-
   // The template uses a classic Serif font (looks like Georgia or Times)
   // We'll use font-serif.
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#000000" : resumeData.colorHex;
+  const colorHex = "var(--accent)";
 
   const dateFormatNumeric = getResumeDateFormat(
     resumeData.dateFormat,
@@ -45,9 +40,12 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
         >
           Profile
         </h3>
-        <p className="text-justify text-sm leading-relaxed text-gray-800">
-          {resumeData.summary}
-        </p>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: resumeData.summary || "",
+          }}
+          className="richTextEditorStyle !m-0 whitespace-pre-line text-justify text-sm leading-relaxed text-gray-800 pt-1"
+        />
       </section>
     ) : null,
     workExperiences:
@@ -296,38 +294,53 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
 
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white text-gray-900",
-        className,
-      )}
+      className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
+      style={{
+        color: "var(--text)",
+      }}
       ref={containerRef}
     >
       <div
         className={cn(
           "space-y-6 p-10 font-serif", // Changed to font-serif
-          BaseFontSize,
           !width && "invisible",
         )}
         style={{
           zoom: (1 / 794) * width,
+          fontSize: "var(--base-font)",
         }}
         id="resumePreviewContent"
       >
         {/* Header */}
-        <header className="flex flex-col items-center text-center">
+        <header
+          className="flex flex-col items-center text-center"
+          data-resume-header
+        >
           <h1
-            className="mb-1 text-3xl font-bold text-gray-900"
-            style={{ color: colorHex }}
+            className="mb-1 font-bold text-gray-900"
+            style={{
+              color: colorHex,
+              fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            }}
           >
             {resumeData.firstName} {resumeData.lastName}
           </h1>
           {resumeData.jobTitle && (
-            <p className="mb-2 text-lg italic text-gray-700">
+            <p
+              className="mb-2 italic text-gray-700"
+              style={{
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+              }}
+            >
               {resumeData.jobTitle}
             </p>
           )}
 
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-gray-600">
+          <div
+            className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-gray-600"
+            data-resume-personal-details
+          >
             {(resumeData.city || resumeData.country) && (
               <div className="flex items-center gap-1">
                 <BiSolidMap className="opacity-70" />

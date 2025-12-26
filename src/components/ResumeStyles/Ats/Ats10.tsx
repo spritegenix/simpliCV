@@ -27,12 +27,7 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
-
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-  const colorHex =
-    resumeData.colorHex === undefined ? "#e5e6e3" : resumeData.colorHex;
+  const colorHex = "var(--accent)";
 
   const dateFormat = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
 
@@ -43,7 +38,12 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
         <Heading colorHex={colorHex}>
           <ImProfile /> Professional Summary
         </Heading>
-        <Text>{resumeData.summary}</Text>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: resumeData.summary || "",
+          }}
+          className="richTextEditorStyle !m-0 whitespace-pre-line pt-1"
+        />
       </>
     ) : null,
     workExperiences:
@@ -78,7 +78,7 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
                       data-resume-entry-title
                       className="text-[1.2em] font-semibold"
                       style={{
-                        color: resumeData.colorHex,
+                        color: "var(--accent)",
                       }}
                     >
                       {exp.company}
@@ -294,20 +294,15 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
   };
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white text-zinc-900",
-        className,
-      )}
+      className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
       ref={containerRef}
+      style={{ color: "var(--text)" }}
     >
       <div
-        className={cn(
-          "space-y-2 font-inter",
-          BaseFontSize,
-          !width && "invisible",
-        )}
+        className={cn("space-y-2 font-inter", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
+          fontSize: "var(--base-font)",
         }}
         id="resumePreviewContent"
       >
@@ -316,10 +311,7 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
         ) : (
           <PersonalInfoHeader1 resumeData={resumeData} hexBgColor={colorHex} />
         )}
-        <div
-          className="space-y-2 p-10 pt-3"
-          style={{ color: hexToRgbaPercent(colorHex, 100) }}
-        >
+        <div className="space-y-2 p-10 pt-3">
           {orderedSections.map((key) => (
             <React.Fragment key={key}>{sections[key]}</React.Fragment>
           ))}
@@ -365,6 +357,7 @@ function PersonalInfoHeader({
       style={{
         backgroundColor: hexBgColor,
       }}
+      data-resume-header
     >
       <div className="col-span-4 flex justify-center overflow-hidden">
         {photoSrc && (
@@ -388,14 +381,30 @@ function PersonalInfoHeader({
       <div className="col-span-8 flex h-max flex-col">
         <div className={`gird flex flex-col justify-between`}>
           <div className="flex flex-col items-start gap-x-1 text-white">
-            <p className="text-[1.8rem] font-bold">
+            <p
+              className="font-bold"
+              style={{
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              }}
+            >
               {firstName} {lastName}
             </p>
-            <p className="text-[2em] font-medium">{jobTitle}</p>
+            <p
+              className="font-medium"
+              style={{
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+              }}
+            >
+              {jobTitle}
+            </p>
           </div>
         </div>
         {/* Social Links  */}
-        <div className="flex w-[70%] flex-wrap gap-x-4 gap-y-1 text-[1.2em]">
+        <div
+          className="flex w-[70%] flex-wrap gap-x-4 gap-y-1 text-[1.2em]"
+          data-resume-personal-details
+        >
           {(city || country) && (
             <p className="flex items-center gap-1">
               <span>
@@ -403,7 +412,7 @@ function PersonalInfoHeader({
               </span>
 
               <span className="text-white">
-                {city}
+                color: "var(--accent)",
                 {city && country ? ", " : ""}
                 {country}
               </span>
@@ -453,34 +462,38 @@ function PersonalInfoHeader1({
       style={{
         backgroundColor: hexBgColor,
       }}
+      data-resume-header
     >
       <Link
         href={resumeData.portfolioLink || "#"}
-        className="cursor-pointer text-center"
+        className="block w-full cursor-pointer"
       >
         <div className="flex flex-col items-start gap-x-3 text-white">
           <p
-            className="text-[1.8rem] font-bold"
-            // style={{
-            //   color: colorHex,
-            // }}
+            className="font-bold"
+            style={{
+              fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            }}
           >
             {firstName &&
               firstName?.charAt(0).toUpperCase() + firstName?.slice(1)}{" "}
             {lastName}
           </p>
           <p
-            className="text-xl"
-            // style={{
-            //   color: colorHex,
-            // }}
+            className="font-medium"
+            style={{
+              fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+            }}
           >
             {jobTitle}
           </p>
         </div>
       </Link>
       {/* Social Links  */}
-      <div className="grid grid-cols-2 flex-wrap gap-x-8 gap-y-1 text-sm">
+      <div
+        className="grid grid-cols-2 flex-wrap gap-x-8 gap-y-1 text-sm"
+        data-resume-personal-details
+      >
         {(city || country) && (
           <p className="flex items-center gap-1 text-white">
             <span>
@@ -559,14 +572,14 @@ function Heading({
         data-resume-section-heading-wrap
         className="flex break-inside-avoid flex-col items-center justify-center space-y-1 text-base"
         style={{
-          backgroundColor: hexToRgbaPercent(colorHex, 20),
+          backgroundColor: "color-mix(in srgb, var(--accent) 20%, transparent)",
         }}
       >
         <h1
           data-resume-section-heading
           className="flex items-center gap-x-2 text-nowrap text-[1.2em] font-semibold"
           style={{
-            color: hexToRgbaPercent(colorHex, 80),
+            color: "var(--accent)",
           }}
         >
           {children}

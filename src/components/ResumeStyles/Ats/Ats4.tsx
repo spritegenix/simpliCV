@@ -23,12 +23,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
 
   const { width } = useDimensions(containerRef);
 
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#545454" : resumeData.colorHex;
+  const colorHex = "var(--accent)";
 
   const dateFormat = getResumeDateFormat(resumeData.dateFormat, "MMM yyyy");
 
@@ -49,15 +44,19 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
   return (
     <div
       className={cn(
-        "aspect-[210/297] h-fit w-full bg-white font-times text-[#545454]",
+        "aspect-[210/297] h-fit w-full bg-white font-times",
         className,
       )}
+      style={{
+        color: "var(--text)",
+      }}
       ref={containerRef}
     >
       <div
-        className={cn(BaseFontSize, !width && "invisible")}
+        className={cn(!width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
+          fontSize: "var(--base-font)",
         }}
         id="resumePreviewContent"
       >
@@ -78,7 +77,12 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
             <Heading colorHex={colorHex} isCenter className="mx-auto w-56">
               Professional Summary
             </Heading>
-            <Text className="text-center">{resumeData.summary}</Text>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: resumeData.summary || "",
+              }}
+              className="richTextEditorStyle whitespace-pre-line text-center"
+            />
           </div>
         )}
 
@@ -406,8 +410,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
     borderStyle,
   } = resumeData;
 
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#545454" : resumeData.colorHex;
+  const colorHex = "var(--accent)";
 
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
@@ -419,7 +422,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
   }, [photo]);
 
   return (
-    <div className="grid grid-cols-12">
+    <div className="grid grid-cols-12" data-resume-header>
       <div className="col-span-8 flex h-max gap-6">
         {photoSrc && (
           <Image
@@ -442,21 +445,37 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
           className={`flex ${photoSrc ? "h-[100px]" : ""} flex-col justify-between`}
         >
           <div className="my-auto">
-            <p className="text-[2.5rem] font-bold" style={{ color: colorHex }}>
+            <p
+              className="font-bold"
+              style={{
+                color: colorHex,
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              }}
+            >
               {firstName} {lastName}
             </p>
-            <p className="text-[1.6em] font-medium">{jobTitle}</p>
+            <p
+              className="font-medium"
+              style={{
+                fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+              }}
+            >
+              {jobTitle}
+            </p>
           </div>
         </div>
       </div>
       {/* Social Links  */}
-      <div className="col-span-4 my-auto flex flex-col items-end">
+      <div
+        className="col-span-4 my-auto flex flex-col items-end"
+        data-resume-personal-details
+      >
         {(city || country) && (
           <p className="flex items-center gap-1">
+            <BiSolidMap />
             {city}
             {city && country ? ", " : ""}
             {country}
-            <BiSolidMap />
           </p>
         )}
         <ContactLinks text={phone} href={`tel:${phone}`} />
@@ -495,8 +514,8 @@ function ContactLinks({
           target="_blank"
           className="flex items-center gap-1"
         >
-          {text === "NO_TEXT" ? "" : <p>{text}</p>}
           {icon ? icon : <SocialMediaIconFinder url={href ? href : ""} />}
+          {text === "NO_TEXT" ? "" : <p>{text}</p>}
         </Link>
       )}
     </>

@@ -5,6 +5,7 @@ interface LayoutSectionProps {
   setColumnLayout: (value: "one" | "two" | "mix") => void;
   headerPosition: "top" | "left" | "right";
   setHeaderPosition: (value: "top" | "left" | "right") => void;
+  styleId?: string;
 }
 
 export default function LayoutSection({
@@ -12,7 +13,22 @@ export default function LayoutSection({
   setColumnLayout,
   headerPosition,
   setHeaderPosition,
+  styleId,
 }: LayoutSectionProps) {
+  const isAts1OrAts2OrAts3OrAts5OrAts6OrAts9ToAts15 =
+    styleId === "ats1" ||
+    styleId === "ats2" ||
+    styleId === "ats3" ||
+    styleId === "ats5" ||
+    styleId === "ats6" ||
+    styleId === "ats9" ||
+    styleId === "ats10" ||
+    styleId === "ats11" ||
+    styleId === "ats12" ||
+    styleId === "ats13" ||
+    styleId === "ats14" ||
+    styleId === "ats15";
+
   return (
     <Card>
       <CardHeader>
@@ -39,10 +55,13 @@ export default function LayoutSection({
             </button>
             <button
               onClick={() => setHeaderPosition("left")}
+              disabled={isAts1OrAts2OrAts3OrAts5OrAts6OrAts9ToAts15}
               className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${
                 headerPosition === "left"
                   ? "border-primary bg-primary/10"
-                  : "border-muted hover:border-primary/50"
+                  : isAts1OrAts2OrAts3OrAts5OrAts6OrAts9ToAts15
+                    ? "cursor-not-allowed border-muted bg-muted/30 opacity-50"
+                    : "border-muted hover:border-primary/50"
               }`}
             >
               <div className="flex h-12 w-full gap-1 rounded bg-muted/50 p-1">
@@ -53,10 +72,13 @@ export default function LayoutSection({
             </button>
             <button
               onClick={() => setHeaderPosition("right")}
+              disabled={isAts1OrAts2OrAts3OrAts5OrAts6OrAts9ToAts15}
               className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${
                 headerPosition === "right"
                   ? "border-primary bg-primary/10"
-                  : "border-muted hover:border-primary/50"
+                  : isAts1OrAts2OrAts3OrAts5OrAts6OrAts9ToAts15
+                    ? "cursor-not-allowed border-muted bg-muted/30 opacity-50"
+                    : "border-muted hover:border-primary/50"
               }`}
             >
               <div className="flex h-12 w-full gap-1 rounded bg-muted/50 p-1">

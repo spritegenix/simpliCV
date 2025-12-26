@@ -159,13 +159,19 @@ const Header = ({
       )}
 
       <div>
-        <h1 style={{ fontSize: "28px", fontWeight: 700, margin: 0 }}>
+        <h1
+          style={{
+            fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            fontWeight: 700,
+            margin: 0,
+          }}
+        >
           {firstName} <span style={{ color: accentColor }}>{lastName}</span>
         </h1>
         {jobTitle && (
           <h2
             style={{
-              fontSize: "14px",
+              fontSize: "calc(var(--base-font) * 1.05 * var(--heading-scale))",
               color: "#666",
               margin: "4px 0 0 0",
               fontWeight: 400,
@@ -190,7 +196,7 @@ const SectionTitleMain = ({
   return (
     <h3
       style={{
-        fontSize: "16px",
+        fontSize: "calc(16px * var(--heading-scale))",
         color: colorHex,
         marginBottom: "15px",
         fontWeight: 600,
@@ -481,16 +487,17 @@ const RightColumn = ({
           >
             ABOUT ME
           </h3>
-          <p
+          <div
+            dangerouslySetInnerHTML={{
+              __html: summary || "",
+            }}
+            className="richTextEditorStyle !m-0 whitespace-pre-line"
             style={{
               fontSize: "12px",
               color: "#555",
               lineHeight: "1.6",
-              margin: 0,
             }}
-          >
-            {summary}
-          </p>
+          />
         </section>
       )}
 

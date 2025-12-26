@@ -83,7 +83,12 @@ export default function Ats1({
                 }}
               >
                 <Heading>Professional Summary</Heading>
-                <Text>{resumeData.summary}</Text>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: resumeData.summary || "",
+                  }}
+                  className="richTextEditorStyle whitespace-pre-line"
+                />
               </section>
             ) : null,
             workExperiences:
@@ -197,15 +202,6 @@ export default function Ats1({
                             ))}
                         </p>
                         <p className="flex flex-col text-right">
-                          {item.company && (
-                            <span
-                              data-resume-entry-subtitle
-                              data-entry-subtitle-slot="newline"
-                              className="italic"
-                            >
-                              {item.company}
-                            </span>
-                          )}
                           {item.startDate && (
                             <span>
                               {item.startDate &&
@@ -217,6 +213,17 @@ export default function Ats1({
                           )}
                         </p>
                       </div>
+                      {item.company && (
+                        <div className="flex items-center justify-between">
+                          <span
+                            data-resume-entry-subtitle
+                            data-entry-subtitle-slot="newline"
+                            className="italic"
+                          >
+                            {item.company}
+                          </span>
+                        </div>
+                      )}
                       <div
                         dangerouslySetInnerHTML={{
                           __html: item.description || "",
@@ -359,6 +366,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
     phone,
     email,
     borderStyle,
+    detailsArrangement = "compact",
   } = resumeData;
 
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
@@ -371,7 +379,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
   }, [photo]);
 
   return (
-    <div className="grid grid-cols-2">
+    <div className="grid grid-cols-2" data-resume-header>
       <div className="flex h-max gap-[calc(var(--section-gap)*0.75)]">
         {photoSrc && (
           <Image
@@ -394,15 +402,40 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
           className={`flex ${photoSrc ? "h-[100px]" : ""} flex-col justify-between`}
         >
           <div className="my-auto">
-            <p className="font-bold text-[var(--accent)]">
+            <p
+              className="font-bold text-[var(--accent)]"
+              style={{
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              }}
+            >
               {firstName} {lastName}
             </p>
-            <p className="font-medium text-[var(--accent)]">{jobTitle}</p>
+            <p
+              className="font-medium text-[var(--accent)]"
+              style={{
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+              }}
+            >
+              {jobTitle}
+            </p>
           </div>
         </div>
       </div>
       {/* Social Links  */}
-      <div className="my-auto ml-auto">
+      <div
+        className={cn(
+          "my-auto ml-auto font-normal",
+          detailsArrangement === "compact"
+            ? "flex flex-col items-end gap-y-1"
+            : "flex flex-wrap justify-end gap-x-2 gap-y-1",
+        )}
+        style={{
+          fontSize: "2em",
+          color: "color-mix(in srgb, var(--text) 80%, transparent)",
+        }}
+        data-resume-personal-details
+      >
         {(city || country) && (
           <p className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
             <BiSolidMap />
@@ -411,16 +444,24 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             {country}
           </p>
         )}
-        <ContactLinks text={phone} href={`tel:${phone}`} />
-        <ContactLinks text={email} href={`mailto:${email}`} />
+        {phone && (
+          <p className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
+            <ContactLinks text={phone} href={`tel:${phone}`} />
+          </p>
+        )}
+        {email && (
+          <p className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
+            <ContactLinks text={email} href={`mailto:${email}`} />
+          </p>
+        )}
         {!!socialLinks &&
           socialLinks.length > 0 &&
           socialLinks.map((link, index) => (
-            <ContactLinks
-              key={index}
-              text={link.split("://")?.[1]}
-              href={link}
-            />
+            <p key={index} className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
+              <ContactLinks
+                text={link.split("://")?.[1]}
+              />
+            </p>
           ))}
         {portfolioLink && (
           <ContactLinks text={"Portfolio"} href={portfolioLink} />
@@ -440,21 +481,44 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
     country,
     phone,
     email,
+    detailsArrangement = "compact",
   } = resumeData;
 
   return (
-    <div>
+    <div data-resume-header>
       <Link
         href={resumeData.portfolioLink || "#"}
-        className="cursor-pointer text-center"
+        className="block w-full cursor-pointer"
       >
-        <p className="font-bold text-[var(--accent)]">
+        <p
+          className="font-bold text-[var(--accent)]"
+          style={{
+            fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+          }}
+        >
           {firstName} {lastName}
         </p>
-        <p className="font-medium text-[var(--accent)]">{jobTitle}</p>
+        <p
+          className="font-medium text-[var(--accent)]"
+          style={{
+            fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+          }}
+        >
+          {jobTitle}
+        </p>
       </Link>
       {/* Social Links  */}
-      <div className="mx-auto flex max-w-xl flex-wrap justify-center gap-x-[calc(var(--section-gap)*0.5)]">
+      <div
+        className={cn(
+          "mx-auto flex flex-wrap justify-center font-normal gap-x-2 gap-y-1",
+          detailsArrangement === "stacked" && "flex-col items-center",
+        )}
+        style={{
+          fontSize: "1.1em",
+          color: "color-mix(in srgb, var(--text) 80%, transparent)",
+        }}
+        data-resume-personal-details
+      >
         {(city || country) && (
           <p className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
             <BiSolidMap />
@@ -463,15 +527,23 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
             {country}
           </p>
         )}
-        <ContactLinks text={phone} href={`tel:${phone}`} />
-        <ContactLinks text={email} href={`mailto:${email}`} />
+        {phone && (
+          <p className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
+            <ContactLinks text={phone} href={`tel:${phone}`} />
+          </p>
+        )}
+        {email && (
+          <p className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
+            <ContactLinks text={email} href={`mailto:${email}`} />
+          </p>
+        )}
         {!!socialLinks &&
-          socialLinks.map((link) => (
-            <ContactLinks
-              key={link}
-              text={link.split("://")?.[1]}
-              href={link}
-            />
+          socialLinks.map((link, index) => (
+            <p key={link} className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
+              <ContactLinks
+                text={link.split("://")?.[1]}
+              />
+            </p>
           ))}
         {portfolioLink && (
           <ContactLinks text={"Portfolio"} href={portfolioLink} />
@@ -499,7 +571,7 @@ function ContactLinks({
           className="flex items-center gap-[calc(var(--section-gap)*0.25)]"
         >
           {icon ? icon : <SocialMediaIconFinder url={href ? href : ""} />}
-          {text === "NO_TEXT" ? "" : <p>{text}</p>}
+          {text === "NO_TEXT" ? "" : <span>{text}</span>}
         </Link>
       )}
     </>

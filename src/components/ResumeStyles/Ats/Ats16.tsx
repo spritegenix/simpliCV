@@ -34,9 +34,12 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
         >
           Summary
         </h3>
-        <p className="text-justify text-sm leading-relaxed text-gray-800">
-          {resumeData.summary}
-        </p>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: resumeData.summary || "",
+          }}
+          className="richTextEditorStyle !m-0 whitespace-pre-line text-justify text-sm leading-relaxed text-gray-800 pt-1"
+        />
       </section>
     ) : null,
     educations:
@@ -305,17 +308,24 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
         id="resumePreviewContent"
       >
         {/* Header */}
-        <header className="mb-6 flex flex-col items-center text-center">
+        <header
+          className="mb-6 flex flex-col items-center text-center"
+          data-resume-header
+        >
           <h1
-            className="mb-2 text-3xl font-extrabold tracking-wide text-gray-900"
-            style={{ color: "var(--accent)" }}
+            className="mb-2 font-extrabold tracking-wide text-gray-900"
+            style={{
+              color: "var(--accent)",
+              fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            }}
           >
-            <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
-              {resumeData.firstName} {resumeData.lastName}
-            </span>
+            {resumeData.firstName} {resumeData.lastName}
           </h1>
 
-          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm font-medium text-gray-700">
+          <div
+            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm font-medium text-gray-700"
+            data-resume-personal-details
+          >
             {(resumeData.city || resumeData.country) && (
               <div className="flex items-center gap-1.5">
                 <BiSolidMap size={14} />

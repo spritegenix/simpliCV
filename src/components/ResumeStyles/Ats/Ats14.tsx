@@ -20,12 +20,7 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
 
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10.5px]";
-
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#1e3a8a" : resumeData.colorHex; // Default to a deep blue if black
+  const colorHex = "var(--accent)";
 
   const dateFormatNumeric = getResumeDateFormat(
     resumeData.dateFormat,
@@ -37,9 +32,12 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
     summary: resumeData.summary ? (
       <section>
         <SectionHeader title="Profile" style={{ color: colorHex }} />
-        <p className="whitespace-pre-line text-justify leading-relaxed text-slate-700">
-          {resumeData.summary}
-        </p>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: resumeData.summary || "",
+          }}
+          className="richTextEditorStyle !m-0 whitespace-pre-line text-justify leading-relaxed text-slate-700 pt-1"
+        />
       </section>
     ) : null,
     workExperiences:
@@ -271,25 +269,22 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
 
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white text-slate-800",
-        className,
-      )}
+      className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
+      style={{
+        color: "var(--text)",
+      }}
       ref={containerRef}
     >
       <div
-        className={cn(
-          "space-y-5 p-10 font-sans",
-          BaseFontSize,
-          !width && "invisible",
-        )}
+        className={cn("space-y-5 p-10 font-sans", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
+          fontSize: "var(--base-font)",
         }}
         id="resumePreviewContent"
       >
         {/* Header Section */}
-        <header className="mb-6">
+        <header className="mb-6" data-resume-header>
           <div
             className="mb-3 flex items-baseline gap-4 border-b border-slate-100 pb-2"
             style={{
@@ -298,23 +293,31 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
             }}
           >
             <h1
-              className="text-4xl font-extrabold tracking-tight"
-              style={{ color: colorHex }}
+              className="font-extrabold tracking-tight"
+              style={{
+                color: colorHex,
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              }}
             >
-              <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
-                {resumeData.firstName} {resumeData.lastName}
-              </span>
+              {resumeData.firstName} {resumeData.lastName}
             </h1>
             {resumeData.jobTitle && (
-              <span className="text-xl font-medium italic text-slate-600">
-                <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
-                  {resumeData.jobTitle}
-                </span>
+              <span
+                className="font-medium italic text-slate-600"
+                style={{
+                  fontSize:
+                    "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                }}
+              >
+                {resumeData.jobTitle}
               </span>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-600">
+          <div
+            className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-600"
+            data-resume-personal-details
+          >
             {(resumeData.city || resumeData.country) && (
               <span className="flex items-center gap-1">
                 <BiSolidMap className="text-lg" style={{ color: colorHex }} />

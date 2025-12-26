@@ -7,6 +7,7 @@ interface SectionHeadingsProps {
   setHeadingCapitalization: (value: "capitalize" | "uppercase") => void;
   headingSize: "S" | "M" | "L" | "XL";
   setHeadingSize: (value: "S" | "M" | "L" | "XL") => void;
+  styleId?: string;
 }
 
 export default function SectionHeadings({
@@ -16,7 +17,21 @@ export default function SectionHeadings({
   setHeadingCapitalization,
   headingSize,
   setHeadingSize,
+  styleId,
 }: SectionHeadingsProps) {
+  const isAts2OrAts3OrAts5OrAts6OrAts9ToAts15 =
+    styleId === "ats2" ||
+    styleId === "ats3" ||
+    styleId === "ats5" ||
+    styleId === "ats6" ||
+    styleId === "ats9" ||
+    styleId === "ats10" ||
+    styleId === "ats11" ||
+    styleId === "ats12" ||
+    styleId === "ats13" ||
+    styleId === "ats14" ||
+    styleId === "ats15";
+
   return (
     <Card>
       <CardHeader>
@@ -29,60 +44,64 @@ export default function SectionHeadings({
         <div className="space-y-3">
           <label className="text-sm font-medium">Style</label>
           <div className="grid grid-cols-4 gap-2">
-            {[0, 1, 2, 3, 4, 5, 7].map((style) => (
-              <button
-                key={style}
-                onClick={() => setHeadingStyle(style)}
-                className={`flex h-12 items-center justify-center rounded-lg border-2 transition-all ${
-                  headingStyle === style
-                    ? "border-primary bg-primary/10"
-                    : "border-muted hover:border-primary/50"
-                }`}
-              >
-                <div className="w-full px-2">
-                  {style === 0 && (
-                    <div className="space-y-1">
-                      <div className="h-1 w-3/4 bg-muted-foreground/40" />
-                      <div className="h-1 w-1/2 bg-muted-foreground/40" />
-                    </div>
-                  )}
-                  {style === 1 && (
-                    <div className="space-y-1">
-                      <div className="h-1 w-3/4 bg-primary" />
-                      <div className="h-1 w-1/2 bg-muted-foreground/40" />
-                    </div>
-                  )}
-                  {style === 2 && (
-                    <div className="space-y-1">
-                      <div className="h-1 w-3/4 bg-muted-foreground/40" />
-                      <div className="h-0.5 w-full border-b-2 border-muted-foreground/40" />
-                    </div>
-                  )}
-                  {style === 3 && (
-                    <div className="space-y-1">
-                      <div className="h-1 w-3/4 bg-muted-foreground/40" />
-                      <div className="h-0.5 w-full border-b-2 border-dotted border-muted-foreground/40" />
-                    </div>
-                  )}
-                  {style === 4 && (
-                    <div className="space-y-1">
-                      <div className="h-1 w-1/2 bg-muted-foreground/40" />
-                    </div>
-                  )}
-                  {style === 5 && (
-                    <div className="flex items-center gap-1">
-                      <div className="h-1 w-1/4 bg-muted-foreground/40" />
-                      <div className="h-1 w-1/4 bg-muted-foreground/40" />
-                    </div>
-                  )}
-                  {style === 7 && (
-                    <div className="space-y-1">
-                      <div className="h-1 w-3/4 bg-muted-foreground/40" />
-                    </div>
-                  )}
-                </div>
-              </button>
-            ))}
+            {[0, 1, 2, 3, 4, 5].map((style) => {
+              const isDisabled =
+                isAts2OrAts3OrAts5OrAts6OrAts9ToAts15 &&
+                (style === 4 || style === 5);
+
+              return (
+                <button
+                  key={style}
+                  onClick={() => setHeadingStyle(style)}
+                  disabled={isDisabled}
+                  className={`flex h-12 items-center justify-center rounded-lg border-2 transition-all ${
+                    headingStyle === style
+                      ? "border-primary bg-primary/10"
+                      : isDisabled
+                        ? "cursor-not-allowed border-muted bg-muted/30 opacity-50"
+                        : "border-muted hover:border-primary/50"
+                  }`}
+                >
+                  <div className="w-full px-2">
+                    {style === 0 && (
+                      <div className="space-y-1">
+                        <div className="h-1 w-3/4 bg-muted-foreground/40" />
+                        <div className="h-1 w-1/2 bg-muted-foreground/40" />
+                      </div>
+                    )}
+                    {style === 1 && (
+                      <div className="space-y-1">
+                        <div className="h-1 w-3/4 bg-primary" />
+                        <div className="h-1 w-1/2 bg-muted-foreground/40" />
+                      </div>
+                    )}
+                    {style === 2 && (
+                      <div className="space-y-1">
+                        <div className="h-1 w-3/4 bg-muted-foreground/40" />
+                        <div className="h-0.5 w-full border-b-2 border-muted-foreground/40" />
+                      </div>
+                    )}
+                    {style === 3 && (
+                      <div className="space-y-1">
+                        <div className="h-1 w-3/4 bg-muted-foreground/40" />
+                        <div className="h-0.5 w-full border-b-2 border-dotted border-muted-foreground/40" />
+                      </div>
+                    )}
+                    {style === 4 && (
+                      <div className="space-y-1">
+                        <div className="h-1 w-1/2 bg-muted-foreground/40" />
+                      </div>
+                    )}
+                    {style === 5 && (
+                      <div className="flex items-center gap-1">
+                        <div className="h-1 w-1/4 bg-muted-foreground/40" />
+                        <div className="h-1 w-1/4 bg-muted-foreground/40" />
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 

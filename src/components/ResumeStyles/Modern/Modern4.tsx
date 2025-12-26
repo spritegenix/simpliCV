@@ -43,14 +43,23 @@ export default function MillieSmithResume({
       >
         {/* Header Section */}
         <div className="bg-gray-50 px-10 pb-4 pt-8 text-center">
-          <h1 className="mb-1 text-3xl font-light tracking-[0.5rem] text-gray-700">
+          <h1
+            className="mb-1 font-light tracking-[0.5rem] text-gray-700"
+            style={{
+              fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            }}
+          >
             {resumeData.firstName?.toUpperCase()}{" "}
             {resumeData.lastName?.toUpperCase()}
           </h1>
           {resumeData.jobTitle && (
             <p
-              className="text-xs font-normal tracking-[0.15rem]"
-              style={{ color: "var(--accent)" }}
+              className="font-normal tracking-[0.15rem]"
+              style={{
+                color: "var(--accent)",
+                fontSize:
+                  "calc(var(--base-font) * 1.05 * var(--heading-scale))",
+              }}
             >
               {resumeData.jobTitle.toUpperCase()}
             </p>
@@ -58,7 +67,14 @@ export default function MillieSmithResume({
         </div>
 
         {/* Divider */}
-        <div className="mx-10 h-0.5 bg-gray-300" />
+        <div
+          className="mx-10 h-0 border-t"
+          style={{
+            borderTopWidth: "calc(var(--resume-border-width) * 2)",
+            borderStyle: "var(--resume-border-style)" as any,
+            borderColor: "color-mix(in srgb, var(--text) 25%, transparent)",
+          }}
+        />
 
         {/* Main Content Grid */}
         <div className="grid min-h-[calc(100%-180px)] grid-cols-12">
@@ -68,6 +84,7 @@ export default function MillieSmithResume({
             style={{
               borderRightWidth: "calc(var(--resume-border-width) * 2)",
               borderStyle: "var(--resume-border-style)" as any,
+              borderColor: "color-mix(in srgb, var(--text) 25%, transparent)",
             }}
           >
             <LeftColumn resumeData={resumeData} colorHex={"var(--accent)"} />
@@ -138,20 +155,37 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       {resumeData.summary && (
         <div>
           <SectionTitle title="ABOUT" colorHex={colorHex} />
-          <p className="text-xs leading-relaxed text-gray-600">
-            {resumeData.summary}
-          </p>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: resumeData.summary || "",
+            }}
+            className="richTextEditorStyle !m-0 whitespace-pre-line text-xs leading-relaxed text-gray-600"
+          />
         </div>
       )}
 
       {/* Horizontal Divider */}
-      <div className="h-px bg-gray-300" />
+      <div
+        className="h-0 border-t"
+        style={{
+          borderTopWidth: "var(--resume-border-width)",
+          borderStyle: "var(--resume-border-style)" as any,
+          borderColor: "color-mix(in srgb, var(--text) 25%, transparent)",
+        }}
+      />
 
       {/* Contact Section */}
       <ContactSection resumeData={resumeData} colorHex={colorHex} />
 
       {/* Horizontal Divider */}
-      <div className="h-px bg-gray-300" />
+      <div
+        className="h-0 border-t"
+        style={{
+          borderTopWidth: "var(--resume-border-width)",
+          borderStyle: "var(--resume-border-style)" as any,
+          borderColor: "color-mix(in srgb, var(--text) 25%, transparent)",
+        }}
+      />
 
       {/* Skills Section */}
       <SkillsSection resumeData={resumeData} colorHex={colorHex} />
@@ -160,7 +194,14 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       {resumeData.others?.title && resumeData.others?.description && (
         <>
           {/* Horizontal Divider */}
-          <div className="h-px bg-gray-300" />
+          <div
+            className="h-0 border-t"
+            style={{
+              borderTopWidth: "var(--resume-border-width)",
+              borderStyle: "var(--resume-border-style)" as any,
+              borderColor: "color-mix(in srgb, var(--text) 25%, transparent)",
+            }}
+          />
 
           <div>
             <SectionTitle title={resumeData.others.title} colorHex={colorHex} />
@@ -188,7 +229,14 @@ const RightColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
         resumeData.educations.length > 0 &&
         resumeData.workExperiences &&
         resumeData.workExperiences.length > 0 && (
-          <div className="my-4 h-px bg-gray-300" />
+          <div
+            className="my-4 h-0 border-t"
+            style={{
+              borderTopWidth: "var(--resume-border-width)",
+              borderStyle: "var(--resume-border-style)" as any,
+              borderColor: "color-mix(in srgb, var(--text) 25%, transparent)",
+            }}
+          />
         )}
 
       {/* Experience Section */}
@@ -197,7 +245,14 @@ const RightColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       {/* Projects Section */}
       {resumeData.projectWorks && resumeData.projectWorks.length > 0 && (
         <>
-          <div className="my-4 h-px bg-gray-300" />
+          <div
+            className="my-4 h-0 border-t"
+            style={{
+              borderTopWidth: "var(--resume-border-width)",
+              borderStyle: "var(--resume-border-style)" as any,
+              borderColor: "color-mix(in srgb, var(--text) 25%, transparent)",
+            }}
+          />
           <ProjectsSection resumeData={resumeData} colorHex={colorHex} />
         </>
       )}
@@ -205,7 +260,14 @@ const RightColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       {/* Certifications */}
       {resumeData.certifications && resumeData.certifications.length > 0 && (
         <>
-          <div className="my-4 h-px bg-gray-300" />
+          <div
+            className="my-4 h-0 border-t"
+            style={{
+              borderTopWidth: "var(--resume-border-width)",
+              borderStyle: "var(--resume-border-style)" as any,
+              borderColor: "color-mix(in srgb, var(--text) 25%, transparent)",
+            }}
+          />
           <CertificationsSection resumeData={resumeData} colorHex={colorHex} />
         </>
       )}
@@ -223,7 +285,10 @@ function SectionTitle({
   return (
     <h2
       className="mb-3 text-lg font-bold tracking-wide"
-      style={{ color: colorHex }}
+      style={{
+        color: colorHex,
+        fontSize: "calc(1em * var(--heading-scale))",
+      }}
     >
       {title}
     </h2>

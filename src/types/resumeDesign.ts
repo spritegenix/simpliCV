@@ -75,6 +75,8 @@ export type ResumeDesign = {
     };
     personalDetails?: {
       detailsAlign?: "left" | "center" | "right";
+      /** Layout of contact details block relative/within the header area. */
+      detailsLayout?: "stacked" | "compact";
       detailsArrangement?: "icon" | "bullet" | "bar";
       detailsIconStyle?: number;
     };
