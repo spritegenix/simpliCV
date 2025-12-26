@@ -165,16 +165,75 @@ export default function CustomizationPanel({
     (step) => step.key !== "general-info" && step.key !== "personal-info",
   );
 
-  const sectionOrder = (
-    resumeData.design.customization?.sectionOrder ??
-    orderableSteps.map((s) => s.key)
-  ).map((key) => {
-    const step = orderableSteps.find((s) => s.key === key);
-    return {
-      key,
-      title: step?.title ?? key,
-    };
-  });
+  // Map step keys to ResumeValues content fields
+  const stepKeyToContentKey = (stepKey: string): ResumeSectionKey | null => {
+    switch (stepKey) {
+      case "summary":
+        return "summary";
+      case "work-experience":
+        return "workExperiences";
+      case "projects":
+        return "projectWorks";
+      case "skills":
+        return "skills";
+      case "education":
+        return "educations";
+      case "certification":
+        return "certifications";
+      case "interests":
+        return "others";
+      default:
+        return null;
+    }
+  };
+
+  // Only show sections that have content in the resume
+  const sectionsWithContent = orderableSteps
+    .map((step) => ({
+      key: step.key,
+      title: step.title,
+      contentKey: stepKeyToContentKey(step.key),
+    }))
+    .filter(
+      (step) =>
+        step.contentKey &&
+        sectionHasContent(step.contentKey, resumeData.content),
+    );
+
+  // Get current section order
+  const currentSectionOrder =
+    resumeData.design.customization?.sectionOrder ?? [];
+
+  // Include sections that are either in the current order OR have content
+  const allRelevantSectionKeys = new Set([
+    ...currentSectionOrder,
+    ...sectionsWithContent.map((s) => s.key),
+  ]);
+
+  const sectionOrder = Array.from(allRelevantSectionKeys)
+    .map((key) => {
+      const step = orderableSteps.find((s) => s.key === key);
+      const contentKey = stepKeyToContentKey(key);
+
+      // Only include if it has content
+      if (contentKey && sectionHasContent(contentKey, resumeData.content)) {
+        return {
+          key,
+          title: step?.title ?? key,
+        };
+      }
+      return null;
+    })
+    .filter((item): item is { key: string; title: string } => item !== null)
+    // Sort by current order preference
+    .sort((a, b) => {
+      const aIndex = currentSectionOrder.indexOf(a.key);
+      const bIndex = currentSectionOrder.indexOf(b.key);
+      if (aIndex === -1 && bIndex === -1) return 0;
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    });
 
   const setSectionOrder = (sections: { key: string; title: string }[]) =>
     setCustomization({ sectionOrder: sections.map((s) => s.key) });
@@ -250,8 +309,6 @@ export default function CustomizationPanel({
       },
     });
 
-
-
   const titleSubtitleSize: "S" | "M" | "L" =
     resumeData.design.customization?.entryLayout?.titleSubtitleSize ?? "S";
   const setTitleSubtitleSize = (value: "S" | "M" | "L") =>
@@ -282,8 +339,6 @@ export default function CustomizationPanel({
         subtitlePlacement: value,
       },
     });
-
-
 
   const listStyle: "bullet" | "hyphen" =
     resumeData.design.customization?.entryLayout?.listStyle ?? "bullet";
@@ -395,8 +450,6 @@ export default function CustomizationPanel({
         listStyle={listStyle}
         setListStyle={setListStyle}
       />
-
-
 
       {/* Personal Details */}
       <PersonalDetails
