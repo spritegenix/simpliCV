@@ -7,8 +7,6 @@ interface SectionHeadingsProps {
   setHeadingCapitalization: (value: "capitalize" | "uppercase") => void;
   headingSize: "S" | "M" | "L" | "XL";
   setHeadingSize: (value: "S" | "M" | "L" | "XL") => void;
-  headingIcons: "none" | "outline" | "filled";
-  setHeadingIcons: (value: "none" | "outline" | "filled") => void;
 }
 
 export default function SectionHeadings({
@@ -18,8 +16,6 @@ export default function SectionHeadings({
   setHeadingCapitalization,
   headingSize,
   setHeadingSize,
-  headingIcons,
-  setHeadingIcons,
 }: SectionHeadingsProps) {
   return (
     <Card>
@@ -134,43 +130,6 @@ export default function SectionHeadings({
                 {size}
               </button>
             ))}
-          </div>
-        </div>
-
-        {/* Icons */}
-        <div className="space-y-3">
-          <label className="text-sm font-medium">Icons</label>
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              onClick={() => setHeadingIcons("none")}
-              className={`rounded-lg border-2 px-4 py-2 text-sm transition-all ${
-                headingIcons === "none"
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-muted hover:border-primary/50"
-              }`}
-            >
-              None
-            </button>
-            <button
-              onClick={() => setHeadingIcons("outline")}
-              className={`rounded-lg border-2 px-4 py-2 text-sm transition-all ${
-                headingIcons === "outline"
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-muted hover:border-primary/50"
-              }`}
-            >
-              Outline
-            </button>
-            <button
-              onClick={() => setHeadingIcons("filled")}
-              className={`rounded-lg border-2 px-4 py-2 text-sm transition-all ${
-                headingIcons === "filled"
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-muted hover:border-primary/50"
-              }`}
-            >
-              Filled
-            </button>
           </div>
         </div>
       </CardContent>

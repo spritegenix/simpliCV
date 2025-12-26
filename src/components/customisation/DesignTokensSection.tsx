@@ -7,8 +7,6 @@ interface DesignTokensSectionProps {
   setHeadingScale: (value: number) => void;
   borderWidth: number;
   setBorderWidth: (value: number) => void;
-  density: DensityPreset;
-  setDensity: (value: DensityPreset) => void;
 }
 
 export default function DesignTokensSection({
@@ -16,8 +14,6 @@ export default function DesignTokensSection({
   setHeadingScale,
   borderWidth,
   setBorderWidth,
-  density,
-  setDensity,
 }: DesignTokensSectionProps) {
   return (
     <Card>
@@ -59,20 +55,6 @@ export default function DesignTokensSection({
             onChange={(e) => setBorderWidth(Number(e.target.value))}
             className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-muted [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
           />
-        </div>
-
-        {/* Density */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Density</label>
-          <select
-            value={density}
-            onChange={(e) => setDensity(e.target.value as DensityPreset)}
-            className="w-full rounded-md border border-muted bg-background px-3 py-2 text-sm"
-          >
-            <option value="compact">Compact</option>
-            <option value="normal">Normal</option>
-            <option value="relaxed">Relaxed</option>
-          </select>
         </div>
       </CardContent>
     </Card>

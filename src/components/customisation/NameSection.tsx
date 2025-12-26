@@ -5,8 +5,6 @@ interface NameSectionProps {
   setNameSize: (value: "XS" | "S" | "M" | "L" | "XL") => void;
   nameBold: boolean;
   setNameBold: (value: boolean) => void;
-  nameFont: "body" | "creative";
-  setNameFont: (value: "body" | "creative") => void;
 }
 
 export default function NameSection({
@@ -14,8 +12,6 @@ export default function NameSection({
   setNameSize,
   nameBold,
   setNameBold,
-  nameFont,
-  setNameFont,
 }: NameSectionProps) {
   return (
     <Card>
@@ -58,33 +54,6 @@ export default function NameSection({
           >
             Name bold
           </label>
-        </div>
-
-        {/* Font */}
-        <div className="space-y-3">
-          <label className="text-sm font-medium">Font</label>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => setNameFont("body")}
-              className={`rounded-lg border-2 px-4 py-2 text-sm transition-all ${
-                nameFont === "body"
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-muted hover:border-primary/50"
-              }`}
-            >
-              Body Font
-            </button>
-            <button
-              onClick={() => setNameFont("creative")}
-              className={`rounded-lg border-2 px-4 py-2 text-sm transition-all ${
-                nameFont === "creative"
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-muted hover:border-primary/50"
-              }`}
-            >
-              Creative
-            </button>
-          </div>
         </div>
       </CardContent>
     </Card>

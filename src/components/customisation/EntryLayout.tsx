@@ -7,8 +7,6 @@ interface EntryLayoutProps {
   setSubtitleStyle: (value: "normal" | "bold" | "italic") => void;
   subtitlePlacement: "same-line" | "next-line";
   setSubtitlePlacement: (value: "same-line" | "next-line") => void;
-  indentBody: boolean;
-  setIndentBody: (value: boolean) => void;
   listStyle: "bullet" | "hyphen";
   setListStyle: (value: "bullet" | "hyphen") => void;
 }
@@ -20,8 +18,6 @@ export default function EntryLayout({
   setSubtitleStyle,
   subtitlePlacement,
   setSubtitlePlacement,
-  indentBody,
-  setIndentBody,
   listStyle,
   setListStyle,
 }: EntryLayoutProps) {
@@ -112,23 +108,6 @@ export default function EntryLayout({
             >
               Next Line
             </button>
-          </div>
-        </div>
-
-        {/* Description indentation */}
-        <div className="space-y-3">
-          <label className="text-sm font-medium">Description indentation</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="indent-body"
-              checked={indentBody}
-              onChange={(e) => setIndentBody(e.target.checked)}
-              className="h-4 w-4 rounded border-muted"
-            />
-            <label htmlFor="indent-body" className="cursor-pointer text-sm">
-              Indent body
-            </label>
           </div>
         </div>
 

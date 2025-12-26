@@ -10,7 +10,6 @@ import FontSection from "@/components/customisation/FontSection";
 import SectionHeadings from "@/components/customisation/SectionHeadings";
 import SpacingSection from "@/components/customisation/SpacingSection";
 import EntryLayout from "@/components/customisation/EntryLayout";
-import AdvancedSection from "@/components/customisation/AdvancedSection";
 import PersonalDetails from "@/components/customisation/PersonalDetails";
 import NameSection from "@/components/customisation/NameSection";
 import {
@@ -20,9 +19,7 @@ import {
   type ResumeSectionKey,
 } from "@/lib/sectionOrder";
 import type { ResumeValues } from "@/lib/validation";
-import DesignTokensSection, {
-  DensityPreset,
-} from "@/components/customisation/DesignTokensSection";
+import DesignTokensSection from "@/components/customisation/DesignTokensSection";
 
 interface CustomizationPanelProps {
   resumeData: ResumeDocument;
@@ -149,20 +146,6 @@ export default function CustomizationPanel({
       },
     });
 
-  const density = (resumeData.design.spacing.density ??
-    "normal") as DensityPreset;
-  const setDensity = (value: DensityPreset) =>
-    setResumeData({
-      ...resumeData,
-      design: {
-        ...resumeData.design,
-        spacing: {
-          ...resumeData.design.spacing,
-          density: value,
-        },
-      },
-    });
-
   // Everything else is intentionally frozen in Phase 2
   const language = "English";
   const dateFormat = resumeData.design.formatting?.dateFormat ?? "MMM yyyy";
@@ -267,15 +250,7 @@ export default function CustomizationPanel({
       },
     });
 
-  const headingIcons: "none" | "outline" | "filled" =
-    resumeData.design.customization?.sectionHeadings?.headingIcons ?? "filled";
-  const setHeadingIcons = (value: "none" | "outline" | "filled") =>
-    setCustomization({
-      sectionHeadings: {
-        ...resumeData.design.customization?.sectionHeadings,
-        headingIcons: value,
-      },
-    });
+
 
   const titleSubtitleSize: "S" | "M" | "L" =
     resumeData.design.customization?.entryLayout?.titleSubtitleSize ?? "S";
@@ -308,15 +283,7 @@ export default function CustomizationPanel({
       },
     });
 
-  const indentBody =
-    resumeData.design.customization?.entryLayout?.indentBody ?? false;
-  const setIndentBody = (value: boolean) =>
-    setCustomization({
-      entryLayout: {
-        ...resumeData.design.customization?.entryLayout,
-        indentBody: value,
-      },
-    });
+
 
   const listStyle: "bullet" | "hyphen" =
     resumeData.design.customization?.entryLayout?.listStyle ?? "bullet";
@@ -352,19 +319,8 @@ export default function CustomizationPanel({
       },
     });
 
-  const detailsIconStyle =
-    resumeData.design.customization?.personalDetails?.detailsIconStyle ?? 0;
-  const setDetailsIconStyle = (value: number) =>
-    setCustomization({
-      personalDetails: {
-        ...resumeData.design.customization?.personalDetails,
-        detailsIconStyle: value,
-      },
-    });
-
   const nameSize: "XS" | "S" | "M" | "L" | "XL" = "L";
   const nameBold = true;
-  const nameFont: "body" | "creative" = "body";
 
   return (
     <div className="w-full space-y-6 overflow-y-auto px-3 pb-5">
@@ -401,7 +357,6 @@ export default function CustomizationPanel({
         setSelectedFont={setSelectedFont}
       />
 
-      {/* Section Headings */}
       <SectionHeadings
         headingStyle={headingStyle}
         setHeadingStyle={setHeadingStyle}
@@ -409,8 +364,6 @@ export default function CustomizationPanel({
         setHeadingCapitalization={setHeadingCapitalization}
         headingSize={headingSize}
         setHeadingSize={setHeadingSize}
-        headingIcons={headingIcons}
-        setHeadingIcons={setHeadingIcons}
       />
 
       {/* Spacing */}
@@ -429,8 +382,6 @@ export default function CustomizationPanel({
         setHeadingScale={setHeadingScale}
         borderWidth={borderWidth}
         setBorderWidth={setBorderWidth}
-        density={density}
-        setDensity={setDensity}
       />
 
       {/* Entry Layout */}
@@ -441,19 +392,11 @@ export default function CustomizationPanel({
         setSubtitleStyle={setSubtitleStyle}
         subtitlePlacement={subtitlePlacement}
         setSubtitlePlacement={setSubtitlePlacement}
-        indentBody={indentBody}
-        setIndentBody={setIndentBody}
         listStyle={listStyle}
         setListStyle={setListStyle}
       />
 
-      {/* Advanced */}
-      <AdvancedSection
-        linkIcon={linkIcon}
-        setLinkIcon={noop as any}
-        reduceDateLocationOpacity={reduceDateLocationOpacity}
-        setReduceDateLocationOpacity={noop}
-      />
+
 
       {/* Personal Details */}
       <PersonalDetails
@@ -461,8 +404,6 @@ export default function CustomizationPanel({
         setDetailsAlign={setDetailsAlign}
         detailsArrangement={detailsArrangement}
         setDetailsArrangement={setDetailsArrangement}
-        detailsIconStyle={detailsIconStyle}
-        setDetailsIconStyle={setDetailsIconStyle}
       />
 
       {/* Name */}
@@ -471,8 +412,6 @@ export default function CustomizationPanel({
         setNameSize={noop as any}
         nameBold={nameBold}
         setNameBold={noop}
-        nameFont={nameFont}
-        setNameFont={noop as any}
       />
     </div>
   );
