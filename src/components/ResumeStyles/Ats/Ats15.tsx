@@ -64,8 +64,22 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
             {resumeData.workExperiences.map((exp, index) => (
               <div key={index}>
                 <div className="flex items-baseline justify-between">
-                  <h4 className="text-base font-bold text-gray-900">
-                    {exp.position}
+                  <h4>
+                    <span
+                      data-resume-entry-title
+                      className="italic text-gray-700"
+                    >
+                      {exp.company}
+                    </span>
+                    {exp.position && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        className="text-base font-bold text-gray-900"
+                      >
+                        {exp.position}
+                      </span>
+                    )}
                   </h4>
                   <span className="text-sm font-medium text-gray-600">
                     {exp.startDate &&
@@ -77,7 +91,17 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
                   </span>
                 </div>
                 <div className="mb-1 flex items-baseline justify-between">
-                  <span className="italic text-gray-700">{exp.company}</span>
+                  {exp.position ? (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      className="text-base font-bold text-gray-900"
+                    >
+                      {exp.position}
+                    </span>
+                  ) : (
+                    <span />
+                  )}
                   {exp.jobLocation && (
                     <span className="text-xs text-gray-500">
                       {exp.jobLocation}
@@ -168,12 +192,39 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
             {resumeData.projectWorks.map((project, index) => (
               <div key={index}>
                 <div className="flex items-baseline justify-between">
-                  <h4 className="font-bold text-gray-900">{project.title}</h4>
+                  <h4>
+                    <span
+                      data-resume-entry-title
+                      className="font-bold text-gray-900"
+                    >
+                      {project.title}
+                    </span>
+                    {project.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        className="italic"
+                      >
+                        {project.company}
+                      </span>
+                    )}
+                  </h4>
                   <span className="text-sm text-gray-600">
                     {project.startDate &&
                       safeFormatDate(project.startDate, dateFormatNumeric)}
                   </span>
                 </div>
+                {project.company && (
+                  <div className="mb-1">
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      className="italic"
+                    >
+                      {project.company}
+                    </span>
+                  </div>
+                )}
                 {project.links && project.links.length > 0 && (
                   <div className="mb-1 text-xs">
                     {project.links.map((link, i) => (

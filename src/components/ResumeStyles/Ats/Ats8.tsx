@@ -53,9 +53,9 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
           {resumeData.workExperiences?.map((exp, index) => (
             <div key={index} className="!m-0 break-inside-avoid pb-2">
               <div className="flex justify-between">
-                <div className="text-[1.4em] font-semibold">
-                  {exp.position},{" "}
+                <div>
                   <span
+                    data-resume-entry-title
                     className="text-[1em] font-semibold"
                     style={{
                       color: resumeData.colorHex,
@@ -63,6 +63,15 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                   >
                     {exp.company}
                   </span>
+                  {exp.position && (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="inline"
+                      className="text-[1.4em] font-semibold"
+                    >
+                      {exp.position}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col">
                   {exp.startDate && (
@@ -73,10 +82,23 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                         : "now"}
                     </span>
                   )}
-                  {exp.jobLocation && (
-                    <span className="font-semibold">{exp.jobLocation}</span>
-                  )}
                 </div>
+              </div>
+              <div className="flex justify-between">
+                {exp.position ? (
+                  <span
+                    data-resume-entry-subtitle
+                    data-entry-subtitle-slot="newline"
+                    className="text-[1.4em] font-semibold"
+                  >
+                    {exp.position}
+                  </span>
+                ) : (
+                  <span />
+                )}
+                {exp.jobLocation && (
+                  <span className="font-semibold">{exp.jobLocation}</span>
+                )}
               </div>
 
               <div className="col-span-3 !m-0">
@@ -103,6 +125,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                 <div className="!m-0 flex justify-between gap-1">
                   <p className="flex gap-1">
                     <Link
+                      data-resume-entry-title
                       href={
                         !!item?.links && item?.links[0] ? item?.links[0] : "#"
                       }
@@ -114,6 +137,15 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                     >
                       {item.title}
                     </Link>
+                    {item.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        className="italic"
+                      >
+                        {item.company}
+                      </span>
+                    )}
                     {!!item.links &&
                       item.links.map((l, index) => (
                         <span key={index} className="mr-1 mt-1">
@@ -133,11 +165,19 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                           : "present"}
                       </span>
                     )}
-                    {item.company && (
-                      <span className="italic">{item.company}</span>
-                    )}
                   </p>
                 </div>
+              </div>
+              <div className="flex justify-between">
+                {item.company && (
+                  <span
+                    data-resume-entry-subtitle
+                    data-entry-subtitle-slot="newline"
+                    className="italic"
+                  >
+                    {item.company}
+                  </span>
+                )}
               </div>
 
               <div

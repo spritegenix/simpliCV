@@ -103,14 +103,24 @@ export default function ATSStyle3({
                           key={index}
                           className="break-inside-avoid pb-[calc(var(--section-gap)*0.25)]"
                         >
-                          <div className="font-semibold italic">
-                            {exp.position}
-                          </div>
-                          <div className="flex items-center gap-x-[calc(var(--section-gap)*0.5)]">
-                            <span className="font-semibold text-[var(--accent)]">
-                              {exp.company}
+                          <div className="flex items-center justify-between gap-x-[calc(var(--section-gap)*0.5)]">
+                            <span>
+                              <span
+                                data-resume-entry-title
+                                className="font-semibold text-[var(--accent)]"
+                              >
+                                {exp.company}
+                              </span>
+                              {exp.position && (
+                                <span
+                                  data-resume-entry-subtitle
+                                  data-entry-subtitle-slot="inline"
+                                  className="font-semibold italic"
+                                >
+                                  {exp.position}
+                                </span>
+                              )}
                             </span>
-
                             {exp.startDate && (
                               <span>
                                 {safeFormatDate(
@@ -125,6 +135,19 @@ export default function ATSStyle3({
                                     )
                                   : "now"}
                               </span>
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between gap-x-[calc(var(--section-gap)*0.5)]">
+                            {exp.position ? (
+                              <span
+                                data-resume-entry-subtitle
+                                data-entry-subtitle-slot="newline"
+                                className="font-semibold italic"
+                              >
+                                {exp.position}
+                              </span>
+                            ) : (
+                              <span />
                             )}
                             {exp.jobLocation && (
                               <span className="font-semibold">
@@ -162,6 +185,7 @@ export default function ATSStyle3({
                           <div className="flex justify-between gap-[calc(var(--section-gap)*0.1)]">
                             <p className="flex gap-[calc(var(--section-gap)*0.1)]">
                               <Link
+                                data-resume-entry-title
                                 href={
                                   !!item?.links && item?.links[0]
                                     ? item?.links[0]
@@ -172,6 +196,15 @@ export default function ATSStyle3({
                               >
                                 {item.title}
                               </Link>
+                              {item.company && (
+                                <span
+                                  data-resume-entry-subtitle
+                                  data-entry-subtitle-slot="inline"
+                                  className="italic"
+                                >
+                                  {item.company}
+                                </span>
+                              )}
                               {!!item.links &&
                                 item.links.map((l, index) => (
                                   <span
@@ -184,9 +217,15 @@ export default function ATSStyle3({
                             </p>
                           </div>
                           <div className="font-semibold">
-                            <p className="flex flex-row">
+                            <p className="flex flex-row gap-[calc(var(--section-gap)*0.1)]">
                               {item.company && (
-                                <span className="italic">{item.company}</span>
+                                <span
+                                  data-resume-entry-subtitle
+                                  data-entry-subtitle-slot="newline"
+                                  className="italic"
+                                >
+                                  {item.company}
+                                </span>
                               )}
                               {item.startDate && (
                                 <span>

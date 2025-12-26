@@ -63,19 +63,25 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
             {resumeData.workExperiences?.map((exp, index) => (
               <li key={index} className="z-10 break-inside-avoid">
                 <div className="!m-0 flex items-center justify-between">
-                  <span
-                    className="text-[1.2em] font-semibold"
-                    style={{
-                      color: colorHex,
-                    }}
-                  >
-                    {exp.company}
-                  </span>
-                  {exp.jobLocation && <span>{exp.jobLocation}</span>}
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[1.1em] font-semibold italic">
-                    {exp.position}
+                  <span>
+                    <span
+                      data-resume-entry-title
+                      className="text-[1.2em] font-semibold"
+                      style={{
+                        color: colorHex,
+                      }}
+                    >
+                      {exp.company}
+                    </span>
+                    {exp.position && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        className="text-[1.1em] font-semibold italic"
+                      >
+                        {exp.position}
+                      </span>
+                    )}
                   </span>
                   {exp.startDate && (
                     <span>
@@ -85,6 +91,20 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
                         : "present"}
                     </span>
                   )}
+                </div>
+                <div className="flex items-center justify-between">
+                  {exp.position ? (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      className="text-[1.1em] font-semibold italic"
+                    >
+                      {exp.position}
+                    </span>
+                  ) : (
+                    <span />
+                  )}
+                  {exp.jobLocation && <span>{exp.jobLocation}</span>}
                 </div>
                 <div
                   dangerouslySetInnerHTML={{
@@ -106,6 +126,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
               <div className="!m-0 flex justify-between gap-1">
                 <p className="flex gap-1">
                   <Link
+                    data-resume-entry-title
                     href={
                       !!item?.links && item?.links[0] ? item?.links[0] : "#"
                     }
@@ -117,6 +138,15 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
                   >
                     {item.title}
                   </Link>
+                  {item.company && (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="inline"
+                      className="italic"
+                    >
+                      {item.company}
+                    </span>
+                  )}
                   {!!item.links &&
                     item.links.map((l, index) => (
                       <span key={index} className="mr-1 mt-1">
@@ -125,9 +155,6 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
                     ))}
                 </p>
                 <p className="flex flex-col text-right">
-                  {item.company && (
-                    <span className="italic">{item.company}</span>
-                  )}
                   {item.startDate && (
                     <span>
                       {item.startDate &&
@@ -138,6 +165,17 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
                     </span>
                   )}
                 </p>
+              </div>
+              <div className="flex items-center justify-between">
+                {item.company && (
+                  <span
+                    data-resume-entry-subtitle
+                    data-entry-subtitle-slot="newline"
+                    className="italic"
+                  >
+                    {item.company}
+                  </span>
+                )}
               </div>
               <div
                 dangerouslySetInnerHTML={{ __html: item.description || "" }}

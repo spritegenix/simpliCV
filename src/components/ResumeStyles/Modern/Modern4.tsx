@@ -399,16 +399,35 @@ const ExperienceSection: React.FC<SectionProps> = ({
               </span>
               <div className="mb-2">
                 <p className="text-sm font-bold text-gray-800">
-                  {exp.company?.toUpperCase()}
+                  <span data-resume-entry-title>
+                    {exp.company?.toUpperCase()}
+                  </span>
+                  {exp.position && (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="inline"
+                      className="font-semibold"
+                    >
+                      {exp.position}
+                    </span>
+                  )}
                 </p>
                 <p className="text-xs text-gray-600">
                   {exp.startDate && formatDate(exp.startDate, "yyyy")} -{" "}
                   {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
                 </p>
               </div>
-              <p className="mb-1 text-xs font-semibold text-gray-600">
-                {exp.position}
-              </p>
+              {exp.position ? (
+                <p
+                  data-resume-entry-subtitle
+                  data-entry-subtitle-slot="newline"
+                  className="mb-1 text-xs font-semibold text-gray-600"
+                >
+                  {exp.position}
+                </p>
+              ) : (
+                <p />
+              )}
               {exp.jobLocation && (
                 <p className="mb-1 text-[10px] text-gray-500">
                   {exp.jobLocation}
@@ -444,7 +463,16 @@ const ProjectsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
               </span>
               <div className="mb-1">
                 <p className="text-sm font-bold text-gray-800">
-                  {project.title}
+                  <span data-resume-entry-title>{project.title}</span>
+                  {project.company && (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="inline"
+                      className="italic"
+                    >
+                      {project.company}
+                    </span>
+                  )}
                 </p>
                 <p className="text-xs text-gray-600">
                   {project.startDate && formatDate(project.startDate, "yyyy")} -{" "}
@@ -453,6 +481,15 @@ const ProjectsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
                     : "Present"}
                 </p>
               </div>
+              {project.company && (
+                <p
+                  data-resume-entry-subtitle
+                  data-entry-subtitle-slot="newline"
+                  className="mb-1 text-xs italic text-gray-600"
+                >
+                  {project.company}
+                </p>
+              )}
               {project.description && (
                 <div
                   className="text-xs leading-relaxed text-gray-600"

@@ -557,7 +557,18 @@ const RightColumn = ({
                       fontWeight: 600,
                     }}
                   >
-                    {exp.position}
+                    <span data-resume-entry-title>{exp.position}</span>
+                    {exp.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        style={{
+                          fontWeight: 600,
+                        }}
+                      >
+                        {exp.company}
+                      </span>
+                    )}
                   </h4>
                   <strong
                     style={{
@@ -567,10 +578,23 @@ const RightColumn = ({
                       marginBottom: "4px",
                     }}
                   >
-                    {exp.company}{" "}
                     {exp.startDate && formatDate(exp.startDate, "yyyy")} |{" "}
                     {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
                   </strong>
+                  {exp.company && (
+                    <strong
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      style={{
+                        fontSize: "11px",
+                        color: accentColor,
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {exp.company}
+                    </strong>
+                  )}
                   <div
                     style={{ fontSize: "12px", color: "#555" }}
                     dangerouslySetInnerHTML={{ __html: exp.description || "" }}
@@ -645,7 +669,16 @@ const RightColumn = ({
                       fontWeight: 600,
                     }}
                   >
-                    {proj.title}
+                    <span data-resume-entry-title>{proj.title}</span>
+                    {proj.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {proj.company}
+                      </span>
+                    )}
                   </h4>
                   <strong
                     style={{
@@ -655,13 +688,25 @@ const RightColumn = ({
                       marginBottom: "4px",
                     }}
                   >
-                    {proj.company && `${proj.company} | `}
-                    {proj.startDate &&
-                      formatDate(proj.startDate, "yyyy")} -{" "}
+                    {proj.startDate && formatDate(proj.startDate, "yyyy")} |{" "}
                     {proj.endDate
                       ? formatDate(proj.endDate, "yyyy")
                       : "PRESENT"}
                   </strong>
+                  {proj.company && (
+                    <strong
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      style={{
+                        fontSize: "11px",
+                        color: accentColor,
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {proj.company}
+                    </strong>
+                  )}
                   {proj.links && proj.links.length > 0 && (
                     <div style={{ fontSize: "11px", marginBottom: "4px" }}>
                       {proj.links.map((link, linkIdx) => (

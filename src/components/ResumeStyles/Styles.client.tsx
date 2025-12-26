@@ -378,17 +378,15 @@ function adaptLegacyTemplateComponent(
       isAts || isModern
         ? `\n\n` +
           // Title & subtitle size
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-title-size=\"S\"] [data-resume-entry-title],\n` +
+          // Only change the subtitle size; keep title + body text unchanged.
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-title-size=\"S\"] [data-resume-entry-subtitle] {\n` +
-          `  font-size: 0.95em !important;\n` +
+          `  font-size: 0.93em !important;\n` +
           `}\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-title-size=\"M\"] [data-resume-entry-title],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-title-size=\"M\"] [data-resume-entry-subtitle] {\n` +
           `  font-size: 1em !important;\n` +
           `}\n` +
-          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-title-size=\"L\"] [data-resume-entry-title],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-title-size=\"L\"] [data-resume-entry-subtitle] {\n` +
-          `  font-size: 1.08em !important;\n` +
+          `  font-size: 1.06em !important;\n` +
           `}\n` +
           // Subtitle style
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-subtitle-style=\"normal\"] [data-resume-entry-subtitle] {\n` +
@@ -408,12 +406,28 @@ function adaptLegacyTemplateComponent(
           `  display: inline !important;\n` +
           `}\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-subtitle-placement=\"same-line\"] [data-resume-entry-subtitle] {\n` +
-          `  margin-left: 0.4em !important;\n` +
+          `  margin-left: 0 !important;\n` +
+          `}\n` +
+          // ATS1 uses two subtitle slots (inline vs newline) to preserve original layout.
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-subtitle-placement=\"same-line\"] [data-entry-subtitle-slot=\"newline\"] {\n` +
+          `  display: none !important;\n` +
+          `}\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-subtitle-placement=\"same-line\"] [data-entry-subtitle-slot=\"inline\"] {\n` +
+          `  display: inline !important;\n` +
+          `}\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-subtitle-placement=\"same-line\"] [data-entry-subtitle-slot=\"inline\"]::before {\n` +
+          `  content: ", " !important;\n` +
           `}\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-subtitle-placement=\"next-line\"] [data-resume-entry-title],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-subtitle-placement=\"next-line\"] [data-resume-entry-subtitle] {\n` +
           `  display: block !important;\n` +
           `  margin-left: 0 !important;\n` +
+          `}\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-subtitle-placement=\"next-line\"] [data-entry-subtitle-slot=\"inline\"] {\n` +
+          `  display: none !important;\n` +
+          `}\n` +
+          `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-subtitle-placement=\"next-line\"] [data-entry-subtitle-slot=\"newline\"] {\n` +
+          `  display: block !important;\n` +
           `}\n` +
           // Description indentation (targets rich text descriptions used by most templates)
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-entry-indent-body=\"true\"] .break-inside-avoid .richTextEditorStyle {\n` +

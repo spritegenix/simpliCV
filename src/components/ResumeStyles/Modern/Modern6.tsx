@@ -138,7 +138,16 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                       <div key={idx} className="break-inside-avoid">
                         <div className="mb-1 flex items-baseline justify-between">
                           <h4 className="text-lg font-bold uppercase text-slate-800">
-                            {exp.position}
+                            <span data-resume-entry-title>{exp.position}</span>
+                            {exp.company && (
+                              <span
+                                data-resume-entry-subtitle
+                                data-entry-subtitle-slot="inline"
+                                className="font-semibold"
+                              >
+                                {exp.company}
+                              </span>
+                            )}
                           </h4>
                           <span className="text-sm font-semibold text-slate-500">
                             {exp.startDate &&
@@ -148,12 +157,19 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                               ? safeFormatDate(exp.endDate, "yyyy")
                               : "Present"}
                           </span>
-                          <span className="font-semibold text-slate-800">
-                            {exp.position}
-                          </span>
                         </div>
                         <div className="flex justify-between text-sm text-slate-600">
-                          <span>{exp.company}</span>
+                          {exp.company ? (
+                            <span
+                              data-resume-entry-subtitle
+                              data-entry-subtitle-slot="newline"
+                              className="font-semibold"
+                            >
+                              {exp.company}
+                            </span>
+                          ) : (
+                            <span />
+                          )}
                           {exp.description && (
                             <span
                               className="max-w-[60%] text-justify leading-snug"
@@ -186,11 +202,30 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                             : "Present"}
                         </span>
                         <span className="font-semibold text-slate-800">
-                          {proj.title}
+                          <span data-resume-entry-title>{proj.title}</span>
+                          {proj.company && (
+                            <span
+                              data-resume-entry-subtitle
+                              data-entry-subtitle-slot="inline"
+                              className="font-normal"
+                            >
+                              {proj.company}
+                            </span>
+                          )}
                         </span>
                       </div>
                       <div className="flex justify-between text-sm text-slate-600">
-                        <span>{proj.company}</span>
+                        {proj.company ? (
+                          <span
+                            data-resume-entry-subtitle
+                            data-entry-subtitle-slot="newline"
+                            className="font-normal"
+                          >
+                            {proj.company}
+                          </span>
+                        ) : (
+                          <span />
+                        )}
                         {proj.description && (
                           <span
                             className="max-w-[60%] text-justify leading-snug"

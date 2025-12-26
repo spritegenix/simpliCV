@@ -73,18 +73,36 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
               </div>
               <div className="col-span-3 !m-0">
                 <div className="flex items-center justify-between">
-                  <span
-                    className="text-[1.2em] font-semibold"
-                    style={{
-                      color: resumeData.colorHex,
-                    }}
-                  >
-                    {exp.company}
+                  <span>
+                    <span
+                      data-resume-entry-title
+                      className="text-[1.2em] font-semibold"
+                      style={{
+                        color: resumeData.colorHex,
+                      }}
+                    >
+                      {exp.company}
+                    </span>
+                    {exp.position && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        className="text-[1.1em] font-semibold italic"
+                      >
+                        {exp.position}
+                      </span>
+                    )}
                   </span>
                 </div>
-                <div className="text-[1.1em] font-semibold italic">
-                  {exp.position}
-                </div>
+                {exp.position && (
+                  <div
+                    data-resume-entry-subtitle
+                    data-entry-subtitle-slot="newline"
+                    className="text-[1.1em] font-semibold italic"
+                  >
+                    {exp.position}
+                  </div>
+                )}
 
                 <div
                   dangerouslySetInnerHTML={{
@@ -112,6 +130,7 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
               <div className="!m-0 flex flex-col gap-y-1">
                 <p className="flex gap-1">
                   <Link
+                    data-resume-entry-title
                     href={
                       !!item?.links && item?.links[0] ? item?.links[0] : "#"
                     }
@@ -123,6 +142,15 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
                   >
                     {item.title}
                   </Link>
+                  {item.company && (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="inline"
+                      className="italic"
+                    >
+                      {item.company}
+                    </span>
+                  )}
                   {!!item.links &&
                     item.links.map((l, index) => (
                       <span key={index} className="mr-1 mt-1">
@@ -143,10 +171,18 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
                       : "present"}
                   </span>
                 )}
-                {item.company && <span className="italic">{item.company}</span>}
               </div>
 
               <div className="col-span-3">
+                {item.company && (
+                  <span
+                    data-resume-entry-subtitle
+                    data-entry-subtitle-slot="newline"
+                    className="italic"
+                  >
+                    {item.company}
+                  </span>
+                )}
                 <div
                   dangerouslySetInnerHTML={{
                     __html: item.description || "",

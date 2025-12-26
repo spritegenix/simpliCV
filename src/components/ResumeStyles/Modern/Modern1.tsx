@@ -113,24 +113,25 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-[1.2em] font-semibold text-[var(--accent)]">
                           <span
+                            data-resume-entry-title
                             style={{
                               fontSize: "calc(1em * var(--heading-scale))",
                             }}
                           >
                             {exp.company}
                           </span>
-                        </span>
-                        {exp.jobLocation && <span>{exp.jobLocation}</span>}
-                      </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[1.1em] font-semibold italic">
-                          <span
-                            style={{
-                              fontSize: "calc(1em * var(--heading-scale))",
-                            }}
-                          >
-                            {exp.position}
-                          </span>
+                          {exp.position && (
+                            <span
+                              data-resume-entry-subtitle
+                              data-entry-subtitle-slot="inline"
+                              className="font-semibold italic"
+                              style={{
+                                fontSize: "calc(1em * var(--heading-scale))",
+                              }}
+                            >
+                              {exp.position}
+                            </span>
+                          )}
                         </span>
                         {exp.startDate && (
                           <span>
@@ -140,6 +141,23 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                               : "Present"}
                           </span>
                         )}
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        {exp.position ? (
+                          <span
+                            data-resume-entry-subtitle
+                            data-entry-subtitle-slot="newline"
+                            className="text-[1.1em] font-semibold italic"
+                            style={{
+                              fontSize: "calc(1em * var(--heading-scale))",
+                            }}
+                          >
+                            {exp.position}
+                          </span>
+                        ) : (
+                          <span />
+                        )}
+                        {exp.jobLocation && <span>{exp.jobLocation}</span>}
                       </div>
                       <div
                         dangerouslySetInnerHTML={{
@@ -168,6 +186,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                   <div className="flex justify-between gap-[calc(var(--section-gap)*0.25)]">
                     <p className="flex gap-[calc(var(--section-gap)*0.25)]">
                       <Link
+                        data-resume-entry-title
                         href={
                           !!item?.links && item?.links[0] ? item?.links[0] : "#"
                         }
@@ -176,6 +195,15 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                       >
                         {item.title}
                       </Link>
+                      {item.company && (
+                        <span
+                          data-resume-entry-subtitle
+                          data-entry-subtitle-slot="inline"
+                          className="italic"
+                        >
+                          {item.company}
+                        </span>
+                      )}
                       {!!item.links &&
                         item.links.map((l, index) => (
                           <span
@@ -187,9 +215,6 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                         ))}
                     </p>
                     <p className="flex flex-col text-right">
-                      {item.company && (
-                        <span className="italic">{item.company}</span>
-                      )}
                       {item.startDate && (
                         <span>
                           {item.startDate &&
@@ -201,6 +226,15 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                       )}
                     </p>
                   </div>
+                  {item.company && (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      className="italic"
+                    >
+                      {item.company}
+                    </span>
+                  )}
                   <div
                     dangerouslySetInnerHTML={{ __html: item.description || "" }}
                     className="richTextEditorStyle whitespace-pre-line"

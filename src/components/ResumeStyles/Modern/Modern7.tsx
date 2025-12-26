@@ -179,7 +179,16 @@ export default function PurpleModern({
 
                         <div className="mb-1 flex items-baseline justify-between">
                           <h4 className="text-md font-bold uppercase tracking-tight text-slate-800">
-                            {exp.position}
+                            <span data-resume-entry-title>{exp.position}</span>
+                            {exp.company && (
+                              <span
+                                data-resume-entry-subtitle
+                                data-entry-subtitle-slot="inline"
+                                className="font-bold uppercase"
+                              >
+                                {exp.company}
+                              </span>
+                            )}
                           </h4>
                           <span
                             className="rounded-full px-2 py-0.5 text-xs font-semibold text-white"
@@ -193,9 +202,17 @@ export default function PurpleModern({
                               : "Present"}
                           </span>
                         </div>
-                        <div className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">
-                          {exp.company}
-                        </div>
+                        {exp.company ? (
+                          <div
+                            data-resume-entry-subtitle
+                            data-entry-subtitle-slot="newline"
+                            className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500"
+                          >
+                            {exp.company}
+                          </div>
+                        ) : (
+                          <div />
+                        )}
 
                         <div
                           className="text-justify text-xs leading-relaxed text-slate-600"
@@ -721,7 +738,18 @@ const RightColumn = ({
                       margin: "0 0 4px 0",
                     }}
                   >
-                    {exp.company}{" "}
+                    <span data-resume-entry-title>{exp.company}</span>{" "}
+                    {exp.position && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        style={{
+                          fontWeight: 600,
+                        }}
+                      >
+                        {exp.position}
+                      </span>
+                    )}
                     <span
                       style={{
                         fontWeight: 400,
@@ -735,15 +763,21 @@ const RightColumn = ({
                         : "PRESENT"}
                     </span>
                   </h4>
-                  <strong
-                    style={{
-                      fontSize: "12px",
-                      display: "block",
-                      marginBottom: "4px",
-                    }}
-                  >
-                    {exp.position}
-                  </strong>
+                  {exp.position ? (
+                    <strong
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      style={{
+                        fontSize: "12px",
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {exp.position}
+                    </strong>
+                  ) : (
+                    <strong />
+                  )}
                   <div
                     style={{ fontSize: "12px", color: "#555" }}
                     dangerouslySetInnerHTML={{ __html: exp.description || "" }}

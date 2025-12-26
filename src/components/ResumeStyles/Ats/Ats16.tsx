@@ -92,8 +92,22 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
             {resumeData.workExperiences.map((exp, index) => (
               <div key={index}>
                 <div className="mb-1 flex items-baseline justify-between">
-                  <h4 className="text-sm font-bold uppercase tracking-wide text-gray-900">
-                    {exp.company}
+                  <h4>
+                    <span
+                      data-resume-entry-title
+                      className="text-sm font-bold uppercase tracking-wide text-gray-900"
+                    >
+                      {exp.company}
+                    </span>
+                    {exp.position && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        className="font-medium italic text-gray-800"
+                      >
+                        {exp.position}
+                      </span>
+                    )}
                   </h4>
                   <span className="whitespace-nowrap text-sm font-medium text-gray-600">
                     {exp.startDate && safeFormatDate(exp.startDate, dateFormat)}{" "}
@@ -110,9 +124,15 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
                   </span>
                 </div>
                 <div className="mb-2 flex items-baseline justify-between">
-                  <p className="font-medium italic text-gray-800">
-                    {exp.position}
-                  </p>
+                  {exp.position && (
+                    <p
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      className="font-medium italic text-gray-800"
+                    >
+                      {exp.position}
+                    </p>
+                  )}
                 </div>
                 <div
                   className="richTextEditorStyle text-sm leading-snug text-gray-800"
@@ -159,14 +179,39 @@ export default function Ats16({ resumeData, className }: ResumePreviewProps) {
             {resumeData.projectWorks.map((project, index) => (
               <div key={index}>
                 <div className="mb-1 flex items-baseline justify-between">
-                  <h4 className="text-sm font-bold uppercase text-gray-900">
-                    {project.title}
+                  <h4>
+                    <span
+                      data-resume-entry-title
+                      className="text-sm font-bold uppercase text-gray-900"
+                    >
+                      {project.title}
+                    </span>
+                    {project.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        className="italic"
+                      >
+                        {project.company}
+                      </span>
+                    )}
                   </h4>
                   <span className="text-sm text-gray-600">
                     {project.startDate &&
                       safeFormatDate(project.startDate, dateFormat)}
                   </span>
                 </div>
+                {project.company && (
+                  <div className="mb-1">
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      className="italic"
+                    >
+                      {project.company}
+                    </span>
+                  </div>
+                )}
                 {project.links && project.links.length > 0 && (
                   <div className="mb-1 text-xs">
                     {project.links.map((link, i) => (

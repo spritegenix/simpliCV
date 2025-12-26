@@ -155,7 +155,18 @@ export default function ModernTimeline({
                                     marginBottom: "4px",
                                   }}
                                 >
-                                  {exp.position}
+                                  <span data-resume-entry-title>
+                                    {exp.position}
+                                  </span>
+                                  {exp.company && (
+                                    <span
+                                      data-resume-entry-subtitle
+                                      data-entry-subtitle-slot="inline"
+                                      style={{ fontWeight: 600 }}
+                                    >
+                                      {exp.company}
+                                    </span>
+                                  )}
                                 </h3>
                                 <span
                                   style={{
@@ -166,7 +177,6 @@ export default function ModernTimeline({
                                     marginBottom: "10px",
                                   }}
                                 >
-                                  {exp.company} /{" "}
                                   {exp.startDate &&
                                     formatDate(exp.startDate, "yyyy")}{" "}
                                   -{" "}
@@ -174,6 +184,21 @@ export default function ModernTimeline({
                                     ? formatDate(exp.endDate, "yyyy")
                                     : "PRESENT"}
                                 </span>
+                                {exp.company && (
+                                  <span
+                                    data-resume-entry-subtitle
+                                    data-entry-subtitle-slot="newline"
+                                    style={{
+                                      display: "block",
+                                      fontSize: "12px",
+                                      color:
+                                        "color-mix(in srgb, var(--text) 70%, transparent)",
+                                      marginBottom: "10px",
+                                    }}
+                                  >
+                                    {exp.company}
+                                  </span>
+                                )}
                                 {exp.description && (
                                   <div
                                     className="richTextEditorStyle whitespace-pre-line pl-[18px] text-[14px] leading-[1.7]"
@@ -216,7 +241,18 @@ export default function ModernTimeline({
                                     marginBottom: "4px",
                                   }}
                                 >
-                                  {project.title}
+                                  <span data-resume-entry-title>
+                                    {project.title}
+                                  </span>
+                                  {project.company && (
+                                    <span
+                                      data-resume-entry-subtitle
+                                      data-entry-subtitle-slot="inline"
+                                      style={{ fontWeight: 600 }}
+                                    >
+                                      {project.company}
+                                    </span>
+                                  )}
                                 </h3>
                                 <span
                                   style={{
@@ -227,7 +263,6 @@ export default function ModernTimeline({
                                     marginBottom: "10px",
                                   }}
                                 >
-                                  {project.company && `${project.company} / `}
                                   {project.startDate &&
                                     formatDate(project.startDate, "yyyy")}{" "}
                                   -{" "}
@@ -235,6 +270,21 @@ export default function ModernTimeline({
                                     ? formatDate(project.endDate, "yyyy")
                                     : "PRESENT"}
                                 </span>
+                                {project.company && (
+                                  <span
+                                    data-resume-entry-subtitle
+                                    data-entry-subtitle-slot="newline"
+                                    style={{
+                                      display: "block",
+                                      fontSize: "12px",
+                                      color:
+                                        "color-mix(in srgb, var(--text) 70%, transparent)",
+                                      marginBottom: "10px",
+                                    }}
+                                  >
+                                    {project.company}
+                                  </span>
+                                )}
                                 {project.description && (
                                   <div
                                     className="richTextEditorStyle whitespace-pre-line pl-[18px] text-[14px] leading-[1.7]"

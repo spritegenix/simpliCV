@@ -100,14 +100,22 @@ export default function Ats1({
                   {resumeData.workExperiences?.map((exp, index) => (
                     <div key={index} className="break-inside-avoid">
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-[var(--accent)]">
-                          {exp.company}
-                        </span>
-                        {exp.jobLocation && <span>{exp.jobLocation}</span>}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold italic">
-                          {exp.position}
+                        <span>
+                          <span
+                            data-resume-entry-title
+                            className="font-semibold text-[var(--accent)]"
+                          >
+                            {exp.company}
+                          </span>
+                          {exp.position && (
+                            <span
+                              data-resume-entry-subtitle
+                              data-entry-subtitle-slot="inline"
+                              className="font-semibold italic"
+                            >
+                              {exp.position}
+                            </span>
+                          )}
                         </span>
                         {exp.startDate && (
                           <span>
@@ -117,6 +125,20 @@ export default function Ats1({
                               : ongoingExperienceLabel}
                           </span>
                         )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        {exp.position ? (
+                          <span
+                            data-resume-entry-subtitle
+                            data-entry-subtitle-slot="newline"
+                            className="font-semibold italic"
+                          >
+                            {exp.position}
+                          </span>
+                        ) : (
+                          <span />
+                        )}
+                        {exp.jobLocation && <span>{exp.jobLocation}</span>}
                       </div>
                       <div
                         dangerouslySetInnerHTML={{
@@ -144,6 +166,7 @@ export default function Ats1({
                       <div className="flex justify-between gap-[calc(var(--section-gap)*0.25)]">
                         <p className="flex gap-[calc(var(--section-gap)*0.25)]">
                           <Link
+                            data-resume-entry-title
                             href={
                               !!item?.links && item?.links[0]
                                 ? item?.links[0]
@@ -154,6 +177,15 @@ export default function Ats1({
                           >
                             {item.title}
                           </Link>
+                          {item.company && (
+                            <span
+                              data-resume-entry-subtitle
+                              data-entry-subtitle-slot="inline"
+                              className="italic"
+                            >
+                              {item.company}
+                            </span>
+                          )}
                           {!!item.links &&
                             item.links.map((l, index) => (
                               <span
@@ -166,7 +198,13 @@ export default function Ats1({
                         </p>
                         <p className="flex flex-col text-right">
                           {item.company && (
-                            <span className="italic">{item.company}</span>
+                            <span
+                              data-resume-entry-subtitle
+                              data-entry-subtitle-slot="newline"
+                              className="italic"
+                            >
+                              {item.company}
+                            </span>
                           )}
                           {item.startDate && (
                             <span>

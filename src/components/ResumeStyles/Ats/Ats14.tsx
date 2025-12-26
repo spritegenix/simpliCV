@@ -50,8 +50,22 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
             {resumeData.workExperiences.map((exp, index) => (
               <div key={index}>
                 <div className="mb-1 flex items-baseline justify-between">
-                  <h4 className="text-lg font-bold text-slate-900">
-                    {exp.position}
+                  <h4>
+                    <span
+                      data-resume-entry-title
+                      className="font-medium italic text-slate-700"
+                    >
+                      {exp.company}
+                    </span>
+                    {exp.position && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        className="text-lg font-bold text-slate-900"
+                      >
+                        {exp.position}
+                      </span>
+                    )}
                   </h4>
                   <span className="text-sm font-medium text-slate-600">
                     {exp.startDate &&
@@ -63,9 +77,17 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
                   </span>
                 </div>
                 <div className="mb-2 flex items-baseline justify-between">
-                  <p className="font-medium italic text-slate-700">
-                    {exp.company}
-                  </p>
+                  {exp.position ? (
+                    <p
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      className="text-lg font-bold text-slate-900"
+                    >
+                      {exp.position}
+                    </p>
+                  ) : (
+                    <span />
+                  )}
                   {exp.jobLocation && (
                     <span className="text-sm text-slate-500">
                       {exp.jobLocation}
@@ -139,7 +161,23 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
             {resumeData.projectWorks.map((project, index) => (
               <div key={index}>
                 <div className="mb-1 flex items-baseline justify-between">
-                  <h4 className="font-bold text-slate-900">{project.title}</h4>
+                  <h4>
+                    <span
+                      data-resume-entry-title
+                      className="font-bold text-slate-900"
+                    >
+                      {project.title}
+                    </span>
+                    {project.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        className="italic"
+                      >
+                        {project.company}
+                      </span>
+                    )}
+                  </h4>
                   <span className="text-sm text-slate-600">
                     {project.startDate &&
                       safeFormatDate(project.startDate, dateFormatNumeric)}{" "}
@@ -149,6 +187,17 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
                       : "present"}
                   </span>
                 </div>
+                {project.company && (
+                  <div className="mb-2">
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      className="italic"
+                    >
+                      {project.company}
+                    </span>
+                  </div>
+                )}
                 {project.links && project.links.length > 0 && (
                   <div className="mb-2 flex gap-3 text-xs text-blue-600">
                     {project.links.map((link, i) => (

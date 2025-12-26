@@ -172,7 +172,18 @@ export default function ModernSidebar({
                                 fontSize: "calc(1em * var(--heading-scale))",
                               }}
                             >
-                              {exp.position}
+                              <span data-resume-entry-title>
+                                {exp.position}
+                              </span>
+                              {exp.company && (
+                                <span
+                                  data-resume-entry-subtitle
+                                  data-entry-subtitle-slot="inline"
+                                  className="font-bold uppercase"
+                                >
+                                  {exp.company}
+                                </span>
+                              )}
                             </h4>
                             <span className="text-xs font-bold text-slate-400">
                               {exp.startDate &&
@@ -183,12 +194,18 @@ export default function ModernSidebar({
                                 : "Present"}
                             </span>
                           </div>
-                          <div
-                            className="mb-2 text-xs font-bold uppercase tracking-wide"
-                            style={{ color: primaryColor }}
-                          >
-                            {exp.company}
-                          </div>
+                          {exp.company ? (
+                            <div
+                              data-resume-entry-subtitle
+                              data-entry-subtitle-slot="newline"
+                              className="mb-2 text-xs font-bold uppercase tracking-wide"
+                              style={{ color: primaryColor }}
+                            >
+                              {exp.company}
+                            </div>
+                          ) : (
+                            <div />
+                          )}
                           <div
                             className="text-justify text-xs leading-relaxed text-slate-600"
                             dangerouslySetInnerHTML={{
@@ -823,21 +840,40 @@ const MainContent = ({
                     }}
                   >
                     <span
+                      data-resume-entry-title
                       style={{ fontSize: "calc(1em * var(--heading-scale))" }}
                     >
                       {exp.position}
                     </span>
+                    {exp.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        style={{
+                          fontSize: "calc(1em * var(--heading-scale))",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {exp.company}
+                      </span>
+                    )}
                   </h3>
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      color: "#777",
-                      display: "block",
-                      marginBottom: "4px",
-                    }}
-                  >
-                    {exp.company}
-                  </span>
+                  {exp.company ? (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      style={{
+                        fontSize: "12px",
+                        color: "#777",
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {exp.company}
+                    </span>
+                  ) : (
+                    <span />
+                  )}
                   <div
                     className="richTextEditorStyle whitespace-pre-line"
                     style={{
@@ -957,13 +993,28 @@ const MainContent = ({
                   }}
                 >
                   <span
+                    data-resume-entry-title
                     style={{ fontSize: "calc(1em * var(--heading-scale))" }}
                   >
                     {proj.title}
                   </span>
+                  {proj.company && (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="inline"
+                      style={{
+                        fontSize: "calc(1em * var(--heading-scale))",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {proj.company}
+                    </span>
+                  )}
                 </h3>
                 {proj.company && (
                   <span
+                    data-resume-entry-subtitle
+                    data-entry-subtitle-slot="newline"
                     style={{
                       fontSize: "12px",
                       color: "#777",

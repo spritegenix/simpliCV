@@ -150,19 +150,27 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
           <Heading colorHex={colorHex}>Professional Experience</Heading>
           {resumeData.workExperiences?.map((exp, index) => (
             <div key={index} className="!m-0 break-inside-avoid pb-2">
-              <div className="text-[1.4em] font-semibold italic">
-                {exp.position}
-              </div>
-              <div className="flex items-center gap-x-4">
-                <span
-                  className="text-[1.2em] font-semibold"
-                  style={{
-                    color: colorHex,
-                  }}
-                >
-                  {exp.company}
+              <div className="flex items-center justify-between gap-x-4">
+                <span>
+                  <span
+                    data-resume-entry-title
+                    className="text-[1.2em] font-semibold"
+                    style={{
+                      color: colorHex,
+                    }}
+                  >
+                    {exp.company}
+                  </span>
+                  {exp.position && (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="inline"
+                      className="text-[1.4em] font-semibold italic"
+                    >
+                      {exp.position}
+                    </span>
+                  )}
                 </span>
-
                 {exp.startDate && (
                   <span>
                     {safeFormatDate(exp.startDate, dateFormatNumeric)} -{" "}
@@ -170,6 +178,19 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                       ? safeFormatDate(exp.endDate, dateFormatNumeric)
                       : "present"}
                   </span>
+                )}
+              </div>
+              <div className="flex items-center justify-between gap-x-4">
+                {exp.position ? (
+                  <span
+                    data-resume-entry-subtitle
+                    data-entry-subtitle-slot="newline"
+                    className="text-[1.4em] font-semibold italic"
+                  >
+                    {exp.position}
+                  </span>
+                ) : (
+                  <span />
                 )}
                 {exp.jobLocation && (
                   <span className="font-semibold">{exp.jobLocation}</span>
@@ -199,6 +220,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
               <div className="!m-0 flex justify-between gap-1">
                 <p className="flex gap-1">
                   <Link
+                    data-resume-entry-title
                     href={
                       !!item?.links && item?.links[0] ? item?.links[0] : "#"
                     }
@@ -210,6 +232,15 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                   >
                     {item.title}
                   </Link>
+                  {item.company && (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="inline"
+                      className="italic"
+                    >
+                      {item.company}
+                    </span>
+                  )}
                   {!!item.links &&
                     item.links.map((l, index) => (
                       <span key={index} className="mr-1 mt-1">
@@ -219,9 +250,15 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                 </p>
               </div>
               <div className="font-semibold">
-                <p className="flex flex-row">
+                <p className="flex flex-row gap-1">
                   {item.company && (
-                    <span className="italic">{item.company}</span>
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      className="italic"
+                    >
+                      {item.company}
+                    </span>
                   )}
                   {item.startDate && (
                     <span>
