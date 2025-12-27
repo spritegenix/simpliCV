@@ -32,20 +32,29 @@ export default function ModernSidebar({
         className={`h-full ${!width ? "invisible" : ""}`}
         style={{
           zoom: (1 / 794) * width,
+          direction: "ltr",
         }}
       >
         <div className="flex h-full">
           {/* LEFT COLUMN - Fixed Width Sidebar with Grey Background */}
-          <div className="flex w-[300px] shrink-0 flex-col bg-slate-100 pt-12 text-slate-700">
+          <div
+            className="flex w-[300px] shrink-0 flex-col pt-12"
+            style={{
+              backgroundColor:
+                "color-mix(in srgb, var(--text) 8%, transparent)",
+              color: "color-mix(in srgb, var(--text) 75%, transparent)",
+            }}
+          >
             {/* Profile Image */}
             <div className="mb-10 flex justify-center px-6">
               <PhotoSection resumeData={resumeData} colorHex={primaryColor} />
             </div>
 
             {/* Contact Section */}
-            <div className="mb-10 space-y-5 px-8">
+            <div className="mb-10 space-y-5 px-8" data-resume-personal-details>
               <h3
-                className="mb-4 border-b border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest text-slate-800"
+                data-resume-section-heading
+                className="mb-4 border-b pb-2 text-sm font-bold tracking-widest"
                 style={{
                   color: primaryColor,
                   borderColor: primaryColor,
@@ -71,15 +80,22 @@ export default function ModernSidebar({
                     {resumeData.certifications.map((item, idx) => (
                       <div key={idx}>
                         <h4
-                          className="text-xs font-bold uppercase text-slate-900"
+                          className="text-xs font-bold"
                           style={{
                             fontSize: "calc(1em * var(--heading-scale))",
+                            color: "var(--text)",
                           }}
                         >
                           {item.title}
                         </h4>
                         {item.description && (
-                          <p className="mt-1 text-[10px] text-slate-600">
+                          <p
+                            className="mt-1 text-[10px]"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 70%, transparent)",
+                            }}
+                          >
                             {item.description}
                           </p>
                         )}
@@ -102,7 +118,10 @@ export default function ModernSidebar({
                     colorHex={primaryColor}
                   />
                   <div
-                    className="text-[11px] leading-relaxed text-slate-600"
+                    className="text-[11px] leading-relaxed"
+                    style={{
+                      color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                    }}
                     dangerouslySetInnerHTML={{
                       __html: resumeData.others.description || "",
                     }}
@@ -115,7 +134,8 @@ export default function ModernSidebar({
           <div className="flex-1 bg-white px-10 py-12">
             {/* Header Name (Top of Right Column) */}
             <div
-              className="mb-12 border-b border-slate-100 pb-8"
+              data-resume-header
+              className="mb-12 border-b pb-8"
               style={{
                 borderBottomWidth: "calc(var(--resume-border-width) * 2)",
                 borderColor: "color-mix(in srgb, var(--text) 20%, transparent)",
@@ -123,9 +143,12 @@ export default function ModernSidebar({
               }}
             >
               <h1
-                className="mb-2 font-black uppercase leading-none tracking-tight text-slate-900"
+                className="mb-2 leading-none tracking-tight"
                 style={{
-                  fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                  fontSize:
+                    "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                  fontWeight: "var(--name-font-weight)",
+                  color: "var(--text)",
                 }}
               >
                 {resumeData.firstName}{" "}
@@ -135,10 +158,11 @@ export default function ModernSidebar({
               </h1>
               {resumeData.jobTitle && (
                 <p
-                  className="font-bold uppercase tracking-[0.3em] text-slate-400"
+                  className="font-bold tracking-[0.3em]"
                   style={{
                     fontSize:
                       "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                    color: "color-mix(in srgb, var(--text) 60%, transparent)",
                   }}
                 >
                   {resumeData.jobTitle}
@@ -154,12 +178,15 @@ export default function ModernSidebar({
                   dangerouslySetInnerHTML={{
                     __html: resumeData.summary || "",
                   }}
-                  className="richTextEditorStyle !m-0 whitespace-pre-line text-justify text-sm font-medium leading-relaxed text-slate-600"
+                  className="richTextEditorStyle !m-0 whitespace-pre-line text-justify text-sm font-medium leading-relaxed"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
                 />
               </div>
             )}
 
-            {/* JOB EXPERIENCE - 2 Column Grid Subsection */}
+            {/* JOB EXPERIENCE */}
             {resumeData.workExperiences &&
               resumeData.workExperiences.length > 0 && (
                 <div className="mb-10">
@@ -167,67 +194,69 @@ export default function ModernSidebar({
                     title="Job Experience"
                     colorHex={primaryColor}
                   />
-                  <div className="grid grid-cols-1 gap-x-8 gap-y-8">
-                    {/* Note: Prompt asked for "Two-column subsections". 
-                                 However, long descriptions in 2 cols can look bad. 
-                                 I'll stick to 1 col for readability unless strictly needed small items. 
-                                 Actually, widely used "Job Experience" in resume templates often is 1 col.
-                                 But if user insists on 2-col subsections, I will try a grid for the *Items* if they are short, or maybe internal layout.
-                                 Let's allow 2 cols for items if there are enough.
-                             */}
-                    <div className="grid grid-cols-1 gap-6">
-                      {resumeData.workExperiences.map((exp, idx) => (
-                        <div key={idx} className="relative break-inside-avoid">
-                          <div className="mb-1 flex items-baseline justify-between">
-                            <h4
-                              className="text-md font-bold uppercase text-slate-800"
-                              style={{
-                                fontSize: "calc(1em * var(--heading-scale))",
-                              }}
-                            >
-                              <span data-resume-entry-title>
-                                {exp.position}
+                  <div className="grid grid-cols-1 gap-6">
+                    {resumeData.workExperiences.map((exp, idx) => (
+                      <div key={idx} className="relative break-inside-avoid">
+                        <div className="mb-1 flex items-baseline justify-between">
+                          <h4
+                            className="text-md font-bold"
+                            style={{
+                              fontSize: "calc(1em * var(--heading-scale))",
+                              color: "var(--text)",
+                            }}
+                          >
+                            <span data-resume-entry-title>{exp.position}</span>
+                            {exp.company && (
+                              <span
+                                data-resume-entry-subtitle
+                                data-entry-subtitle-slot="inline"
+                                className="font-semibold"
+                              >
+                                {exp.company}
                               </span>
-                              {exp.company && (
-                                <span
-                                  data-resume-entry-subtitle
-                                  data-entry-subtitle-slot="inline"
-                                  className="font-bold uppercase"
-                                >
-                                  {exp.company}
-                                </span>
-                              )}
-                            </h4>
-                            <span className="text-xs font-bold text-slate-400">
-                              {exp.startDate &&
-                                safeFormatDate(exp.startDate, "yyyy")}{" "}
-                              -{" "}
-                              {exp.endDate
-                                ? safeFormatDate(exp.endDate, "yyyy")
-                                : "Present"}
-                            </span>
-                          </div>
-                          {exp.company ? (
-                            <div
-                              data-resume-entry-subtitle
-                              data-entry-subtitle-slot="newline"
-                              className="mb-2 text-xs font-bold uppercase tracking-wide"
-                              style={{ color: primaryColor }}
-                            >
-                              {exp.company}
-                            </div>
-                          ) : (
-                            <div />
-                          )}
+                            )}
+                          </h4>
+                          <span
+                            className="text-xs font-bold"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 60%, transparent)",
+                            }}
+                          >
+                            {exp.startDate &&
+                              safeFormatDate(exp.startDate, "yyyy")}{" "}
+                            -{" "}
+                            {exp.endDate
+                              ? safeFormatDate(exp.endDate, "yyyy")
+                              : "Present"}
+                          </span>
+                        </div>
+
+                        {exp.company && (
                           <div
-                            className="text-justify text-xs leading-relaxed text-slate-600"
+                            data-resume-entry-subtitle
+                            data-entry-subtitle-slot="newline"
+                            className="mb-2 text-xs font-bold tracking-wide"
+                            style={{ color: primaryColor }}
+                          >
+                            {exp.company}
+                          </div>
+                        )}
+
+                        {exp.description && (
+                          <div
+                            className="text-justify text-xs leading-relaxed"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 70%, transparent)",
+                            }}
                             dangerouslySetInnerHTML={{
                               __html: exp.description || "",
                             }}
                           />
-                        </div>
-                      ))}
-                    </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -240,18 +269,24 @@ export default function ModernSidebar({
                   {resumeData.educations.map((edu, idx) => (
                     <div key={idx} className="break-inside-avoid">
                       <h4
-                        className="mb-0.5 text-sm font-bold uppercase text-slate-800"
+                        className="mb-0.5 text-sm font-bold"
                         style={{ fontSize: "calc(1em * var(--heading-scale))" }}
                       >
                         {edu.degree}
                       </h4>
                       <div
-                        className="mb-1 text-xs font-bold uppercase text-slate-400"
+                        className="mb-1 text-xs font-bold"
                         style={{ color: primaryColor }}
                       >
                         {edu.school}
                       </div>
-                      <span className="mb-1 block text-[10px] font-bold text-slate-400">
+                      <span
+                        className="mb-1 block text-[10px] font-bold"
+                        style={{
+                          color:
+                            "color-mix(in srgb, var(--text) 60%, transparent)",
+                        }}
+                      >
                         {edu.startDate && safeFormatDate(edu.startDate, "yyyy")}{" "}
                         -{" "}
                         {edu.endDate
@@ -259,7 +294,13 @@ export default function ModernSidebar({
                           : "Present"}
                       </span>
                       {edu.description && (
-                        <div className="text-[11px] text-slate-600">
+                        <div
+                          className="text-[11px]"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--text) 70%, transparent)",
+                          }}
+                        >
                           {edu.description}
                         </div>
                       )}
@@ -281,15 +322,23 @@ export default function ModernSidebar({
                     <div key={idx}>
                       <div className="mb-1 flex justify-between">
                         <h4
-                          className="text-xs font-bold uppercase text-slate-700"
+                          className="text-xs font-bold"
                           style={{
                             fontSize: "calc(1em * var(--heading-scale))",
+                            color:
+                              "color-mix(in srgb, var(--text) 80%, transparent)",
                           }}
                         >
                           {skill.title}
                         </h4>
                       </div>
-                      <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className="h-2 w-full overflow-hidden rounded-full"
+                        style={{
+                          backgroundColor:
+                            "color-mix(in srgb, var(--text) 10%, transparent)",
+                        }}
+                      >
                         {/* Randomized percent for visual if skillName is plain strings, or use skill items count */}
                         <div
                           className="h-full rounded-full"
@@ -301,7 +350,14 @@ export default function ModernSidebar({
                       </div>
                       <div className="mt-1 flex flex-wrap gap-x-2">
                         {skill.skillName?.map((item, i) => (
-                          <span key={i} className="text-[10px] text-slate-500">
+                          <span
+                            key={i}
+                            className="text-[10px]"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 65%, transparent)",
+                            }}
+                          >
                             {item}
                           </span>
                         ))}
@@ -322,10 +378,11 @@ export default function ModernSidebar({
                     colorHex={primaryColor}
                   />
                   <div
-                    className="border-l pl-3 text-xs leading-relaxed text-slate-600"
+                    className="border-l pl-3 text-xs leading-relaxed"
                     style={{
                       borderColor: primaryColor,
                       borderLeftWidth: "calc(var(--resume-border-width) * 4)",
+                      color: "color-mix(in srgb, var(--text) 70%, transparent)",
                     }}
                     dangerouslySetInnerHTML={{
                       __html: resumeData.others.description || "",
@@ -404,7 +461,10 @@ const ContactSection = ({
     resumeData;
 
   return (
-    <div className="space-y-3 text-xs text-slate-700">
+    <div
+      className="space-y-3 text-xs"
+      style={{ color: "color-mix(in srgb, var(--text) 75%, transparent)" }}
+    >
       {phone && (
         <div className="flex items-center gap-2">
           <Phone size={14} style={{ color: colorHex }} />
@@ -451,7 +511,8 @@ const SectionHeaderSide = ({
 }) => {
   return (
     <h3
-      className="mb-4 border-b border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest text-slate-800"
+      data-resume-section-heading
+      className="mb-4 border-b pb-2 text-sm font-bold tracking-widest"
       style={{
         color: colorHex,
         borderColor: colorHex,
@@ -475,7 +536,8 @@ const SectionHeaderMain = ({
 }) => {
   return (
     <h3
-      className="mb-6 border-b pb-2 text-lg font-bold uppercase tracking-wide"
+      data-resume-section-heading
+      className="mb-6 border-b pb-2 text-lg font-bold tracking-wide"
       style={{
         borderColor: colorHex,
         color: colorHex,
@@ -649,7 +711,7 @@ const Sidebar = ({
       <div
         style={{
           height: "6px",
-          background: "#ccc",
+          background: "color-mix(in srgb, var(--text) 20%, transparent)",
           margin: "20px 0",
           borderRadius: "5px",
         }}
@@ -669,7 +731,7 @@ const Sidebar = ({
               margin: "25px 0 10px",
             }}
           >
-            REFERENCES
+            References
           </div>
           {certifications.map((ref, idx) => (
             <div key={idx} style={{ marginBottom: "15px", fontSize: "12px" }}>
@@ -689,7 +751,13 @@ const Sidebar = ({
                 </span>
               </h4>
               {ref.description && (
-                <p style={{ margin: 0, fontSize: "11px", color: "#555" }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "11px",
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
+                >
                   {ref.description}
                 </p>
               )}
@@ -700,7 +768,7 @@ const Sidebar = ({
                   rel="noreferrer"
                   style={{
                     fontSize: "11px",
-                    color: "#3b82f6",
+                    color: "var(--accent)",
                     textDecoration: "underline",
                   }}
                 >
@@ -712,7 +780,7 @@ const Sidebar = ({
           <div
             style={{
               height: "6px",
-              background: "#ccc",
+              background: "color-mix(in srgb, var(--text) 20%, transparent)",
               margin: "20px 0",
               borderRadius: "5px",
             }}
@@ -734,11 +802,14 @@ const Sidebar = ({
               margin: "25px 0 10px",
             }}
           >
-            {others.title || "AWARDS"}
+            {others.title || "Awards"}
           </div>
           <div
             className="richTextEditorStyle whitespace-pre-line"
-            style={{ fontSize: "12px", color: "#555" }}
+            style={{
+              fontSize: "12px",
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
+            }}
             dangerouslySetInnerHTML={{ __html: others.description || "" }}
           />
         </>
@@ -769,10 +840,10 @@ const MainContent = ({
   return (
     <main style={{ padding: "40px" }}>
       {/* Header */}
-      <header style={{ marginBottom: "20px" }}>
+      <header style={{ marginBottom: "20px" }} data-resume-header>
         <h1
           style={{
-            fontWeight: 700,
+            fontWeight: "var(--name-font-weight)",
             margin: 0,
             fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
           }}
@@ -784,10 +855,9 @@ const MainContent = ({
             style={{
               fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
               letterSpacing: "3px",
-              color: "#666",
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
               margin: "8px 0 0 0",
               fontWeight: 400,
-              textTransform: "uppercase",
             }}
           >
             {jobTitle}
@@ -809,12 +879,16 @@ const MainContent = ({
               fontWeight: 600,
             }}
           >
-            ABOUT ME
+            About me
           </div>
           <div
             dangerouslySetInnerHTML={{ __html: summary || "" }}
             className="richTextEditorStyle !m-0 whitespace-pre-line"
-            style={{ fontSize: "13px", color: "#555", margin: "0 0 20px 0" }}
+            style={{
+              fontSize: "13px",
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              margin: "0 0 20px 0",
+            }}
           />
         </>
       )}
@@ -879,7 +953,8 @@ const MainContent = ({
                       data-entry-subtitle-slot="newline"
                       style={{
                         fontSize: "12px",
-                        color: "#777",
+                        color:
+                          "color-mix(in srgb, var(--text) 65%, transparent)",
                         display: "block",
                         marginBottom: "4px",
                       }}
@@ -893,13 +968,17 @@ const MainContent = ({
                     className="richTextEditorStyle whitespace-pre-line"
                     style={{
                       fontSize: "12px",
-                      color: "#555",
+                      color: "color-mix(in srgb, var(--text) 70%, transparent)",
                       marginBottom: "4px",
                     }}
                     dangerouslySetInnerHTML={{ __html: exp.description || "" }}
                   />
                   <small
-                    style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}
+                    style={{
+                      fontSize: "11px",
+                      color: "color-mix(in srgb, var(--text) 80%, transparent)",
+                      fontWeight: 600,
+                    }}
                   >
                     {exp.startDate && safeFormatDate(exp.startDate, "yyyy")} –{" "}
                     {exp.endDate
@@ -947,7 +1026,7 @@ const MainContent = ({
                   <span
                     style={{
                       fontSize: "12px",
-                      color: "#777",
+                      color: "color-mix(in srgb, var(--text) 65%, transparent)",
                       display: "block",
                       marginBottom: "4px",
                     }}
@@ -960,14 +1039,19 @@ const MainContent = ({
                       className="richTextEditorStyle whitespace-pre-line"
                       style={{
                         fontSize: "12px",
-                        color: "#555",
+                        color:
+                          "color-mix(in srgb, var(--text) 70%, transparent)",
                         margin: "0 0 4px 0",
                       }}
                       dangerouslySetInnerHTML={{ __html: edu.description }}
                     />
                   )}
                   <small
-                    style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}
+                    style={{
+                      fontSize: "11px",
+                      color: "color-mix(in srgb, var(--text) 80%, transparent)",
+                      fontWeight: 600,
+                    }}
                   >
                     {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} –{" "}
                     {edu.endDate
@@ -1032,7 +1116,7 @@ const MainContent = ({
                     data-entry-subtitle-slot="newline"
                     style={{
                       fontSize: "12px",
-                      color: "#777",
+                      color: "color-mix(in srgb, var(--text) 65%, transparent)",
                       display: "block",
                       marginBottom: "4px",
                     }}
@@ -1045,7 +1129,7 @@ const MainContent = ({
                     className="richTextEditorStyle whitespace-pre-line"
                     style={{
                       fontSize: "12px",
-                      color: "#555",
+                      color: "color-mix(in srgb, var(--text) 70%, transparent)",
                       marginBottom: "4px",
                     }}
                     dangerouslySetInnerHTML={{ __html: proj.description || "" }}
@@ -1062,7 +1146,7 @@ const MainContent = ({
                         style={{
                           display: "block",
                           fontSize: "11px",
-                          color: "#3b82f6",
+                          color: "var(--accent)",
                           textDecoration: "underline",
                           marginBottom: "2px",
                         }}
@@ -1073,7 +1157,11 @@ const MainContent = ({
                   </div>
                 )}
                 <small
-                  style={{ fontSize: "11px", color: "#333", fontWeight: 600 }}
+                  style={{
+                    fontSize: "11px",
+                    color: "color-mix(in srgb, var(--text) 80%, transparent)",
+                    fontWeight: 600,
+                  }}
                 >
                   {proj.startDate && safeFormatDate(proj.startDate, "yyyy")} –{" "}
                   {proj.endDate
@@ -1117,7 +1205,8 @@ const MainContent = ({
                 </span>
                 <div
                   style={{
-                    background: "#ccc",
+                    background:
+                      "color-mix(in srgb, var(--text) 20%, transparent)",
                     height: "6px",
                     borderRadius: "5px",
                     overflow: "hidden",

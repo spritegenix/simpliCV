@@ -116,7 +116,7 @@ export default function ModernTimeline({
                     return (
                       <Section
                         key="summary"
-                        label="PROFILE"
+                        label="Profile"
                         isFirst={isFirst}
                         content={
                           <div
@@ -136,7 +136,7 @@ export default function ModernTimeline({
                     return (
                       <Section
                         key="workExperiences"
-                        label="WORK EXPERIENCE"
+                        label="Work Experience"
                         isFirst={isFirst}
                         content={
                           <>
@@ -155,7 +155,6 @@ export default function ModernTimeline({
                                     fontSize:
                                       "calc(1em * var(--heading-scale))",
                                     fontWeight: 600,
-                                    textTransform: "uppercase",
                                     margin: 0,
                                     marginBottom: "4px",
                                   }}
@@ -222,7 +221,7 @@ export default function ModernTimeline({
                     return (
                       <Section
                         key="projectWorks"
-                        label="PROJECTS"
+                        label="Projects"
                         isFirst={isFirst}
                         content={
                           <>
@@ -241,7 +240,6 @@ export default function ModernTimeline({
                                     fontSize:
                                       "calc(1em * var(--heading-scale))",
                                     fontWeight: 600,
-                                    textTransform: "uppercase",
                                     margin: 0,
                                     marginBottom: "4px",
                                   }}
@@ -336,7 +334,7 @@ export default function ModernTimeline({
                     return (
                       <Section
                         key="educations"
-                        label="EDUCATION"
+                        label="Education"
                         isFirst={isFirst}
                         content={
                           <>
@@ -355,7 +353,6 @@ export default function ModernTimeline({
                                     fontSize:
                                       "calc(1em * var(--heading-scale))",
                                     fontWeight: 600,
-                                    textTransform: "uppercase",
                                     margin: 0,
                                     marginBottom: "4px",
                                   }}
@@ -398,7 +395,7 @@ export default function ModernTimeline({
                     return (
                       <Section
                         key="certifications"
-                        label="CERTIFICATIONS"
+                        label="Certifications"
                         isFirst={isFirst}
                         content={
                           <>
@@ -417,7 +414,6 @@ export default function ModernTimeline({
                                     fontSize:
                                       "calc(1em * var(--heading-scale))",
                                     fontWeight: 600,
-                                    textTransform: "uppercase",
                                     margin: 0,
                                     marginBottom: "4px",
                                   }}
@@ -466,7 +462,7 @@ export default function ModernTimeline({
                     return (
                       <Section
                         key="skills"
-                        label="SKILLS"
+                        label="Skills"
                         isFirst={isFirst}
                         content={
                           <ul style={{ paddingLeft: "18px", margin: 0 }}>
@@ -551,6 +547,7 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
 
   return (
     <div
+      data-resume-header
       style={{
         display: "flex",
         justifyContent: "center",
@@ -579,8 +576,7 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
         <h1
           style={{
             fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
-            fontWeight: 600,
-            textTransform: "uppercase",
+            fontWeight: "var(--name-font-weight)",
             letterSpacing: "3px",
             margin: 0,
           }}
@@ -588,6 +584,7 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
           {firstName} {lastName}
         </h1>
         <div
+          data-resume-personal-details
           style={{
             marginTop: "12px",
             display: "flex",
@@ -678,10 +675,10 @@ const Section = ({
     >
       {/* Label */}
       <div
+        data-resume-section-heading
         style={{
           fontSize: "calc(1em * var(--heading-scale))",
           fontWeight: 600,
-          textTransform: "uppercase",
           letterSpacing: "2px",
           paddingTop: "10px",
         }}

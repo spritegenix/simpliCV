@@ -57,19 +57,23 @@ export default function PurpleModern({
           />
 
           {/* Name & Title Content */}
-          <div className="relative z-10 flex h-full flex-col items-end justify-center px-12 pb-10 text-white">
+          <div
+            data-resume-header
+            className="relative z-10 flex h-full flex-col items-end justify-center px-12 pb-10 text-white"
+          >
             <h1
-              className="mb-1 text-right font-extrabold uppercase tracking-widest"
+              className="mb-1 text-right tracking-widest"
               style={{
                 fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                fontWeight: "var(--name-font-weight)",
               }}
             >
               {resumeData.firstName}{" "}
-              <span className="font-light">{resumeData.lastName}</span>
+              <span style={{ opacity: 0.9 }}>{resumeData.lastName}</span>
             </h1>
             {resumeData.jobTitle && (
               <p
-                className="text-right font-medium uppercase tracking-[0.2em] opacity-90"
+                className="text-right font-medium tracking-[0.2em] opacity-90"
                 style={{
                   fontSize:
                     "calc(var(--base-font) * 1.05 * var(--heading-scale))",
@@ -98,7 +102,10 @@ export default function PurpleModern({
                   dangerouslySetInnerHTML={{
                     __html: resumeData.summary || "",
                   }}
-                  className="richTextEditorStyle !m-0 whitespace-pre-line text-justify text-xs font-medium leading-relaxed text-slate-600"
+                  className="richTextEditorStyle !m-0 whitespace-pre-line text-justify text-xs font-medium leading-relaxed"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
                 />
               </div>
             )}
@@ -106,7 +113,12 @@ export default function PurpleModern({
             {/* CONTACT */}
             <div>
               <SectionTitleSide title="Contact" colorHex={primaryColor} />
-              <ContactSection resumeData={resumeData} colorHex={primaryColor} />
+              <div data-resume-personal-details>
+                <ContactSection
+                  resumeData={resumeData}
+                  colorHex={primaryColor}
+                />
+              </div>
             </div>
 
             {/* EXPERTISE/SKILLS (Sidebar Style) */}
@@ -116,14 +128,18 @@ export default function PurpleModern({
                 <div className="space-y-4">
                   {resumeData.skills.map((skill, idx) => (
                     <div key={idx}>
-                      <h4 className="mb-1 text-xs font-bold uppercase text-slate-800">
-                        {skill.title}
-                      </h4>
+                      <h4 className="mb-1 text-xs font-bold">{skill.title}</h4>
                       <div className="flex flex-wrap gap-1">
                         {skill.skillName?.map((item, i) => (
                           <span
                             key={i}
-                            className="rounded-sm bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-600"
+                            className="rounded-sm px-2 py-1 text-[10px] font-semibold"
+                            style={{
+                              backgroundColor:
+                                "color-mix(in srgb, var(--text) 10%, transparent)",
+                              color:
+                                "color-mix(in srgb, var(--text) 75%, transparent)",
+                            }}
                           >
                             {item}
                           </span>
@@ -146,11 +162,15 @@ export default function PurpleModern({
                   <div className="space-y-4">
                     {resumeData.certifications.map((cert, idx) => (
                       <div key={idx}>
-                        <h4 className="text-[11px] font-bold uppercase text-slate-800">
-                          {cert.title}
-                        </h4>
+                        <h4 className="text-[11px] font-bold">{cert.title}</h4>
                         {cert.description && (
-                          <p className="text-[10px] text-slate-500">
+                          <p
+                            className="text-[10px]"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 65%, transparent)",
+                            }}
+                          >
                             {cert.description}
                           </p>
                         )}
@@ -162,7 +182,13 @@ export default function PurpleModern({
           </div>
 
           {/* RIGHT COLUMN - Main Content */}
-          <div className="space-y-10 bg-slate-50 px-10 py-10">
+          <div
+            className="space-y-10 px-10 py-10"
+            style={{
+              backgroundColor:
+                "color-mix(in srgb, var(--text) 5%, transparent)",
+            }}
+          >
             {/* WORK EXPERIENCE */}
             {resumeData.workExperiences &&
               resumeData.workExperiences.length > 0 && (
@@ -172,7 +198,7 @@ export default function PurpleModern({
                     colorHex={primaryColor}
                   />
                   <div
-                    className="ml-1 space-y-8 border-l border-slate-200 pl-2"
+                    className="ml-1 space-y-8 border-l pl-2"
                     style={{
                       borderLeftWidth: "calc(var(--resume-border-width) * 2)",
                       borderColor:
@@ -195,13 +221,13 @@ export default function PurpleModern({
                         />
 
                         <div className="mb-1 flex items-baseline justify-between">
-                          <h4 className="text-md font-bold uppercase tracking-tight text-slate-800">
+                          <h4 className="text-md font-bold tracking-tight">
                             <span data-resume-entry-title>{exp.position}</span>
                             {exp.company && (
                               <span
                                 data-resume-entry-subtitle
                                 data-entry-subtitle-slot="inline"
-                                className="font-bold uppercase"
+                                className="font-semibold"
                               >
                                 {exp.company}
                               </span>
@@ -223,7 +249,11 @@ export default function PurpleModern({
                           <div
                             data-resume-entry-subtitle
                             data-entry-subtitle-slot="newline"
-                            className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500"
+                            className="mb-2 text-xs font-bold tracking-widest"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 65%, transparent)",
+                            }}
                           >
                             {exp.company}
                           </div>
@@ -232,7 +262,11 @@ export default function PurpleModern({
                         )}
 
                         <div
-                          className="text-justify text-xs leading-relaxed text-slate-600"
+                          className="text-justify text-xs leading-relaxed"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--text) 70%, transparent)",
+                          }}
                           dangerouslySetInnerHTML={{
                             __html: exp.description || "",
                           }}
@@ -248,7 +282,7 @@ export default function PurpleModern({
               <div>
                 <SectionTitleMain title="Education" colorHex={primaryColor} />
                 <div
-                  className="ml-1 space-y-6 border-l border-slate-200 pl-2"
+                  className="ml-1 space-y-6 border-l pl-2"
                   style={{
                     borderLeftWidth: "calc(var(--resume-border-width) * 2)",
                     borderColor:
@@ -267,10 +301,14 @@ export default function PurpleModern({
                       />
 
                       <div className="mb-1 flex items-baseline justify-between">
-                        <h4 className="text-md font-bold uppercase text-slate-800">
-                          {edu.degree}
-                        </h4>
-                        <span className="text-[10px] font-bold text-slate-500">
+                        <h4 className="text-md font-bold">{edu.degree}</h4>
+                        <span
+                          className="text-[10px] font-bold"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--text) 65%, transparent)",
+                          }}
+                        >
                           {edu.startDate &&
                             safeFormatDate(edu.startDate, "yyyy")}{" "}
                           -{" "}
@@ -279,11 +317,23 @@ export default function PurpleModern({
                             : "Present"}
                         </span>
                       </div>
-                      <div className="mb-1 text-xs font-bold uppercase tracking-widest text-slate-500">
+                      <div
+                        className="mb-1 text-xs font-bold tracking-widest"
+                        style={{
+                          color:
+                            "color-mix(in srgb, var(--text) 65%, transparent)",
+                        }}
+                      >
                         {edu.school}
                       </div>
                       {edu.description && (
-                        <div className="text-xs text-slate-600">
+                        <div
+                          className="text-xs"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--text) 70%, transparent)",
+                          }}
+                        >
                           {edu.description}
                         </div>
                       )}
@@ -302,7 +352,10 @@ export default function PurpleModern({
                     colorHex={primaryColor}
                   />
                   <div
-                    className="whitespace-pre-line text-xs leading-relaxed text-slate-600"
+                    className="whitespace-pre-line text-xs leading-relaxed"
+                    style={{
+                      color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                    }}
                     dangerouslySetInnerHTML={{
                       __html: resumeData.others.description || "",
                     }}
@@ -370,7 +423,8 @@ const SectionTitleSide = ({
 }) => {
   return (
     <h3
-      className="mb-3 border-b pb-1 text-sm font-bold uppercase tracking-wide"
+      data-resume-section-heading
+      className="mb-3 border-b pb-1 text-sm font-bold tracking-wide"
       style={{
         borderColor: colorHex,
         borderStyle: "var(--resume-border-style)" as any,
@@ -395,7 +449,8 @@ const SectionTitleMain = ({
 }) => {
   return (
     <h3
-      className="mb-6 text-lg font-bold uppercase tracking-wide"
+      data-resume-section-heading
+      className="mb-6 text-lg font-bold tracking-wide"
       style={{ color: colorHex }}
     >
       <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
@@ -417,37 +472,38 @@ const ContactSection = ({
     resumeData;
 
   return (
-    <div className="space-y-2 text-xs">
+    <div
+      className="space-y-2 text-xs"
+      style={{ color: "color-mix(in srgb, var(--text) 75%, transparent)" }}
+    >
       {phone && (
         <div className="flex items-center gap-2">
           <Phone size={12} style={{ color: colorHex }} />
-          <span className="text-slate-700">{phone}</span>
+          <span>{phone}</span>
         </div>
       )}
       {email && (
         <div className="flex items-center gap-2">
           <Mail size={12} style={{ color: colorHex }} />
-          <span className="break-all text-slate-700">{email}</span>
+          <span className="break-all">{email}</span>
         </div>
       )}
       {(city || country) && (
         <div className="flex items-center gap-2">
           <MapPin size={12} style={{ color: colorHex }} />
-          <span className="text-slate-700">
-            {[city, country].filter(Boolean).join(", ")}
-          </span>
+          <span>{[city, country].filter(Boolean).join(", ")}</span>
         </div>
       )}
       {portfolioLink && (
         <div className="flex items-center gap-2">
           <Globe size={12} style={{ color: colorHex }} />
-          <span className="break-all text-slate-700">{portfolioLink}</span>
+          <span className="break-all">{portfolioLink}</span>
         </div>
       )}
       {socialLinks?.map((link, idx) => (
         <div key={idx} className="flex items-center gap-2">
           <Link2 size={12} style={{ color: colorHex }} />
-          <span className="break-all text-slate-700">
+          <span className="break-all">
             {link.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
           </span>
         </div>
@@ -525,9 +581,8 @@ const Header = ({
         <h1
           style={{
             fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
-            fontWeight: 700,
+            fontWeight: "var(--name-font-weight)",
             margin: 0,
-            textTransform: "uppercase",
           }}
         >
           {firstName} {lastName}
@@ -540,7 +595,6 @@ const Header = ({
               marginBottom: "10px",
               marginTop: "4px",
               fontWeight: 400,
-              textTransform: "uppercase",
             }}
           >
             {jobTitle}

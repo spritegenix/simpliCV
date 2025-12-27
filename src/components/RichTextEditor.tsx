@@ -1,5 +1,5 @@
 // RichTextEditor.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Bold,
   Italic,
@@ -52,6 +52,7 @@ import {
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
+  placeholder?: string;
   className?: string;
   isBubbleButtons?: boolean;
   isFloatingButtons?: boolean;
@@ -62,12 +63,15 @@ interface RichTextEditorProps {
 export function RichTextEditor({
   value,
   onChange,
+  placeholder,
   className,
   isBubbleButtons = false,
   isFloatingButtons = false,
   designTextColor,
   onDesignTextColorChange,
 }: RichTextEditorProps) {
+  const [isEmpty, setIsEmpty] = useState(true);
+
   const editor = useEditor({
     extensions: [
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -90,6 +94,7 @@ export function RichTextEditor({
     content: value || "",
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
+      setIsEmpty(editor.isEmpty);
     },
   });
 
@@ -97,6 +102,9 @@ export function RichTextEditor({
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value || "");
+    }
+    if (editor) {
+      setIsEmpty(editor.isEmpty);
     }
   }, [editor, value]);
 
@@ -113,7 +121,12 @@ export function RichTextEditor({
       />
       {isBubbleButtons && <BubbleMenuButtons editor={editor} />}
       {isFloatingButtons && <FloatingMenuButtons editor={editor} />}
-      <div className="min-h-32 max-w-none p-2">
+      <div className="relative min-h-32 max-w-none p-2">
+        {placeholder && isEmpty && (
+          <div className="pointer-events-none absolute left-2 top-2 text-sm text-muted-foreground">
+            {placeholder}
+          </div>
+        )}
         <EditorContent editor={editor} />
       </div>
     </div>

@@ -43,6 +43,7 @@ export default function TealModern({
         style={{
           zoom: (1 / 794) * width,
           fontFamily: "'Montserrat', sans-serif",
+          direction: "ltr",
           borderTop: `18px solid ${accentColor}`,
           borderBottom: `18px solid ${accentColor}`,
         }}
@@ -128,6 +129,7 @@ const Header = ({
 
   return (
     <header
+      data-resume-header
       style={{
         display: "flex",
         alignItems: "center",
@@ -162,7 +164,7 @@ const Header = ({
         <h1
           style={{
             fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
-            fontWeight: 700,
+            fontWeight: "var(--name-font-weight)",
             margin: 0,
           }}
         >
@@ -172,10 +174,9 @@ const Header = ({
           <h2
             style={{
               fontSize: "calc(var(--base-font) * 1.05 * var(--heading-scale))",
-              color: "#666",
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
               margin: "4px 0 0 0",
               fontWeight: 400,
-              textTransform: "uppercase",
             }}
           >
             {jobTitle}
@@ -195,12 +196,12 @@ const SectionTitleMain = ({
 }) => {
   return (
     <h3
+      data-resume-section-heading
       style={{
         fontSize: "calc(16px * var(--heading-scale))",
         color: colorHex,
         marginBottom: "15px",
         fontWeight: 600,
-        textTransform: "uppercase",
       }}
     >
       {title}
@@ -237,8 +238,9 @@ const LeftColumn = ({
     >
       {/* CONTACT */}
       {(phone || email || city || country || portfolioLink) && (
-        <section style={{ marginBottom: "25px" }}>
+        <section data-resume-personal-details style={{ marginBottom: "25px" }}>
           <h3
+            data-resume-section-heading
             style={{
               fontSize: "14px",
               color: accentColor,
@@ -248,7 +250,7 @@ const LeftColumn = ({
               borderBottom: `2px solid ${greenColor}`,
             }}
           >
-            CONTACT
+            Contact
           </h3>
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {(city || country) && (
@@ -312,6 +314,7 @@ const LeftColumn = ({
       {socialLinks && socialLinks.length > 0 && (
         <section style={{ marginBottom: "25px" }}>
           <h3
+            data-resume-section-heading
             style={{
               fontSize: "14px",
               color: accentColor,
@@ -321,7 +324,7 @@ const LeftColumn = ({
               borderBottom: `2px solid ${greenColor}`,
             }}
           >
-            SOCIAL MEDIA
+            Social media
           </h3>
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {socialLinks.map((link, idx) => (
@@ -449,7 +452,7 @@ const LeftColumn = ({
               borderBottom: `2px solid ${greenColor}`,
             }}
           >
-            {others.title.toUpperCase()}
+            {others.title}
           </h3>
           <div
             style={{ fontSize: "12px", color: "#555", lineHeight: "1.6" }}

@@ -320,12 +320,12 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         <div
           className={`flex ${photoSrc ? "h-[100px]" : ""} flex-col justify-between`}
         >
-          <div className="my-auto">
+          <div className="my-auto" data-resume-header>
             <p
-              className="font-bold"
               style={{
                 color: "var(--accent)",
                 fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                fontWeight: "var(--name-font-weight)" as any,
               }}
             >
               {firstName} {lastName}
@@ -344,7 +344,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         </div>
       </div>
       {/* Social Links  */}
-      <div className="my-auto ml-auto">
+      <div className="my-auto ml-auto" data-resume-personal-details>
         {(city || country) && (
           <p className="flex items-center gap-1">
             <span className="text-[var(--accent)]">
@@ -391,12 +391,13 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
       <Link
         href={resumeData.portfolioLink || "#"}
         className="cursor-pointer text-center"
+        data-resume-header
       >
         <p
-          className="font-bold"
           style={{
             color: "var(--accent)",
             fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            fontWeight: "var(--name-font-weight)" as any,
           }}
         >
           {firstName} {lastName}
@@ -412,7 +413,10 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
         </p>
       </Link>
       {/* Social Links  */}
-      <div className="mx-auto flex max-w-xl flex-wrap justify-center gap-x-4">
+      <div
+        className="mx-auto flex max-w-xl flex-wrap justify-center gap-x-4"
+        data-resume-personal-details
+      >
         {(city || country) && (
           <p className="flex items-center gap-1">
             <span className="text-[var(--accent)]">
@@ -475,16 +479,18 @@ function Text({ children }: { children: string }) {
 function Heading({ children }: { children: string }) {
   return (
     <>
-      <div
-        className="!mb-1 flex break-inside-avoid gap-x-0.5 px-2 py-0.5"
-        style={{
-          backgroundColor: "color-mix(in srgb, var(--accent) 16%, transparent)",
-        }}
-      >
+      <div className="!mb-1 flex break-inside-avoid gap-x-0.5">
         <h1
+          data-resume-section-heading
           className="text-nowrap text-[1.2em] font-bold tracking-[0.2em] text-[var(--accent)]"
           style={{
             fontSize: "calc(1em * var(--heading-scale))",
+            padding: "0.25em 0.5em",
+            backgroundColor:
+              "color-mix(in srgb, var(--accent) 16%, transparent)",
+            borderBottomWidth: "var(--resume-border-width)",
+            borderBottomStyle: "var(--resume-border-style)" as any,
+            borderBottomColor: "currentColor",
           }}
         >
           {children}

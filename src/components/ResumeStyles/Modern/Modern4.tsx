@@ -42,11 +42,19 @@ export default function MillieSmithResume({
         id="resumePreviewContent"
       >
         {/* Header Section */}
-        <div className="bg-gray-50 px-10 pb-4 pt-8 text-center">
+        <div
+          className="px-10 pb-4 pt-8 text-center"
+          data-resume-header
+          style={{
+            backgroundColor: "color-mix(in srgb, var(--text) 4%, white)",
+          }}
+        >
           <h1
-            className="mb-1 font-light tracking-[0.5rem] text-gray-700"
+            className="mb-1 font-light tracking-[0.5rem]"
             style={{
               fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              fontWeight: "var(--name-font-weight)" as any,
             }}
           >
             {resumeData.firstName?.toUpperCase()}{" "}
@@ -80,7 +88,7 @@ export default function MillieSmithResume({
         <div className="grid min-h-[calc(100%-180px)] grid-cols-12">
           {/* Left Column */}
           <div
-            className="col-span-5 border-r border-gray-300"
+            className="col-span-5 border-r"
             style={{
               borderRightWidth: "calc(var(--resume-border-width) * 2)",
               borderStyle: "var(--resume-border-style)" as any,
@@ -131,7 +139,12 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       {/* Photo */}
       {photoSrc && (
         <div className="flex justify-center">
-          <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-gray-200">
+          <div
+            className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full"
+            style={{
+              backgroundColor: "color-mix(in srgb, var(--text) 10%, white)",
+            }}
+          >
             <Image
               src={photoSrc}
               width={128}
@@ -154,12 +167,15 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       {/* About Section */}
       {resumeData.summary && (
         <div>
-          <SectionTitle title="ABOUT" colorHex={colorHex} />
+          <SectionTitle title="About" colorHex={colorHex} />
           <div
             dangerouslySetInnerHTML={{
               __html: resumeData.summary || "",
             }}
-            className="richTextEditorStyle !m-0 whitespace-pre-line text-xs leading-relaxed text-gray-600"
+            className="richTextEditorStyle !m-0 whitespace-pre-line text-xs leading-relaxed"
+            style={{
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
+            }}
           />
         </div>
       )}
@@ -206,7 +222,10 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
           <div>
             <SectionTitle title={resumeData.others.title} colorHex={colorHex} />
             <div
-              className="richTextEditorStyle whitespace-pre-line text-xs leading-relaxed text-gray-600"
+              className="richTextEditorStyle whitespace-pre-line text-xs leading-relaxed"
+              style={{
+                color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              }}
               dangerouslySetInnerHTML={{
                 __html: resumeData.others.description || "",
               }}
@@ -285,9 +304,14 @@ function SectionTitle({
   return (
     <h2
       className="mb-3 text-lg font-bold tracking-wide"
+      data-resume-section-heading
       style={{
         color: colorHex,
         fontSize: "calc(1em * var(--heading-scale))",
+        paddingBottom: "0.25em",
+        borderBottomWidth: "var(--resume-border-width)",
+        borderBottomStyle: "var(--resume-border-style)" as any,
+        borderBottomColor: "currentColor",
       }}
     >
       {title}
@@ -301,15 +325,22 @@ const ContactSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
 
   return (
     <div>
-      <SectionTitle title="CONTACT" colorHex={colorHex} />
-      <div className="space-y-3">
+      <SectionTitle title="Contact" colorHex={colorHex} />
+      <div className="space-y-3" data-resume-personal-details>
         {phone && (
           <div className="flex items-start gap-3">
             <Phone
               size={14}
               style={{ color: colorHex, flexShrink: 0, marginTop: "2px" }}
             />
-            <span className="text-xs text-gray-600">{phone}</span>
+            <span
+              className="text-xs"
+              style={{
+                color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              }}
+            >
+              {phone}
+            </span>
           </div>
         )}
         {email && (
@@ -318,7 +349,14 @@ const ContactSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
               size={14}
               style={{ color: colorHex, flexShrink: 0, marginTop: "2px" }}
             />
-            <span className="break-all text-xs text-gray-600">{email}</span>
+            <span
+              className="break-all text-xs"
+              style={{
+                color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              }}
+            >
+              {email}
+            </span>
           </div>
         )}
         {portfolioLink && (
@@ -329,7 +367,10 @@ const ContactSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
             />
             <a
               href={portfolioLink}
-              className="break-all text-xs text-gray-600 hover:underline"
+              className="break-all text-xs hover:underline"
+              style={{
+                color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              }}
             >
               {portfolioLink.replace(/^https?:\/\/(www\.)?/, "")}
             </a>
@@ -341,7 +382,12 @@ const ContactSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
               size={14}
               style={{ color: colorHex, flexShrink: 0, marginTop: "2px" }}
             />
-            <span className="text-xs text-gray-600">
+            <span
+              className="text-xs"
+              style={{
+                color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              }}
+            >
               {[city, country].filter(Boolean).join(", ")}
             </span>
           </div>
@@ -356,7 +402,10 @@ const ContactSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
               href={link}
               target="_blank"
               rel="noreferrer"
-              className="break-all text-xs text-gray-600 hover:underline"
+              className="break-all text-xs hover:underline"
+              style={{
+                color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              }}
             >
               {link.replace(/^https?:\/\/(www\.)?/, "")}
             </a>
@@ -373,10 +422,16 @@ const SkillsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
 
   return (
     <div>
-      <SectionTitle title="SKILLS" colorHex={colorHex} />
+      <SectionTitle title="Skills" colorHex={colorHex} />
       <ul className="space-y-2">
         {skills.map((skill, index) => (
-          <li key={index} className="relative pl-4 text-xs text-gray-600">
+          <li
+            key={index}
+            className="relative pl-4 text-xs"
+            style={{
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
+            }}
+          >
             <span
               className="absolute left-0 top-0.5 text-[8px]"
               style={{ color: colorHex }}
@@ -385,7 +440,11 @@ const SkillsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
             </span>
             <span className="font-medium">{skill.title}</span>
             {skill.skillName && skill.skillName.length > 0 && (
-              <span className="text-gray-500">
+              <span
+                style={{
+                  color: "color-mix(in srgb, var(--text) 55%, transparent)",
+                }}
+              >
                 {" "}
                 - {skill.skillName.join(", ")}
               </span>
@@ -403,37 +462,79 @@ const EducationSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
 
   return (
     <div>
-      <SectionTitle title="EDUCATION" colorHex={colorHex} />
+      <SectionTitle title="Education" colorHex={colorHex} />
       <div className="space-y-4">
         {educations.map((edu, index) => (
           <div key={index} className="break-inside-avoid">
-            <p className="mb-1 text-xs text-gray-600">
+            <p
+              className="mb-1 text-xs"
+              style={{
+                color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              }}
+            >
               {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
               {edu.endDate ? formatDate(edu.endDate, "yyyy") : "Present"}
             </p>
             <div className="relative pl-4">
-              <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">
+              <span
+                className="absolute left-0 top-0.5 text-[8px]"
+                style={{
+                  color: "color-mix(in srgb, var(--text) 80%, transparent)",
+                }}
+              >
                 ■
               </span>
-              <p className="mb-0.5 text-sm font-bold text-gray-800">
+              <p
+                className="mb-0.5 text-sm font-bold"
+                style={{ color: "var(--text)" }}
+              >
                 {edu.degree?.toUpperCase()}
               </p>
-              <p className="text-xs text-gray-600">{edu.school}</p>
+              <p
+                className="text-xs"
+                style={{
+                  color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                }}
+              >
+                {edu.school}
+              </p>
               {edu.stream && (
-                <p className="text-xs text-gray-600">in {edu.stream}</p>
+                <p
+                  className="text-xs"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
+                >
+                  in {edu.stream}
+                </p>
               )}
               {edu.location && (
-                <p className="mt-0.5 text-[10px] italic text-gray-500">
+                <p
+                  className="mt-0.5 text-[10px] italic"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 55%, transparent)",
+                  }}
+                >
                   {edu.location}
                 </p>
               )}
               {edu.marks && (
-                <p className="mt-0.5 text-[10px] text-gray-600">
+                <p
+                  className="mt-0.5 text-[10px]"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
+                >
                   Grade: {edu.marks}
                 </p>
               )}
               {edu.description && (
-                <div className="mt-1 whitespace-pre-line text-[10px] text-gray-600">
+                <div
+                  className="mt-1 whitespace-pre-line text-[10px]"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
+                >
                   {edu.description}
                 </div>
               )}
@@ -454,16 +555,24 @@ const ExperienceSection: React.FC<SectionProps> = ({
 
   return (
     <div>
-      <SectionTitle title="EXPERIENCE" colorHex={colorHex} />
+      <SectionTitle title="Experience" colorHex={colorHex} />
       <div className="space-y-4">
         {workExperiences.map((exp, index) => (
           <div key={index} className="break-inside-avoid">
             <div className="relative pl-4">
-              <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">
+              <span
+                className="absolute left-0 top-0.5 text-[8px]"
+                style={{
+                  color: "color-mix(in srgb, var(--text) 80%, transparent)",
+                }}
+              >
                 ■
               </span>
               <div className="mb-2">
-                <p className="text-sm font-bold text-gray-800">
+                <p
+                  className="text-sm font-bold"
+                  style={{ color: "var(--text)" }}
+                >
                   <span data-resume-entry-title>
                     {exp.company?.toUpperCase()}
                   </span>
@@ -477,7 +586,12 @@ const ExperienceSection: React.FC<SectionProps> = ({
                     </span>
                   )}
                 </p>
-                <p className="text-xs text-gray-600">
+                <p
+                  className="text-xs"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
+                >
                   {exp.startDate && formatDate(exp.startDate, "yyyy")} -{" "}
                   {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
                 </p>
@@ -486,7 +600,10 @@ const ExperienceSection: React.FC<SectionProps> = ({
                 <p
                   data-resume-entry-subtitle
                   data-entry-subtitle-slot="newline"
-                  className="mb-1 text-xs font-semibold text-gray-600"
+                  className="mb-1 text-xs font-semibold"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 75%, transparent)",
+                  }}
                 >
                   {exp.position}
                 </p>
@@ -494,13 +611,21 @@ const ExperienceSection: React.FC<SectionProps> = ({
                 <p />
               )}
               {exp.jobLocation && (
-                <p className="mb-1 text-[10px] text-gray-500">
+                <p
+                  className="mb-1 text-[10px]"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 65%, transparent)",
+                  }}
+                >
                   {exp.jobLocation}
                 </p>
               )}
               {exp.description && (
                 <div
-                  className="prose prose-sm max-w-none text-xs leading-relaxed text-gray-600"
+                  className="prose prose-sm max-w-none text-xs leading-relaxed"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
                   dangerouslySetInnerHTML={{ __html: exp.description }}
                 />
               )}
@@ -518,16 +643,24 @@ const ProjectsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
 
   return (
     <div>
-      <SectionTitle title="PROJECTS" colorHex={colorHex} />
+      <SectionTitle title="Projects" colorHex={colorHex} />
       <div className="space-y-4">
         {projectWorks.map((project, index) => (
           <div key={index} className="break-inside-avoid">
             <div className="relative pl-4">
-              <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">
+              <span
+                className="absolute left-0 top-0.5 text-[8px]"
+                style={{
+                  color: "color-mix(in srgb, var(--text) 80%, transparent)",
+                }}
+              >
                 ■
               </span>
               <div className="mb-1">
-                <p className="text-sm font-bold text-gray-800">
+                <p
+                  className="text-sm font-bold"
+                  style={{ color: "var(--text)" }}
+                >
                   <span data-resume-entry-title>{project.title}</span>
                   {project.company && (
                     <span
@@ -539,7 +672,12 @@ const ProjectsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
                     </span>
                   )}
                 </p>
-                <p className="text-xs text-gray-600">
+                <p
+                  className="text-xs"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
+                >
                   {project.startDate && formatDate(project.startDate, "yyyy")} -{" "}
                   {project.endDate
                     ? formatDate(project.endDate, "yyyy")
@@ -550,14 +688,20 @@ const ProjectsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
                 <p
                   data-resume-entry-subtitle
                   data-entry-subtitle-slot="newline"
-                  className="mb-1 text-xs italic text-gray-600"
+                  className="mb-1 text-xs italic"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
                 >
                   {project.company}
                 </p>
               )}
               {project.description && (
                 <div
-                  className="text-xs leading-relaxed text-gray-600"
+                  className="text-xs leading-relaxed"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
                   dangerouslySetInnerHTML={{ __html: project.description }}
                 />
               )}
@@ -578,16 +722,32 @@ const CertificationsSection: React.FC<SectionProps> = ({
 
   return (
     <div>
-      <SectionTitle title="CERTIFICATIONS" colorHex={colorHex} />
+      <SectionTitle title="Certifications" colorHex={colorHex} />
       <ul className="space-y-2">
         {certifications.map((cert, index) => (
-          <li key={index} className="relative pl-4 text-xs text-gray-600">
-            <span className="absolute left-0 top-0.5 text-[8px] text-gray-800">
+          <li
+            key={index}
+            className="relative pl-4 text-xs"
+            style={{
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
+            }}
+          >
+            <span
+              className="absolute left-0 top-0.5 text-[8px]"
+              style={{
+                color: "color-mix(in srgb, var(--text) 80%, transparent)",
+              }}
+            >
               ■
             </span>
             <span className="block font-bold">{cert.title}</span>
             {cert.description && (
-              <span className="text-[10px] text-gray-500">
+              <span
+                className="text-[10px]"
+                style={{
+                  color: "color-mix(in srgb, var(--text) 65%, transparent)",
+                }}
+              >
                 {cert.description}
               </span>
             )}

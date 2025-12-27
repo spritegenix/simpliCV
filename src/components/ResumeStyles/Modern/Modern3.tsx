@@ -167,15 +167,20 @@ export default function Modern3({ resumeData, className }: ResumePreviewProps) {
         {/* Right Side  */}
         <div className="z-[1] col-span-8 space-y-3 p-6 pl-3">
           {/* Name And Job Title  */}
-          <div className="my-16 text-end" style={{ color: "var(--text)" }}>
+          <div
+            className="my-16 text-end"
+            style={{ color: "var(--text)" }}
+            data-resume-header
+          >
             <p
               style={{
                 fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
                 color: "var(--accent)",
+                fontWeight: "var(--name-font-weight)" as any,
               }}
             >
-              <span className="font-bold">{resumeData.firstName}</span>{" "}
-              <span className="font-semibold">{resumeData.lastName}</span>
+              <span>{resumeData.firstName}</span>{" "}
+              <span>{resumeData.lastName}</span>
             </p>
             <p
               className="font-medium"
@@ -366,7 +371,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         </div>
       )}
       {/* Social Links  */}
-      <div className="space-y-2">
+      <div className="space-y-2" data-resume-personal-details>
         {(city || country || socialLinks || portfolioLink) && (
           <Heading>Contact</Heading>
         )}
@@ -428,26 +433,21 @@ function Text({ children }: { children: string }) {
 function Heading({ children }: { children: string }) {
   return (
     <>
-      <div className="grid break-inside-avoid grid-cols-6 items-center">
+      <div className="break-inside-avoid">
         <h1
-          className="col-span-3 text-wrap font-semibold uppercase"
+          data-resume-section-heading
+          className="text-wrap font-semibold"
           style={{
             color: "var(--accent)",
             fontSize: "calc(1em * var(--heading-scale))",
+            paddingBottom: "0.25em",
+            borderBottomWidth: "var(--resume-border-width)",
+            borderBottomStyle: "var(--resume-border-style)" as any,
+            borderBottomColor: "currentColor",
           }}
         >
           {children}
         </h1>
-        <div className="col-span-3 flex items-center justify-end">
-          <div
-            className="h-0 w-10/12"
-            style={{
-              borderTopWidth: "var(--resume-border-width)",
-              borderStyle: "var(--resume-border-style)",
-              borderColor: "var(--accent)",
-            }}
-          />
-        </div>
       </div>
     </>
   );

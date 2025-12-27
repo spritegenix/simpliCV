@@ -33,19 +33,21 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
     >
       <div
         className={cn(
-          "grid h-full grid-cols-[2fr_1fr] gap-6",
+          "grid h-full grid-cols-[1fr_2fr] gap-6",
           !width && "invisible",
         )}
         style={{
           zoom: (1 / 794) * width,
+          direction: "ltr",
         }}
         id="resumePreviewContent"
       >
         {/* Main column */}
-        <div className="min-w-0 p-6 pr-0">
+        <div className="order-2 min-w-0 p-6 pl-0">
           {/* Name And Job Title  */}
           <section
             className="break-inside-avoid"
+            data-resume-header
             style={{
               marginBottom:
                 "calc(var(--section-gap) * var(--density-multiplier))",
@@ -65,7 +67,9 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     "calc(var(--base-font) * 1.9 * var(--heading-scale))",
                 }}
               >
-                <span className="font-bold">{resumeData.firstName}</span>{" "}
+                <span style={{ fontWeight: "var(--name-font-weight)" as any }}>
+                  {resumeData.firstName}
+                </span>{" "}
                 <span style={{ color: "var(--accent)" }}>
                   {resumeData.lastName}
                 </span>
@@ -260,13 +264,13 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
 
         {/* Sidebar column */}
         <div
-          className="min-w-0 space-y-[calc(var(--section-gap)*0.5)] p-6 pl-0"
+          className="order-1 min-w-0 space-y-[calc(var(--section-gap)*0.5)] p-6 pr-0"
           style={{
             backgroundColor:
               "color-mix(in srgb, var(--accent) 8%, transparent)",
-            borderLeftColor: "var(--accent)",
-            borderLeftStyle: "var(--resume-border-style)" as any,
-            borderLeftWidth: "var(--resume-border-width)",
+            borderRightColor: "var(--accent)",
+            borderRightStyle: "var(--resume-border-style)" as any,
+            borderRightWidth: "var(--resume-border-width)",
           }}
         >
           <PersonalInfoHeader resumeData={resumeData} />
@@ -448,6 +452,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
       <div>
         <section
           className="break-inside-avoid"
+          data-resume-personal-details
           style={{
             marginBottom:
               "calc(var(--section-gap) * var(--density-multiplier))",
@@ -518,12 +523,21 @@ function Heading({ children }: { children: string }) {
   return (
     <>
       <div className="break-inside-avoid">
-        <h1 className="text-nowrap text-[1.2em] font-semibold uppercase text-[var(--accent)]">
+        <h1
+          data-resume-section-heading
+          className="text-nowrap text-[1.2em] font-semibold text-[var(--accent)]"
+          style={{
+            fontSize: "calc(1em * var(--heading-scale))",
+            paddingBottom: "0.25em",
+            borderBottomWidth: "var(--resume-border-width)",
+            borderBottomStyle: "var(--resume-border-style)" as any,
+            borderBottomColor: "currentColor",
+          }}
+        >
           <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
             {children}
           </span>
         </h1>
-        <div className="mb-2 mt-auto h-0 w-full border-[length:var(--resume-border-width)] [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
       </div>
     </>
   );

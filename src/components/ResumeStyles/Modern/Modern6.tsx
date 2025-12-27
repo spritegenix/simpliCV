@@ -40,7 +40,13 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
         }}
       >
         {/* HEADER */}
-        <div className="py-0.20 relative mb-8 flex items-center rounded-md bg-[#E5E5E5] px-6">
+        <div
+          data-resume-header
+          className="py-0.20 relative mb-8 flex items-center rounded-md px-6"
+          style={{
+            backgroundColor: "color-mix(in srgb, var(--text) 10%, transparent)",
+          }}
+        >
           {/* Left Diamond Photo */}
           <div className="relative -ml-4 h-[160px] w-[160px]">
             {/* Outer diamond border */}
@@ -58,22 +64,29 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
           {/* Right Side Name + Role */}
           <div className="ml-16">
             <h1
-              className="font-bold text-slate-900 leading-tight"
+              className="leading-tight"
               style={{
                 fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                fontWeight: "var(--name-font-weight)",
+                color: "var(--text)",
               }}
             >
               {resumeData.firstName}{" "}
-              <span className="font-light text-slate-600">
+              <span
+                style={{
+                  color: "color-mix(in srgb, var(--text) 75%, transparent)",
+                }}
+              >
                 {resumeData.lastName}
               </span>
             </h1>
             {resumeData.jobTitle && (
               <p
-                className="mt-1 font-medium text-slate-500"
+                className="mt-1 font-medium"
                 style={{
                   fontSize:
                     "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                  color: "color-mix(in srgb, var(--text) 70%, transparent)",
                 }}
               >
                 {resumeData.jobTitle}
@@ -89,14 +102,19 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
             {/* Contact */}
             <div>
               <SectionTitle title="Contact Me" colorHex={accentColor} />
-              <ContactSection resumeData={resumeData} colorHex={accentColor} />
+              <div data-resume-personal-details>
+                <ContactSection
+                  resumeData={resumeData}
+                  colorHex={accentColor}
+                />
+              </div>
             </div>
 
             {/* Expertise */}
             {resumeData.skills && resumeData.skills.length > 0 && (
               <div>
                 <SectionTitle title="Expertise" colorHex={accentColor} />
-                <ul className="ml-1 list-none space-y-2 text-sm text-slate-700">
+                <ul className="ml-1 list-none space-y-2 text-sm">
                   {resumeData.skills.map((skill, idx) => (
                     <li key={idx}>
                       <span className="font-semibold">{skill.title}:</span>{" "}
@@ -118,7 +136,7 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                   dangerouslySetInnerHTML={{
                     __html: resumeData.summary || "",
                   }}
-                  className="richTextEditorStyle !m-0 whitespace-pre-line text-sm text-slate-700"
+                  className="richTextEditorStyle !m-0 whitespace-pre-line text-sm"
                 />
               </div>
             )}
@@ -134,7 +152,7 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                   dangerouslySetInnerHTML={{
                     __html: resumeData.others.description || "",
                   }}
-                  className="richTextEditorStyle whitespace-pre-line pt-1 text-sm text-slate-700"
+                  className="richTextEditorStyle whitespace-pre-line pt-1 text-sm"
                 />
               </div>
             )}
@@ -151,7 +169,10 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                     {resumeData.workExperiences.map((exp, idx) => (
                       <div key={idx} className="break-inside-avoid">
                         <div className="mb-1 flex items-baseline justify-between">
-                          <h4 className="text-lg font-bold uppercase text-slate-800">
+                          <h4
+                            className="text-lg font-bold"
+                            style={{ color: "var(--text)" }}
+                          >
                             <span data-resume-entry-title>{exp.position}</span>
                             {exp.company && (
                               <span
@@ -163,7 +184,13 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                               </span>
                             )}
                           </h4>
-                          <span className="text-sm font-semibold text-slate-500">
+                          <span
+                            className="text-sm font-semibold"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 65%, transparent)",
+                            }}
+                          >
                             {exp.startDate &&
                               safeFormatDate(exp.startDate, "yyyy")}{" "}
                             -{" "}
@@ -172,7 +199,13 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                               : "Present"}
                           </span>
                         </div>
-                        <div className="flex justify-between text-sm text-slate-600">
+                        <div
+                          className="flex justify-between text-sm"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--text) 70%, transparent)",
+                          }}
+                        >
                           {exp.company ? (
                             <span
                               data-resume-entry-subtitle
@@ -206,8 +239,14 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                 <div className="space-y-4">
                   {resumeData.projectWorks.map((proj, idx) => (
                     <div key={idx}>
-                      <div className="flex justify-between text-sm text-slate-700">
-                        <span className="font-semibold">
+                      <div className="flex justify-between text-sm">
+                        <span
+                          className="font-semibold"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--text) 75%, transparent)",
+                          }}
+                        >
                           {proj.startDate &&
                             safeFormatDate(proj.startDate, "yyyy")}{" "}
                           -{" "}
@@ -215,7 +254,10 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                             ? safeFormatDate(proj.endDate, "yyyy")
                             : "Present"}
                         </span>
-                        <span className="font-semibold text-slate-800">
+                        <span
+                          className="font-semibold"
+                          style={{ color: "var(--text)" }}
+                        >
                           <span data-resume-entry-title>{proj.title}</span>
                           {proj.company && (
                             <span
@@ -228,7 +270,13 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                           )}
                         </span>
                       </div>
-                      <div className="flex justify-between text-sm text-slate-600">
+                      <div
+                        className="flex justify-between text-sm"
+                        style={{
+                          color:
+                            "color-mix(in srgb, var(--text) 70%, transparent)",
+                        }}
+                      >
                         {proj.company ? (
                           <span
                             data-resume-entry-subtitle
@@ -237,9 +285,7 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                           >
                             {proj.company}
                           </span>
-                        ) : (
-                          <span />
-                        )}
+                        ) : null}
                         {proj.description && (
                           <span
                             className="max-w-[60%] text-justify leading-snug"
@@ -250,7 +296,13 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                         )}
                       </div>
                       {proj.links && proj.links.length > 0 && (
-                        <div className="mt-1 text-xs text-slate-500">
+                        <div
+                          className="mt-1 text-xs"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--text) 65%, transparent)",
+                          }}
+                        >
                           {proj.links.map((link, i) => (
                             <a
                               key={i}
@@ -278,10 +330,19 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                   {resumeData.educations.map((edu, idx) => (
                     <div key={idx} className="break-inside-avoid">
                       <div className="mb-1 flex items-baseline justify-between">
-                        <h4 className="text-lg font-bold uppercase text-slate-800">
+                        <h4
+                          className="text-lg font-bold"
+                          style={{ color: "var(--text)" }}
+                        >
                           {edu.degree}
                         </h4>
-                        <span className="text-sm font-semibold text-slate-500">
+                        <span
+                          className="text-sm font-semibold"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--text) 65%, transparent)",
+                          }}
+                        >
                           {edu.startDate &&
                             safeFormatDate(edu.startDate, "yyyy")}{" "}
                           -{" "}
@@ -289,17 +350,30 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                             ? safeFormatDate(edu.endDate, "yyyy")
                             : "Present"}
                         </span>
-                        <span className="font-semibold text-slate-800">
+                        <span
+                          className="font-semibold"
+                          style={{ color: "var(--text)" }}
+                        >
                           {edu.degree}
                         </span>
                       </div>
-                      <div className="text-sm font-medium text-slate-600">
+                      <div
+                        className="text-sm font-medium"
+                        style={{
+                          color:
+                            "color-mix(in srgb, var(--text) 70%, transparent)",
+                        }}
+                      >
                         {edu.school}
                         {edu.marks && ` | ${edu.marks}`}
                       </div>
                       {edu.description && (
                         <div
-                          className="richTextEditorStyle mt-1 text-sm leading-snug text-slate-600"
+                          className="richTextEditorStyle mt-1 text-sm leading-snug"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--text) 70%, transparent)",
+                          }}
                           dangerouslySetInnerHTML={{
                             __html: edu.description,
                           }}
@@ -316,18 +390,27 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
               resumeData.certifications.length > 0 && (
                 <div className="pt-4">
                   <SectionTitle title="Certificates" colorHex={accentColor} />
-                  <div className="flex flex-wrap gap-3 text-[0.9rem] text-slate-700">
+                  <div className="flex flex-wrap gap-3 text-[0.9rem]">
                     {resumeData.certifications.map((cert, idx) => (
                       <div
                         key={idx}
                         className="min-w-[45%] flex-1 break-words"
                         style={{ wordBreak: "break-word" }}
                       >
-                        <p className="font-semibold text-slate-900">
+                        <p
+                          className="font-semibold"
+                          style={{ color: "var(--text)" }}
+                        >
                           {cert.title}
                         </p>
                         {cert.description && (
-                          <p className="leading-tight text-slate-600">
+                          <p
+                            className="leading-tight"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 70%, transparent)",
+                            }}
+                          >
                             {cert.description}
                           </p>
                         )}
@@ -336,7 +419,8 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                             href={cert.link}
                             target="_blank"
                             rel="noreferrer"
-                            className="break-all text-xs text-blue-600 hover:underline"
+                            className="break-all text-xs hover:underline"
+                            style={{ color: "var(--accent)" }}
                           >
                             {cert.link.replace(/^https?:\/\/(www\.)?/, "")}
                           </a>
@@ -405,7 +489,8 @@ const SectionTitle = ({
   colorHex: string;
 }) => (
   <div
-    className="mb-3 border-b-[2px] pb-1 text-[1rem] font-bold uppercase tracking-wide"
+    data-resume-section-heading
+    className="mb-3 border-b-[2px] pb-1 text-[1rem] font-bold tracking-wide"
     style={{
       color: colorHex,
       borderColor: "color-mix(in srgb, var(--text) 30%, transparent)",
@@ -437,7 +522,10 @@ const ContactSection = ({
     text: string;
     href?: string;
   }) => (
-    <div className="flex items-center gap-3 text-sm text-slate-700">
+    <div
+      className="flex items-center gap-3 text-sm"
+      style={{ color: "color-mix(in srgb, var(--text) 75%, transparent)" }}
+    >
       <span className="text-[16px]" style={{ color: colorHex }}>
         {icon}
       </span>
