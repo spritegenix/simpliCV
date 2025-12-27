@@ -461,7 +461,8 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
               className="font-medium"
               style={{
                 color: colorHex,
-                fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
               }}
             >
               {jobTitle}
@@ -560,6 +561,11 @@ export function hexToRgbaPercent(
   hex: string = "#fff",
   alphaPercent: number = 100,
 ): string {
+  // If it's a CSS variable, return it as is with opacity
+  if (hex?.startsWith("var(")) {
+    return hex;
+  }
+
   // Remove "#" if present
   hex = hex.replace(/^#/, "");
 
@@ -572,7 +578,8 @@ export function hexToRgbaPercent(
   }
 
   if (hex.length !== 6) {
-    throw new Error("Invalid hex color.");
+    console.warn(`Invalid hex color: ${hex}. Using default #fff`);
+    hex = "ffffff";
   }
 
   const r: number = parseInt(hex.substring(0, 2), 16);

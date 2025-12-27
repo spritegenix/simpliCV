@@ -42,11 +42,11 @@ export function getOngoingLabel(
 export function fileReplacer(key: unknown, value: unknown) {
   return value instanceof File
     ? {
-      name: value.name,
-      size: value.size,
-      type: value.type,
-      lastModified: value.lastModified,
-    }
+        name: value.name,
+        size: value.size,
+        type: value.type,
+        lastModified: value.lastModified,
+      }
     : value;
 }
 
@@ -71,7 +71,9 @@ export function fileReplacer(key: unknown, value: unknown) {
 //   payload.photo = undefined; // no need to update it
 // }
 
-export function mapToResumeValues(data: ResumeServerData): ResumeValues {
+export function mapToResumeValues(
+  data: ResumeServerData,
+): ResumeValues & { design?: any } {
   return {
     id: data.id,
     title: data.title || undefined,
@@ -125,13 +127,14 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
     })),
     others: data.others
       ? {
-        title: data.others.title || undefined,
-        description: data.others.description || undefined,
-      }
+          title: data.others.title || undefined,
+          description: data.others.description || undefined,
+        }
       : undefined,
     borderStyle: data.borderStyle,
     colorHex: data.colorHex,
     baseFontSize: data.baseFontSize,
     summary: data.summary || undefined,
+    design: (data as any).design || undefined,
   };
 }
