@@ -8,8 +8,15 @@ export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json();
     if (!url) {
-      return NextResponse.json({ error: "Missing URL parameter" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing URL parameter" },
+        { status: 400 },
+      );
     }
+
+    // Add print=true parameter to render in print-friendly mode
+    const printUrl = new URL(url);
+    printUrl.searchParams.set("print", "true");
 
     const browser = await chromium.launch({
       headless: true,
@@ -19,10 +26,10 @@ export async function POST(req: NextRequest) {
     const page = await browser.newPage();
 
     // Wait for network to be idle to ensure all content loads
-    await page.goto(url, { waitUntil: "networkidle" });
+    await page.goto(printUrl.toString(), { waitUntil: "networkidle" });
 
     // Wait for the resume content to be visible
-    await page.waitForSelector('#resumePreviewContent', { timeout: 30000 });
+    await page.waitForSelector("#resumePreviewContent", { timeout: 30000 });
 
     // Additional wait for fonts and dynamic content to load
     await page.waitForTimeout(800);
@@ -48,6 +55,9 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("PDF generation error:", error);
-    return NextResponse.json({ message: "Error generating PDF" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error generating PDF" },
+      { status: 500 },
+    );
   }
 }

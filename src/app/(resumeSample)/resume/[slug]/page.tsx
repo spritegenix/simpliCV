@@ -20,6 +20,7 @@ export default async function FullScreenResumePreview({
 }: Props) {
   const searchParam = await searchParams;
   const currentStyleId = searchParam.styleId || DEFAULT_STYLE_ID;
+  const isPrintMode = searchParam.print === "true";
   const resumeId = (await params).slug;
   const resumeToEdit = resumeId
     ? await prisma.resume.findUnique({
@@ -47,6 +48,7 @@ export default async function FullScreenResumePreview({
           resumeData={resumeData}
           styleId={currentStyleId.toString()}
           className="max-w-3xl" // Slightly wider container for full screen
+          printMode={isPrintMode}
         />
       ) : (
         <div className="text-center">Incorrect URL</div>

@@ -11,6 +11,7 @@ interface PaginatedResumePreviewProps {
   styleId: string;
   className?: string;
   onPageClick?: () => void;
+  printMode?: boolean;
 }
 
 export default function PaginatedResumePreview({
@@ -18,6 +19,7 @@ export default function PaginatedResumePreview({
   styleId,
   className,
   onPageClick,
+  printMode = false,
 }: PaginatedResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
@@ -53,6 +55,19 @@ export default function PaginatedResumePreview({
 
   if (!ResumeStylePreview) {
     return null;
+  }
+
+  // Print mode: render content once without pagination wrapper
+  if (printMode) {
+    return (
+      <div
+        className={cn("w-full max-w-2xl bg-white", className)}
+        data-resume-preview="print"
+        ref={containerRef}
+      >
+        <ResumeStylePreview resumeData={resumeData} className="print-resume" />
+      </div>
+    );
   }
 
   return (
