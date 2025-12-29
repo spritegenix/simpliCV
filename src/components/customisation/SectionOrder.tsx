@@ -21,14 +21,16 @@ import { GripVertical } from "lucide-react";
 interface SectionOrderProps {
   sectionOrder: { key: string; title: string }[];
   setSectionOrder: (sections: { key: string; title: string }[]) => void;
+  styleId?: string;
 }
 
 interface SortableItemProps {
   id: string;
   title: string;
+  isDisabled?: boolean;
 }
 
-function SortableItem({ id, title }: SortableItemProps) {
+function SortableItem({ id, title, isDisabled }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -36,7 +38,7 @@ function SortableItem({ id, title }: SortableItemProps) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id, disabled: isDisabled });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -53,9 +55,15 @@ function SortableItem({ id, title }: SortableItemProps) {
       <div
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing"
+        className={
+          isDisabled
+            ? "cursor-not-allowed"
+            : "cursor-grab active:cursor-grabbing"
+        }
       >
-        <GripVertical className="h-5 w-5 text-muted-foreground" />
+        <GripVertical
+          className={`h-5 w-5 ${isDisabled ? "text-muted-foreground/30" : "text-muted-foreground"}`}
+        />
       </div>
       <div className="flex flex-1 items-center gap-2">
         <div className="flex h-6 w-6 items-center justify-center rounded bg-muted">
@@ -63,7 +71,11 @@ function SortableItem({ id, title }: SortableItemProps) {
             {title.substring(0, 2).toUpperCase()}
           </span>
         </div>
-        <span className="text-sm font-medium">{title}</span>
+        <span
+          className={`text-sm font-medium ${isDisabled ? "text-muted-foreground/50" : ""}`}
+        >
+          {title}
+        </span>
       </div>
     </div>
   );
@@ -72,7 +84,11 @@ function SortableItem({ id, title }: SortableItemProps) {
 export default function SectionOrder({
   sectionOrder,
   setSectionOrder,
+  styleId,
 }: SectionOrderProps) {
+  // Templates that support section ordering
+  const supportedTemplates = ["modern2", "modern5"];
+  const isDisabled = !styleId || !supportedTemplates.includes(styleId);
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -81,6 +97,8 @@ export default function SectionOrder({
   );
 
   function handleDragEnd(event: DragEndEvent) {
+    if (isDisabled) return; // Prevent reordering for disabled templates
+
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
@@ -95,7 +113,7 @@ export default function SectionOrder({
   }
 
   return (
-    <Card>
+    <Card className={isDisabled ? "cursor-not-allowed opacity-50" : ""}>
       <CardHeader>
         <CardTitle className="text-xl font-semibold">
           Change Section Order
@@ -117,6 +135,7 @@ export default function SectionOrder({
                   key={section.key}
                   id={section.key}
                   title={section.title}
+                  isDisabled={isDisabled}
                 />
               ))}
             </div>

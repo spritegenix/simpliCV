@@ -80,10 +80,10 @@ export default function ResumePreviewSection({
           }
         />
         <FullScreenPreviewButton
-          href={`/resume/${resumeData.content.id}?&styleId=${currentStyleId}`}
+          href={`/resume/${resumeData.content.id}?styleId=${currentStyleId}`}
         />
         <DownloadButton
-          url={`${env.NEXT_PUBLIC_BASE_URL}/resume/${resumeData.content.id}?&styleId=${currentStyleId}`}
+          url={`${env.NEXT_PUBLIC_BASE_URL}/resume/${resumeData.content.id}?styleId=${currentStyleId}`}
         />
         <ShareButton resumeData={resumeData} />
       </div>

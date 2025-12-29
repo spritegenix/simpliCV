@@ -42,12 +42,9 @@ export default function PersonalDetails({
     styleId === "ats8" ||
     styleId === "ats10" ||
     styleId === "ats14" ||
-    styleId === "ats15";
-  const isCompactDisabled =
-    styleId === "ats4" ||
-    styleId === "ats5" ||
-    styleId === "ats6" ||
-    styleId === "ats7";
+    styleId === "ats15" ||
+    styleId === "modern5";
+  const isCompactDisabled = true; // Always disabled
   const isLeftAlignDisabled = styleId === "ats14" || styleId === "ats15";
   const isCenterAlignDisabled = styleId === "ats5" || styleId === "ats10";
   const isRightAlignDisabled =
@@ -56,6 +53,8 @@ export default function PersonalDetails({
     styleId === "ats14" ||
     styleId === "ats15";
   const isCompactArrangementDisabled = styleId === "ats5";
+  const isBulletDisabled = true; // Always disabled
+  const isBarDisabled = true; // Always disabled
 
   return (
     <Card>
@@ -203,21 +202,29 @@ export default function PersonalDetails({
               Icon
             </button>
             <button
-              onClick={() => setDetailsArrangement("bullet")}
+              onClick={() =>
+                !isBulletDisabled && setDetailsArrangement("bullet")
+              }
+              disabled={isBulletDisabled}
               className={`flex items-center justify-center gap-1 rounded-lg border-2 px-4 py-2 text-sm transition-all ${
-                detailsArrangement === "bullet"
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-muted hover:border-primary/50"
+                isBulletDisabled
+                  ? "cursor-not-allowed border-muted bg-muted/20 opacity-50"
+                  : detailsArrangement === "bullet"
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-muted hover:border-primary/50"
               }`}
             >
               • Bullet
             </button>
             <button
-              onClick={() => setDetailsArrangement("bar")}
+              onClick={() => !isBarDisabled && setDetailsArrangement("bar")}
+              disabled={isBarDisabled}
               className={`flex items-center justify-center gap-1 rounded-lg border-2 px-4 py-2 text-sm transition-all ${
-                detailsArrangement === "bar"
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-muted hover:border-primary/50"
+                isBarDisabled
+                  ? "cursor-not-allowed border-muted bg-muted/20 opacity-50"
+                  : detailsArrangement === "bar"
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-muted hover:border-primary/50"
               }`}
             >
               | Bar

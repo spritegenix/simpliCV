@@ -10,9 +10,14 @@ import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
+  dateFormat?: string;
 }
 
-export default function Modern6({ resumeData, className }: ResumePreviewProps) {
+export default function Modern6({
+  resumeData,
+  className,
+  dateFormat = "MMM yyyy",
+}: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
   const accentColor = "var(--accent)";
@@ -32,7 +37,7 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
       <div
         id="resumePreviewContent"
         className={cn(
-          "relative h-full origin-top scale-[0.85] transform overflow-visible px-10 pb-2",
+          "relative h-full origin-top scale-[0.85] transform overflow-visible",
           !width && "invisible",
         )}
         style={{
@@ -42,13 +47,13 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
         {/* HEADER */}
         <div
           data-resume-header
-          className="py-0.20 relative mb-8 flex items-center rounded-md px-6"
+          className="py-0.20 relative mb-8 flex items-center rounded-md px-2"
           style={{
             backgroundColor: "color-mix(in srgb, var(--text) 10%, transparent)",
           }}
         >
           {/* Left Diamond Photo */}
-          <div className="relative -ml-4 h-[160px] w-[160px]">
+          <div className="relative h-[160px] w-[160px]">
             {/* Outer diamond border */}
             <div className="absolute inset-0 flex -rotate-45 items-center justify-center rounded-md bg-white">
               {/* Inner diamond */}
@@ -62,11 +67,11 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
           </div>
 
           {/* Right Side Name + Role */}
-          <div className="ml-16">
+          <div className="ml-20">
             <h1
               className="leading-tight"
               style={{
-                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                fontSize: "var(--name-font-size)",
                 fontWeight: "var(--name-font-weight)",
                 color: "var(--text)",
               }}
@@ -84,8 +89,7 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
               <p
                 className="mt-1 font-medium"
                 style={{
-                  fontSize:
-                    "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                  fontSize: "calc(var(--name-font-size) * 0.71)",
                   color: "color-mix(in srgb, var(--text) 70%, transparent)",
                 }}
               >
@@ -96,9 +100,9 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
         </div>
 
         {/* TWO COLUMN LAYOUT */}
-        <div className="grid h-full grid-cols-[40%_1fr] gap-10">
+        <div className="grid h-full grid-cols-[40%_1fr] gap-4">
           {/* LEFT COLUMN */}
-          <div className="space-y-8">
+          <div className="space-y-4">
             {/* Contact */}
             <div>
               <SectionTitle title="Contact Me" colorHex={accentColor} />
@@ -159,7 +163,7 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="space-y-8">
+          <div className="space-y-4">
             {/* Experience */}
             {resumeData.workExperiences &&
               resumeData.workExperiences.length > 0 && (
@@ -192,10 +196,10 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                             }}
                           >
                             {exp.startDate &&
-                              safeFormatDate(exp.startDate, "yyyy")}{" "}
+                              safeFormatDate(exp.startDate, dateFormat)}{" "}
                             -{" "}
                             {exp.endDate
-                              ? safeFormatDate(exp.endDate, "yyyy")
+                              ? safeFormatDate(exp.endDate, dateFormat)
                               : "Present"}
                           </span>
                         </div>
@@ -248,10 +252,10 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                           }}
                         >
                           {proj.startDate &&
-                            safeFormatDate(proj.startDate, "yyyy")}{" "}
+                            safeFormatDate(proj.startDate, dateFormat)}{" "}
                           -{" "}
                           {proj.endDate
-                            ? safeFormatDate(proj.endDate, "yyyy")
+                            ? safeFormatDate(proj.endDate, dateFormat)
                             : "Present"}
                         </span>
                         <span
@@ -344,10 +348,10 @@ export default function Modern6({ resumeData, className }: ResumePreviewProps) {
                           }}
                         >
                           {edu.startDate &&
-                            safeFormatDate(edu.startDate, "yyyy")}{" "}
+                            safeFormatDate(edu.startDate, dateFormat)}{" "}
                           -{" "}
                           {edu.endDate
-                            ? safeFormatDate(edu.endDate, "yyyy")
+                            ? safeFormatDate(edu.endDate, dateFormat)
                             : "Present"}
                         </span>
                         <span

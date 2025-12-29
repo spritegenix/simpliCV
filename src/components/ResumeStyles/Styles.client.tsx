@@ -48,6 +48,7 @@ interface LegacyResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
   sectionOrder?: string[];
+  dateFormat?: string;
 }
 
 function fontFamilyToCss(
@@ -74,6 +75,7 @@ function adaptLegacyTemplateComponent(
     const isAts = styleId.startsWith("ats");
     const isModern = styleId.startsWith("modern");
     const resumeScope = deriveResumeScopeFromStyleId(styleId);
+    const isModern4 = styleId === "modern4";
 
     // Hide photo for ATS templates that don't support images
     const photoRestrictedAtsTemplates = [
@@ -118,15 +120,21 @@ function adaptLegacyTemplateComponent(
       (selectedFontLabel && customFontFamilyByLabel[selectedFontLabel]) ||
       fontFamilyToCss(resumeData.design.typography.fontFamily);
 
-    const headerPosition =
+    const rawHeaderPosition =
       resumeData.design.customization?.layout?.headerPosition ?? "top";
+    const headerPosition: "top" | "left" | "right" = isModern4
+      ? "left"
+      : rawHeaderPosition;
     const detailsAlign =
       resumeData.design.customization?.personalDetails?.detailsAlign ??
       "center";
     const rawDetailsLayout = resumeData.design.customization?.personalDetails
       ?.detailsLayout as string | undefined;
-    const detailsLayout =
-      rawDetailsLayout === "compact" ? "compact" : "stacked";
+    const detailsLayout: "stacked" | "compact" = isModern4
+      ? "stacked"
+      : rawDetailsLayout === "compact"
+        ? "compact"
+        : "stacked";
     const detailsArrangement =
       resumeData.design.customization?.personalDetails?.detailsArrangement ??
       "icon";
@@ -135,8 +143,12 @@ function adaptLegacyTemplateComponent(
 
     const rawSectionHeadingStyle =
       resumeData.design.customization?.sectionHeadings?.headingStyle ?? 1;
-    const sectionHeadingStyle =
+    const normalizedSectionHeadingStyle =
       rawSectionHeadingStyle === 6 ? 5 : rawSectionHeadingStyle;
+    const sectionHeadingStyle =
+      isModern4 && normalizedSectionHeadingStyle === 5
+        ? 1
+        : normalizedSectionHeadingStyle;
     const sectionHeadingCapitalization =
       resumeData.design.customization?.sectionHeadings?.headingCapitalization ??
       "uppercase";
@@ -163,6 +175,8 @@ function adaptLegacyTemplateComponent(
 
     const lineHeight =
       resumeData.design.customization?.spacing?.lineHeight ?? 1.3;
+
+    const dateFormat = resumeData.design.formatting?.dateFormat ?? "MMM yyyy";
 
     const headingScale = resumeData.design.typography.headingScale ?? 1.15;
     const borderWidth = resumeData.design.decorations.borderWidth ?? 1;
@@ -233,32 +247,31 @@ function adaptLegacyTemplateComponent(
           `}`
         : "";
 
-    // ATS-specific font sizing standards
-    const atsTypographyCss = isAts
-      ? `\n` +
-        `/* ATS Font Size Standards */\n` +
-        // Name: respects name size and name bold settings
-        `[data-resume-scope="${resumeScope}"] [data-resume-header] > p:first-child,\n` +
-        `[data-resume-scope="${resumeScope}"] [data-resume-header] > h1 {\n` +
-        `  font-size: calc(${nameFontSize} * var(--heading-scale)) !important;\n` +
-        `  font-weight: var(--name-font-weight) !important;\n` +
-        `}\n` +
-        // Job Title/Role: respects name size but NOT name bold (always medium weight)
-        `[data-resume-scope="${resumeScope}"] [data-resume-header] > p:nth-child(2),\n` +
-        `[data-resume-scope="${resumeScope}"] [data-resume-header] > h2,\n` +
-        `[data-resume-scope="${resumeScope}"] [data-resume-header] p:has(+ [data-resume-personal-details]) {\n` +
-        `  font-size: calc(${nameFontSize} * 0.7 * var(--heading-scale)) !important;\n` +
-        `  font-weight: 500 !important;\n` +
-        `}\n` +
-        // Demographics: relative size, scales with base font
-        `[data-resume-scope="${resumeScope}"] [data-resume-personal-details],\n` +
-        `[data-resume-scope="${resumeScope}"] [data-resume-personal-details] * {\n` +
-        `  font-size: 0.85em !important; /* Scales with base font */\n` +
-        `  font-weight: 400 !important;\n` +
-        `}\n`
-      : "";
-
-
+    // ATS + Modern font sizing standards
+    const atsTypographyCss =
+      isAts || isModern
+        ? `\n` +
+          `/* ATS + Modern Font Size Standards */\n` +
+          // Name: respects name size and name bold settings
+          `[data-resume-scope="${resumeScope}"] [data-resume-header] > p:first-child,\n` +
+          `[data-resume-scope="${resumeScope}"] [data-resume-header] > h1 {\n` +
+          `  font-size: calc(${nameFontSize} * var(--heading-scale)) !important;\n` +
+          `  font-weight: var(--name-font-weight) !important;\n` +
+          `}\n` +
+          // Job Title/Role: respects name size but NOT name bold (always medium weight)
+          `[data-resume-scope="${resumeScope}"] [data-resume-header] > p:nth-child(2),\n` +
+          `[data-resume-scope="${resumeScope}"] [data-resume-header] > h2,\n` +
+          `[data-resume-scope="${resumeScope}"] [data-resume-header] p:has(+ [data-resume-personal-details]) {\n` +
+          `  font-size: calc(${nameFontSize} * 0.7 * var(--heading-scale)) !important;\n` +
+          `  font-weight: 500 !important;\n` +
+          `}\n` +
+          // Demographics: relative size, scales with base font
+          `[data-resume-scope="${resumeScope}"] [data-resume-personal-details],\n` +
+          `[data-resume-scope="${resumeScope}"] [data-resume-personal-details] * {\n` +
+          `  font-size: 0.85em !important; /* Scales with base font */\n` +
+          `  font-weight: 400 !important;\n` +
+          `}\n`
+        : "";
 
     const scopedPanelCss =
       `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-header-position=\"left\"] [data-resume-header] { text-align: left; }\n` +
@@ -398,23 +411,24 @@ function adaptLegacyTemplateComponent(
           `  background: transparent !important;\n` +
           `  box-shadow: none !important;\n` +
           `}\n` +
- +
-          // Default style (1): provide a consistent, customizable look for ATS templates
-          // without relying on template-hardcoded borders/lines.
-          (isAts
-            ? `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"1\"] [data-resume-section-heading] {\n` +
-              `  padding-bottom: 0.25em;\n` +
-              `}\n` +
-              `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"1\"] [data-resume-section-heading]::after {\n` +
-              `  content: \"\";\n` +
-              `  position: absolute;\n` +
-              `  left: 0;\n` +
-              `  right: 0;\n` +
-              `  bottom: 0;\n` +
-              `  border-bottom: calc(var(--resume-border-width) * 1) solid currentColor;\n` +
-              `  opacity: 0.5;\n` +
-              `}\n`
-            : "") +
+          +(
+            // Default style (1): provide a consistent, customizable look for ATS templates
+            // without relying on template-hardcoded borders/lines.
+            (isAts
+              ? `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"1\"] [data-resume-section-heading] {\n` +
+                `  padding-bottom: 0.25em;\n` +
+                `}\n` +
+                `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"1\"] [data-resume-section-heading]::after {\n` +
+                `  content: \"\";\n` +
+                `  position: absolute;\n` +
+                `  left: 0;\n` +
+                `  right: 0;\n` +
+                `  bottom: 0;\n` +
+                `  border-bottom: calc(var(--resume-border-width) * 1) solid currentColor;\n` +
+                `  opacity: 0.5;\n` +
+                `}\n`
+              : "")
+          ) +
           // Style decorations via pseudo-elements
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-style=\"2\"] [data-resume-section-heading] {\n` +
           `  padding-bottom: 0.25em;\n` +
@@ -950,6 +964,7 @@ function adaptLegacyTemplateComponent(
           resumeData={legacy}
           className={className}
           sectionOrder={sectionOrder}
+          dateFormat={dateFormat}
         />
       </div>
     );

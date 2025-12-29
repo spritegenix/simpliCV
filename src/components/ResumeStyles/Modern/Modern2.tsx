@@ -298,7 +298,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
   }, [photo]);
 
   return (
-    <div className="mb-2 grid grid-cols-2">
+    <div className="mb-2">
       <div className="flex h-max gap-6">
         {photoSrc && (
           <Image
@@ -306,7 +306,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             width={500}
             height={500}
             alt="Author photo"
-            className="aspect-square h-[100px] w-[100px] object-cover object-top"
+            className="aspect-square h-[180px] w-[180px] object-cover object-top"
             style={{
               borderRadius:
                 borderStyle === BorderStyles.SQUARE
@@ -318,7 +318,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
           />
         )}
         <div
-          className={`flex ${photoSrc ? "h-[100px]" : ""} flex-col justify-between`}
+          className={`flex ${photoSrc ? "h-[180px]" : ""} flex-col justify-between`}
         >
           <div className="my-auto" data-resume-header>
             <p
@@ -340,35 +340,35 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             >
               {jobTitle}
             </p>
+            {/* Demographics below role */}
+            <div className="mt-2" data-resume-personal-details>
+              {(city || country) && (
+                <p className="flex items-center gap-1">
+                  <span className="text-[var(--accent)]">
+                    <BiSolidMap />
+                  </span>
+                  {city}
+                  {city && country ? ", " : ""}
+                  {country}
+                </p>
+              )}
+              <ContactLinks text={phone} href={`tel:${phone}`} />
+              <ContactLinks text={email} href={`mailto:${email}`} />
+              {!!socialLinks &&
+                socialLinks.length > 0 &&
+                socialLinks.map((link, index) => (
+                  <ContactLinks
+                    key={index}
+                    text={link.split("://")?.[1]}
+                    href={link}
+                  />
+                ))}
+              {portfolioLink && (
+                <ContactLinks text={"Portfolio"} href={portfolioLink} />
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      {/* Social Links  */}
-      <div className="my-auto ml-auto" data-resume-personal-details>
-        {(city || country) && (
-          <p className="flex items-center gap-1">
-            <span className="text-[var(--accent)]">
-              <BiSolidMap />
-            </span>
-            {city}
-            {city && country ? ", " : ""}
-            {country}
-          </p>
-        )}
-        <ContactLinks text={phone} href={`tel:${phone}`} />
-        <ContactLinks text={email} href={`mailto:${email}`} />
-        {!!socialLinks &&
-          socialLinks.length > 0 &&
-          socialLinks.map((link, index) => (
-            <ContactLinks
-              key={index}
-              text={link.split("://")?.[1]}
-              href={link}
-            />
-          ))}
-        {portfolioLink && (
-          <ContactLinks text={"Portfolio"} href={portfolioLink} />
-        )}
       </div>
     </div>
   );
@@ -478,24 +478,20 @@ function Text({ children }: { children: string }) {
 
 function Heading({ children }: { children: string }) {
   return (
-    <>
-      <div className="!mb-1 flex break-inside-avoid gap-x-0.5">
-        <h1
-          data-resume-section-heading
-          className="text-nowrap text-[1.2em] font-bold tracking-[0.2em] text-[var(--accent)]"
-          style={{
-            fontSize: "calc(1em * var(--heading-scale))",
-            padding: "0.25em 0.5em",
-            backgroundColor:
-              "color-mix(in srgb, var(--accent) 16%, transparent)",
-            borderBottomWidth: "var(--resume-border-width)",
-            borderBottomStyle: "var(--resume-border-style)" as any,
-            borderBottomColor: "currentColor",
-          }}
-        >
-          {children}
-        </h1>
-      </div>
-    </>
+    <h1
+      data-resume-section-heading
+      className="!mb-1 w-full break-inside-avoid text-[1.2em] font-bold tracking-[0.2em] text-[var(--accent)]"
+      style={{
+        fontSize: "calc(1em * var(--heading-scale))",
+        padding: "0.25em 0.5em",
+        backgroundColor:
+          "color-mix(in srgb, var(--accent) 16%, transparent)",
+        borderBottomWidth: "var(--resume-border-width)",
+        borderBottomStyle: "var(--resume-border-style)" as any,
+        borderBottomColor: "currentColor",
+      }}
+    >
+      {children}
+    </h1>
   );
 }

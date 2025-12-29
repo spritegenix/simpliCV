@@ -274,9 +274,9 @@ export default function CustomizationPanel({
     const nextIter = nextEligibleKeys[Symbol.iterator]();
 
     const normalized = normalizeSectionOrder(
-      resumeData.design.customization?.sectionOrder
+      resumeData.design.customization?.sectionOrder,
     );
-    
+
     const merged = normalized.map((key) => {
       if (!sectionHasContent(key, resumeData.content)) return key;
       const next = nextIter.next();
@@ -296,15 +296,23 @@ export default function CustomizationPanel({
       },
     });
 
-  const headerPosition: "top" | "left" | "right" =
+  const isModern4 = resumeData.styleId === "modern4";
+
+  const rawHeaderPosition: "top" | "left" | "right" =
     resumeData.design.customization?.layout?.headerPosition ?? "top";
-  const setHeaderPosition = (value: "top" | "left" | "right") =>
+  const headerPosition: "top" | "left" | "right" =
+    isModern4 && (rawHeaderPosition === "top" || rawHeaderPosition === "right")
+      ? "left"
+      : rawHeaderPosition;
+  const setHeaderPosition = (value: "top" | "left" | "right") => {
+    if (isModern4 && (value === "top" || value === "right")) return;
     setCustomization({
       layout: {
         ...resumeData.design.customization?.layout,
         headerPosition: value,
       },
     });
+  };
 
   const lineHeight =
     resumeData.design.customization?.spacing?.lineHeight ?? 1.3;
@@ -326,15 +334,18 @@ export default function CustomizationPanel({
       },
     });
 
-  const headingStyle =
+  const rawHeadingStyle =
     resumeData.design.customization?.sectionHeadings?.headingStyle ?? 1;
-  const setHeadingStyle = (value: number) =>
+  const headingStyle = isModern4 && rawHeadingStyle === 5 ? 1 : rawHeadingStyle;
+  const setHeadingStyle = (value: number) => {
+    if (isModern4 && value === 5) return;
     setCustomization({
       sectionHeadings: {
         ...resumeData.design.customization?.sectionHeadings,
         headingStyle: value,
       },
     });
+  };
 
   const headingCapitalization: "capitalize" | "uppercase" =
     resumeData.design.customization?.sectionHeadings?.headingCapitalization ??
@@ -435,6 +446,9 @@ export default function CustomizationPanel({
   const isAts4 = resumeData.styleId === "ats4";
   const isAts6 = resumeData.styleId === "ats6";
   const isAts7 = resumeData.styleId === "ats7";
+  const isModern1 = resumeData.styleId === "modern1";
+  const isModern3 = resumeData.styleId === "modern3";
+  const isModern5 = resumeData.styleId === "modern5";
   const detailsLayout: "stacked" | "compact" = isAts1
     ? "compact"
     : isAts4
@@ -453,16 +467,30 @@ export default function CustomizationPanel({
                   ? "compact"
                   : isAts15
                     ? "compact"
-                    : rawDetailsLayout === "compact"
-                      ? "compact"
-                      : "stacked";
+                    : isModern1
+                      ? "stacked"
+                      : isModern3
+                        ? "stacked"
+                        : isModern5
+                          ? "compact"
+                          : isModern4
+                            ? "stacked"
+                            : rawDetailsLayout === "compact"
+                              ? "compact"
+                              : "stacked";
   const setDetailsLayout = (value: "stacked" | "compact") => {
     if (isAts1 && value === "stacked") return; // Prevent setting to stacked for ats1
-    if ((isAts4 || isAts5 || isAts6 || isAts7) && value === "compact") return; // Prevent setting to compact for ats4, ats5, ats6, and ats7
-    if (isAts8 && value === "stacked") return; // Prevent setting to stacked for ats8
-    if (isAts10 && value === "stacked") return; // Prevent setting to stacked for ats10
-    if (isAts14 && value === "stacked") return; // Prevent setting to stacked for ats14
-    if (isAts15 && value === "stacked") return; // Prevent setting to stacked for ats15
+    if (
+      (isAts4 || isAts5 || isAts6 || isAts7 || isModern1 || isModern3) &&
+      value === "compact"
+    )
+      return; // Prevent setting to compact for ats4, ats5, ats6, ats7, modern1, and modern3
+    if (
+      (isAts8 || isAts10 || isAts14 || isAts15 || isModern5) &&
+      value === "stacked"
+    )
+      return; // Prevent setting to stacked for ats8, ats10, ats14, ats15, and modern5
+    if (isModern4 && value === "compact") return; // Prevent compact for modern4
     setCustomization({
       personalDetails: {
         ...resumeData.design.customization?.personalDetails,
@@ -629,6 +657,7 @@ export default function CustomizationPanel({
         <SectionOrder
           sectionOrder={sectionOrder}
           setSectionOrder={setSectionOrder}
+          styleId={resumeData.styleId}
         />
       </PanelGroup>
     </div>

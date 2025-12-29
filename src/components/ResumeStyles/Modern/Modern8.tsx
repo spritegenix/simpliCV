@@ -163,7 +163,7 @@ const Header = ({
       <div>
         <h1
           style={{
-            fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            fontSize: "var(--name-font-size)",
             fontWeight: "var(--name-font-weight)",
             margin: 0,
           }}
@@ -173,7 +173,7 @@ const Header = ({
         {jobTitle && (
           <h2
             style={{
-              fontSize: "calc(var(--base-font) * 1.05 * var(--heading-scale))",
+              fontSize: "calc(var(--name-font-size) * 0.55)",
               color: "color-mix(in srgb, var(--text) 70%, transparent)",
               margin: "4px 0 0 0",
               fontWeight: 400,

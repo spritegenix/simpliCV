@@ -30,7 +30,11 @@ export default function SectionHeadings({
     styleId === "ats12" ||
     styleId === "ats13" ||
     styleId === "ats14" ||
-    styleId === "ats15";
+    styleId === "ats15" ||
+    styleId === "modern1" ||
+    styleId === "modern5";
+
+  const isModern4 = styleId === "modern4";
 
   return (
     <Card>
@@ -49,15 +53,20 @@ export default function SectionHeadings({
                 isAts2OrAts3OrAts5OrAts6OrAts9ToAts15 &&
                 (style === 4 || style === 5);
 
+              const isModern4Disabled = isModern4 && style === 5;
+              const isStyle5AlwaysDisabled = style === 5; // Always disable style 5
+              const isButtonDisabled =
+                isDisabled || isModern4Disabled || isStyle5AlwaysDisabled;
+
               return (
                 <button
                   key={style}
                   onClick={() => setHeadingStyle(style)}
-                  disabled={isDisabled}
+                  disabled={isButtonDisabled}
                   className={`flex h-12 items-center justify-center rounded-lg border-2 transition-all ${
                     headingStyle === style
                       ? "border-primary bg-primary/10"
-                      : isDisabled
+                      : isButtonDisabled
                         ? "cursor-not-allowed border-muted bg-muted/30 opacity-50"
                         : "border-muted hover:border-primary/50"
                   }`}

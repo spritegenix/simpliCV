@@ -27,7 +27,16 @@ export default function LayoutSection({
     styleId === "ats12" ||
     styleId === "ats13" ||
     styleId === "ats14" ||
-    styleId === "ats15";
+    styleId === "ats15" ||
+    styleId === "modern3" ||
+    styleId === "modern5";
+
+  const isModern4 = styleId === "modern4";
+  const isHeaderPositionFullyLocked =
+    isAts1OrAts2OrAts3OrAts5OrAts6OrAts9ToAts15;
+  const isHeaderTopDisabled = true; // Always disabled
+  const isHeaderLeftDisabled = isHeaderPositionFullyLocked;
+  const isHeaderRightDisabled = true; // Always disabled
 
   return (
     <Card>
@@ -40,11 +49,14 @@ export default function LayoutSection({
           <label className="text-sm font-medium">Header Position</label>
           <div className="grid grid-cols-3 gap-3">
             <button
-              onClick={() => setHeaderPosition("top")}
+              onClick={() => !isHeaderTopDisabled && setHeaderPosition("top")}
+              disabled={isHeaderTopDisabled}
               className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${
                 headerPosition === "top"
                   ? "border-primary bg-primary/10"
-                  : "border-muted hover:border-primary/50"
+                  : isHeaderTopDisabled
+                    ? "cursor-not-allowed border-muted bg-muted/30 opacity-50"
+                    : "border-muted hover:border-primary/50"
               }`}
             >
               <div className="flex h-12 w-full flex-col gap-1 rounded bg-muted/50 p-1">
@@ -55,11 +67,11 @@ export default function LayoutSection({
             </button>
             <button
               onClick={() => setHeaderPosition("left")}
-              disabled={isAts1OrAts2OrAts3OrAts5OrAts6OrAts9ToAts15}
+              disabled={isHeaderLeftDisabled}
               className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${
                 headerPosition === "left"
                   ? "border-primary bg-primary/10"
-                  : isAts1OrAts2OrAts3OrAts5OrAts6OrAts9ToAts15
+                  : isHeaderLeftDisabled
                     ? "cursor-not-allowed border-muted bg-muted/30 opacity-50"
                     : "border-muted hover:border-primary/50"
               }`}
@@ -71,12 +83,14 @@ export default function LayoutSection({
               <span className="text-xs font-medium">Left</span>
             </button>
             <button
-              onClick={() => setHeaderPosition("right")}
-              disabled={isAts1OrAts2OrAts3OrAts5OrAts6OrAts9ToAts15}
+              onClick={() =>
+                !isHeaderRightDisabled && setHeaderPosition("right")
+              }
+              disabled={isHeaderRightDisabled}
               className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${
                 headerPosition === "right"
                   ? "border-primary bg-primary/10"
-                  : isAts1OrAts2OrAts3OrAts5OrAts6OrAts9ToAts15
+                  : isHeaderRightDisabled
                     ? "cursor-not-allowed border-muted bg-muted/30 opacity-50"
                     : "border-muted hover:border-primary/50"
               }`}

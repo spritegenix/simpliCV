@@ -19,11 +19,13 @@ import { safeFormatDate } from "@/lib/utils";
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
+  dateFormat?: string;
 }
 
 export default function PurpleModern({
   resumeData,
   className = "",
+  dateFormat = "MMM yyyy",
 }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
@@ -238,10 +240,10 @@ export default function PurpleModern({
                             style={{ backgroundColor: primaryColor }}
                           >
                             {exp.startDate &&
-                              safeFormatDate(exp.startDate, "yyyy")}{" "}
+                              safeFormatDate(exp.startDate, dateFormat)}{" "}
                             -{" "}
                             {exp.endDate
-                              ? safeFormatDate(exp.endDate, "yyyy")
+                              ? safeFormatDate(exp.endDate, dateFormat)
                               : "Present"}
                           </span>
                         </div>
@@ -310,10 +312,10 @@ export default function PurpleModern({
                           }}
                         >
                           {edu.startDate &&
-                            safeFormatDate(edu.startDate, "yyyy")}{" "}
+                            safeFormatDate(edu.startDate, dateFormat)}{" "}
                           -{" "}
                           {edu.endDate
-                            ? safeFormatDate(edu.endDate, "yyyy")
+                            ? safeFormatDate(edu.endDate, dateFormat)
                             : "Present"}
                         </span>
                       </div>

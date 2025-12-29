@@ -7,7 +7,6 @@ import { safeFormatDate } from "@/lib/utils";
 import Image from "next/image";
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton";
 import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
-import { formatDate } from "date-fns";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -20,6 +19,7 @@ export default function MillieSmithResume({
 }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
+  const dateFormat = resumeData.dateFormat || "MMM yyyy";
 
   return (
     <div
@@ -52,7 +52,7 @@ export default function MillieSmithResume({
           <h1
             className="mb-1 font-light tracking-[0.5rem]"
             style={{
-              fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+              fontSize: "var(--name-font-size)",
               color: "color-mix(in srgb, var(--text) 70%, transparent)",
               fontWeight: "var(--name-font-weight)" as any,
             }}
@@ -65,8 +65,7 @@ export default function MillieSmithResume({
               className="font-normal tracking-[0.15rem]"
               style={{
                 color: "var(--accent)",
-                fontSize:
-                  "calc(var(--base-font) * 1.05 * var(--heading-scale))",
+                fontSize: "calc(var(--name-font-size) * 0.55)",
               }}
             >
               {resumeData.jobTitle.toUpperCase()}
@@ -459,6 +458,7 @@ const SkillsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
 const EducationSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
   const { educations } = resumeData;
   if (!educations || educations.length === 0) return null;
+  const dateFormat = resumeData.dateFormat || "MMM yyyy";
 
   return (
     <div>
@@ -472,8 +472,10 @@ const EducationSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
                 color: "color-mix(in srgb, var(--text) 70%, transparent)",
               }}
             >
-              {edu.startDate && formatDate(edu.startDate, "yyyy")} -{" "}
-              {edu.endDate ? formatDate(edu.endDate, "yyyy") : "Present"}
+              {edu.startDate && safeFormatDate(edu.startDate, dateFormat)} -{" "}
+              {edu.endDate
+                ? safeFormatDate(edu.endDate, dateFormat)
+                : "Present"}
             </p>
             <div className="relative pl-4">
               <span
@@ -552,6 +554,7 @@ const ExperienceSection: React.FC<SectionProps> = ({
 }) => {
   const { workExperiences } = resumeData;
   if (!workExperiences || workExperiences.length === 0) return null;
+  const dateFormat = resumeData.dateFormat || "MMM yyyy";
 
   return (
     <div>
@@ -592,8 +595,10 @@ const ExperienceSection: React.FC<SectionProps> = ({
                     color: "color-mix(in srgb, var(--text) 70%, transparent)",
                   }}
                 >
-                  {exp.startDate && formatDate(exp.startDate, "yyyy")} -{" "}
-                  {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
+                  {exp.startDate && safeFormatDate(exp.startDate, dateFormat)} -{" "}
+                  {exp.endDate
+                    ? safeFormatDate(exp.endDate, dateFormat)
+                    : "PRESENT"}
                 </p>
               </div>
               {exp.position ? (
@@ -640,6 +645,7 @@ const ExperienceSection: React.FC<SectionProps> = ({
 const ProjectsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
   const { projectWorks } = resumeData;
   if (!projectWorks || projectWorks.length === 0) return null;
+  const dateFormat = resumeData.dateFormat || "MMM yyyy";
 
   return (
     <div>
@@ -678,9 +684,11 @@ const ProjectsSection: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
                     color: "color-mix(in srgb, var(--text) 70%, transparent)",
                   }}
                 >
-                  {project.startDate && formatDate(project.startDate, "yyyy")} -{" "}
+                  {project.startDate &&
+                    safeFormatDate(project.startDate, dateFormat)}{" "}
+                  -{" "}
                   {project.endDate
-                    ? formatDate(project.endDate, "yyyy")
+                    ? safeFormatDate(project.endDate, dateFormat)
                     : "Present"}
                 </p>
               </div>

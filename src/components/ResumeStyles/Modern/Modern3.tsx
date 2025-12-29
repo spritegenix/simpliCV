@@ -13,9 +13,10 @@ import { BiSolidMap } from "react-icons/bi";
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
+  dateFormat?: string;
 }
 
-export default function Modern3({ resumeData, className }: ResumePreviewProps) {
+export default function Modern3({ resumeData, className, dateFormat = "MMM yyyy" }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
@@ -35,7 +36,7 @@ export default function Modern3({ resumeData, className }: ResumePreviewProps) {
     >
       <div
         className={cn(
-          "mx-10 grid h-full grid-cols-12 space-y-2",
+          "grid h-full grid-cols-12 space-y-2",
           !width && "invisible",
         )}
         style={{
@@ -45,7 +46,7 @@ export default function Modern3({ resumeData, className }: ResumePreviewProps) {
       >
         {/* Left Side  */}
         <div
-          className="z-[1] col-span-4 mt-16 space-y-3 rounded-t-full p-6"
+          className="z-[1] col-span-4 space-y-3 rounded-t-full p-6"
           style={{
             backgroundColor:
               "color-mix(in srgb, var(--accent) 12%, transparent)",
@@ -95,9 +96,9 @@ export default function Modern3({ resumeData, className }: ResumePreviewProps) {
                     <div className="!m-0">
                       <p>
                         {edu.startDate &&
-                          `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
+                          `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
                         {edu.endDate
-                          ? safeFormatDate(edu.endDate, "yyyy")
+                          ? safeFormatDate(edu.endDate, dateFormat)
                           : "Present"}
                       </p>
                       <p className="font-semibold">
@@ -165,7 +166,7 @@ export default function Modern3({ resumeData, className }: ResumePreviewProps) {
           )}
         </div>
         {/* Right Side  */}
-        <div className="z-[1] col-span-8 space-y-3 p-6 pl-3">
+        <div className="z-[1] col-span-8 space-y-3 p-6 pr-0 pl-3">
           {/* Name And Job Title  */}
           <div
             className="my-16 text-end"
@@ -232,9 +233,9 @@ export default function Modern3({ resumeData, className }: ResumePreviewProps) {
                           </span>
                           {exp.startDate && (
                             <span>
-                              {safeFormatDate(exp.startDate, "MMM yyyy")} -{" "}
+                              {safeFormatDate(exp.startDate, dateFormat)} -{" "}
                               {exp.endDate
-                                ? safeFormatDate(exp.endDate, "MMM yyyy")
+                                ? safeFormatDate(exp.endDate, dateFormat)
                                 : "Present"}
                             </span>
                           )}
@@ -306,9 +307,9 @@ export default function Modern3({ resumeData, className }: ResumePreviewProps) {
                         {item.startDate && (
                           <span>
                             {item.startDate &&
-                              `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
+                              `${safeFormatDate(item.startDate, dateFormat)} - `}
                             {item.endDate
-                              ? safeFormatDate(item.endDate, "MMM yyyy")
+                              ? safeFormatDate(item.endDate, dateFormat)
                               : "Present"}
                           </span>
                         )}

@@ -8,11 +8,13 @@ import { safeFormatDate } from "@/lib/utils";
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
+  dateFormat?: string;
 }
 
 export default function ModernSidebar({
   resumeData,
   className = "",
+  dateFormat = "MMM yyyy",
 }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
@@ -224,10 +226,10 @@ export default function ModernSidebar({
                             }}
                           >
                             {exp.startDate &&
-                              safeFormatDate(exp.startDate, "yyyy")}{" "}
+                              safeFormatDate(exp.startDate, dateFormat)}{" "}
                             -{" "}
                             {exp.endDate
-                              ? safeFormatDate(exp.endDate, "yyyy")
+                              ? safeFormatDate(exp.endDate, dateFormat)
                               : "Present"}
                           </span>
                         </div>
@@ -287,10 +289,11 @@ export default function ModernSidebar({
                             "color-mix(in srgb, var(--text) 60%, transparent)",
                         }}
                       >
-                        {edu.startDate && safeFormatDate(edu.startDate, "yyyy")}{" "}
+                        {edu.startDate &&
+                          safeFormatDate(edu.startDate, dateFormat)}{" "}
                         -{" "}
                         {edu.endDate
-                          ? safeFormatDate(edu.endDate, "yyyy")
+                          ? safeFormatDate(edu.endDate, dateFormat)
                           : "Present"}
                       </span>
                       {edu.description && (
@@ -845,7 +848,7 @@ const MainContent = ({
           style={{
             fontWeight: "var(--name-font-weight)",
             margin: 0,
-            fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            fontSize: "var(--name-font-size)",
           }}
         >
           <span style={{ color: colorHex }}>{firstName}</span> {lastName}
@@ -853,7 +856,7 @@ const MainContent = ({
         {jobTitle && (
           <h2
             style={{
-              fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+              fontSize: "calc(var(--name-font-size) * 0.71)",
               letterSpacing: "3px",
               color: "color-mix(in srgb, var(--text) 70%, transparent)",
               margin: "8px 0 0 0",

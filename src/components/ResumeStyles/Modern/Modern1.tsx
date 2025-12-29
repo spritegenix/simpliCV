@@ -12,9 +12,10 @@ import { BiSolidMap } from "react-icons/bi";
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
+  dateFormat?: string;
 }
 
-export default function Modern1({ resumeData, className }: ResumePreviewProps) {
+export default function Modern1({ resumeData, className, dateFormat = "MMM yyyy" }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
@@ -33,7 +34,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
     >
       <div
         className={cn(
-          "grid h-full grid-cols-[1fr_2fr] gap-6",
+          "grid h-full grid-cols-[1fr_2fr]",
           !width && "invisible",
         )}
         style={{
@@ -43,7 +44,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
         id="resumePreviewContent"
       >
         {/* Main column */}
-        <div className="order-2 min-w-0 p-6 pl-0">
+        <div className="order-2 min-w-0 p-6">
           {/* Name And Job Title  */}
           <section
             className="break-inside-avoid"
@@ -53,37 +54,28 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                 "calc(var(--section-gap) * var(--density-multiplier))",
             }}
           >
-            <div
-              className="rounded-md p-4"
+            <p
+              className="leading-none"
               style={{
-                backgroundColor:
-                  "color-mix(in srgb, var(--accent) 8%, transparent)",
+                fontSize: "var(--name-font-size)",
+                fontWeight: "var(--name-font-weight)",
               }}
             >
-              <p
-                className="leading-none"
-                style={{
-                  fontSize:
-                    "calc(var(--base-font) * 1.9 * var(--heading-scale))",
-                }}
-              >
-                <span style={{ fontWeight: "var(--name-font-weight)" as any }}>
-                  {resumeData.firstName}
-                </span>{" "}
-                <span style={{ color: "var(--accent)" }}>
-                  {resumeData.lastName}
-                </span>
-              </p>
-              <p
-                className="mt-[calc(var(--section-gap)*0.15)] font-medium"
-                style={{
-                  fontSize:
-                    "calc(var(--base-font) * 1.35 * var(--heading-scale))",
-                }}
-              >
-                {resumeData.jobTitle}
-              </p>
-            </div>
+              <span>
+                {resumeData.firstName}
+              </span>{" "}
+              <span style={{ color: "var(--accent)" }}>
+                {resumeData.lastName}
+              </span>
+            </p>
+            <p
+              className="mt-[calc(var(--section-gap)*0.15)] font-medium"
+              style={{
+                fontSize: "calc(var(--name-font-size) * 0.7)",
+              }}
+            >
+              {resumeData.jobTitle}
+            </p>
           </section>
 
           {/* Summary */}
@@ -152,9 +144,9 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                         </span>
                         {exp.startDate && (
                           <span>
-                            {safeFormatDate(exp.startDate, "MMM yyyy")} -{" "}
+                            {safeFormatDate(exp.startDate, dateFormat)} -{" "}
                             {exp.endDate
-                              ? safeFormatDate(exp.endDate, "MMM yyyy")
+                              ? safeFormatDate(exp.endDate, dateFormat)
                               : "Present"}
                           </span>
                         )}
@@ -235,9 +227,9 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                       {item.startDate && (
                         <span>
                           {item.startDate &&
-                            `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
+                            `${safeFormatDate(item.startDate, dateFormat)} - `}
                           {item.endDate
-                            ? safeFormatDate(item.endDate, "MMM yyyy")
+                            ? safeFormatDate(item.endDate, dateFormat)
                             : "Present"}
                         </span>
                       )}
@@ -264,10 +256,9 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
 
         {/* Sidebar column */}
         <div
-          className="order-1 min-w-0 space-y-[calc(var(--section-gap)*0.5)] p-6 pr-0"
+          className="order-1 h-full min-w-0 text-white"
           style={{
-            backgroundColor:
-              "color-mix(in srgb, var(--accent) 8%, transparent)",
+            backgroundColor: "#334e5c",
             borderRightColor: "var(--accent)",
             borderRightStyle: "var(--resume-border-style)" as any,
             borderRightWidth: "var(--resume-border-width)",
@@ -277,7 +268,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
           {/* Skills  */}
           {!!resumeData.skills && resumeData.skills?.length > 0 && (
             <section
-              className="break-inside-avoid"
+              className="break-inside-avoid px-6"
               style={{
                 marginBottom:
                   "calc(var(--section-gap) * var(--density-multiplier))",
@@ -302,7 +293,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
           {/* Academics */}
           {!!resumeData.educations && resumeData.educations?.length > 0 && (
             <section
-              className="break-inside-avoid"
+              className="break-inside-avoid px-6"
               style={{
                 marginBottom:
                   "calc(var(--section-gap) * var(--density-multiplier))",
@@ -321,9 +312,9 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                   <div className="!m-0">
                     <p>
                       {edu.startDate &&
-                        `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
+                        `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
                       {edu.endDate
-                        ? safeFormatDate(edu.endDate, "yyyy")
+                        ? safeFormatDate(edu.endDate, dateFormat)
                         : "Present"}
                     </p>
                     <p className="font-semibold">
@@ -348,7 +339,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
           {!!resumeData.certifications &&
             resumeData.certifications?.length > 0 && (
               <section
-                className="break-inside-avoid"
+                className="break-inside-avoid px-6"
                 style={{
                   marginBottom:
                     "calc(var(--section-gap) * var(--density-multiplier))",
@@ -381,7 +372,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
           {/* Interest  */}
           {!!resumeData.others?.title && (
             <section
-              className="break-inside-avoid"
+              className="break-inside-avoid px-6"
               style={{
                 marginBottom:
                   "calc(var(--section-gap) * var(--density-multiplier))",
@@ -424,16 +415,16 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
   }, [photo]);
 
   return (
-    <div>
+    <div className="px-6 py-6">
       {/* Photo  */}
       {photoSrc && (
-        <div className="mb-4 flex w-full justify-center">
+        <div className="mb-4 flex w-full items-center justify-center">
           <Image
             src={photoSrc}
             width={500}
             height={500}
             alt="Author photo"
-            className="aspect-square h-[120px] w-[120px] border object-cover object-top"
+            className="aspect-square h-[120px] w-[120px] border object-cover object-center"
             style={{
               borderColor: "var(--accent)",
               borderStyle: "var(--resume-border-style)" as any,
@@ -452,7 +443,6 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
       <div>
         <section
           className="break-inside-avoid"
-          data-resume-personal-details
           style={{
             marginBottom:
               "calc(var(--section-gap) * var(--density-multiplier))",

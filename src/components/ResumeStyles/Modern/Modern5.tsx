@@ -4,11 +4,12 @@ import { MapPin, Phone, Mail } from "lucide-react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
 import { ResumeValues } from "@/lib/validation";
 import useDimensions from "@/hooks/useDimensions";
-import { formatDate } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
+  dateFormat?: string;
 }
 
 // Define default section order
@@ -66,6 +67,7 @@ const hasSectionContent = (
 export default function ModernTimeline({
   resumeData,
   className = "",
+  dateFormat = "MMM yyyy",
 }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
@@ -181,10 +183,10 @@ export default function ModernTimeline({
                                   }}
                                 >
                                   {exp.startDate &&
-                                    formatDate(exp.startDate, "yyyy")}{" "}
+                                    safeFormatDate(exp.startDate, dateFormat)}{" "}
                                   -{" "}
                                   {exp.endDate
-                                    ? formatDate(exp.endDate, "yyyy")
+                                    ? safeFormatDate(exp.endDate, dateFormat)
                                     : "PRESENT"}
                                 </span>
                                 {exp.company && (
@@ -266,10 +268,10 @@ export default function ModernTimeline({
                                   }}
                                 >
                                   {project.startDate &&
-                                    formatDate(project.startDate, "yyyy")}{" "}
+                                    safeFormatDate(project.startDate, dateFormat)}{" "}
                                   -{" "}
                                   {project.endDate
-                                    ? formatDate(project.endDate, "yyyy")
+                                    ? safeFormatDate(project.endDate, dateFormat)
                                     : "PRESENT"}
                                 </span>
                                 {project.company && (
@@ -369,10 +371,10 @@ export default function ModernTimeline({
                                 >
                                   {edu.school} /{" "}
                                   {edu.startDate &&
-                                    formatDate(edu.startDate, "yyyy")}{" "}
+                                    safeFormatDate(edu.startDate, dateFormat)}{" "}
                                   -{" "}
                                   {edu.endDate
-                                    ? formatDate(edu.endDate, "yyyy")
+                                    ? safeFormatDate(edu.endDate, dateFormat)
                                     : "PRESENT"}
                                   {edu.marks && ` | ${edu.marks}`}
                                 </span>
@@ -575,7 +577,7 @@ const Header = ({ resumeData }: { resumeData: ResumeValues }) => {
       <div>
         <h1
           style={{
-            fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            fontSize: "var(--name-font-size)",
             fontWeight: "var(--name-font-weight)",
             letterSpacing: "3px",
             margin: 0,

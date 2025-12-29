@@ -56,7 +56,7 @@ export default async function Page() {
 
   return (
     <Layout>
-      <Wrapper bgColor="bg-w3 pattern3 pb-20" isTop2>
+      <Wrapper bgColor="bg-w3 pattern3 pb-20" isTop2 containerClassName="min-h-screen">
         <div className="flex justify-between">
           <div className="text-white">
             <h1 className="text-3xl font-bold">Your Resumes</h1>
@@ -73,7 +73,7 @@ export default async function Page() {
           )}
         </div>
         {resumes.length === 0 ? (
-          <div className="flex min-h-[400px] flex-col items-center justify-center py-24 text-center">
+          <div className="flex min-h-[calc(100vh-16rem)] flex-col items-center justify-center py-24 text-center">
             <div className="rounded-full bg-white/10 p-6 backdrop-blur-sm">
               <PlusSquare className="h-16 w-16 text-white" />
             </div>
