@@ -82,7 +82,7 @@ export default function PaginatedResumePreview({
         <div
           key={pageIndex}
           className={cn(
-            "relative w-full max-w-2xl shrink-0 bg-white shadow-md",
+            "relative aspect-[1/1.414] w-full max-w-2xl shrink-0 bg-white shadow-md",
             pageIndex === 0 && onPageClick
               ? "cursor-pointer"
               : "pointer-events-none",
@@ -108,7 +108,7 @@ export default function PaginatedResumePreview({
                   : "none",
                 width: width ? `${width}px` : "100%",
                 position: width ? "absolute" : "relative",
-                top: width ? "20px" : 0,
+                top: 0,
                 left: 0,
               } as React.CSSProperties
             }
@@ -117,8 +117,8 @@ export default function PaginatedResumePreview({
               resumeData={resumeData}
               className={cn(
                 width > 0 &&
-                  "h-[calc(var(--page-height)-40px)] [column-fill:auto] [column-gap:0px] [column-rule:none] [column-width:var(--page-width)]",
-                "!p-0 [&>#resumePreviewContent]:p-6",
+                  "h-[var(--page-height)] [column-fill:auto] [column-gap:0px] [column-rule:none] [column-width:var(--page-width)]",
+                "!p-0 [&>#resumePreviewContent]:p-0",
               )}
             />
           </div>
