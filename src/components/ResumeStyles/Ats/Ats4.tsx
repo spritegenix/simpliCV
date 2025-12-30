@@ -88,7 +88,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
 
         <div className="relative grid h-full grid-cols-12 gap-6">
           <div
-            className="absolute inset-y-0 left-[41%] h-full w-0 border-l"
+            className="absolute inset-y-0 left-1/2 h-full w-0 border-l"
             style={{
               borderColor: colorHex,
               borderLeftWidth: "var(--resume-border-width)",
@@ -96,7 +96,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
             }}
           />
           {/* Left Side  */}
-          <div className="col-span-5 space-y-3 pl-6 pr-3">
+          <div className="col-span-6 space-y-3 pl-6 pr-3">
             {(() => {
               const sections: Record<ResumeSectionKey, React.ReactNode> = {
                 summary: null,
@@ -222,7 +222,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
             })()}
           </div>
           {/* Right Side  */}
-          <div className="col-span-7 space-y-3 pl-3 pr-6">
+          <div className="col-span-6 space-y-3 pl-3 pr-6">
             {(() => {
               const sections: Record<ResumeSectionKey, React.ReactNode> = {
                 summary: null,
@@ -457,7 +457,8 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             <p
               className="font-medium"
               style={{
-                fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
               }}
             >
               {jobTitle}
