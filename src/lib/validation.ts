@@ -186,8 +186,8 @@ export const resumeSchema = z.object({
   borderStyle: optionalString,
   baseFontSize: z
     .number()
-    .min(10, "Must be at least 10")
-    .max(20, "Must be at most 20")
+    .min(8.5, "Must be at least 8.5")
+    .max(16, "Must be at most 16")
     .optional(),
   styleId: optionalString,
   detailsArrangement: z.enum(["compact", "stacked"]).optional(),

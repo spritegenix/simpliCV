@@ -87,7 +87,39 @@ export default function SectionOrder({
   styleId,
 }: SectionOrderProps) {
   // Templates that support section ordering
-  const supportedTemplates = ["modern2", "modern5"];
+  const supportedTemplates = [
+    "modern2",
+    "modern5",
+    "modern1",
+    "modern2",
+    "modern3",
+    "modern4",
+    "modern6",
+    "modern7",
+    "modern8",
+    "modern9",
+    "modern10",
+    "modern11",
+    "modern12",
+    "modern13",
+    "modern14",
+    "modern15",
+    "modern16",
+    "ats1",
+    "ats2",
+    "ats3",
+    "ats4",
+    "ats5",
+    "ats6",
+    "ats7",
+    "ats8",
+    "ats9",
+    "ats10",
+    "ats12",
+    "ats13",
+    "ats14",
+    "ats15",
+  ];
   const isDisabled = !styleId || !supportedTemplates.includes(styleId);
   const sensors = useSensors(
     useSensor(PointerSensor),

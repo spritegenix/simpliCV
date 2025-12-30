@@ -37,7 +37,7 @@ export default function SpacingSection({
           <div className="flex items-center gap-3">
             <input
               type="range"
-              min={8}
+              min={8.5}
               max={16}
               step={0.5}
               value={fontSize}
@@ -115,7 +115,7 @@ export default function SpacingSection({
               type="range"
               min={0}
               max={20}
-              step={1}
+              step={0.5}
               value={spaceBetweenEntries}
               onChange={(e) => setSpaceBetweenEntries(Number(e.target.value))}
               className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-muted [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
@@ -155,8 +155,8 @@ export default function SpacingSection({
             <input
               type="range"
               min={0}
-              max={4}
-              step={1}
+              max={3}
+              step={0.5}
               value={borderWidth}
               onChange={(e) => setBorderWidth(Number(e.target.value))}
               className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-muted [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
