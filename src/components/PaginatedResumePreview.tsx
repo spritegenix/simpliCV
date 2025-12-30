@@ -93,6 +93,8 @@ export default function PaginatedResumePreview({
             minHeight: width ? "unset" : "297mm",
             overflow: "hidden",
             border: "1px solid #e5e7eb",
+            padding: 0,
+            margin: 0,
           }}
           onClick={() => pageIndex === 0 && onPageClick?.()}
           ref={pageIndex === 0 ? containerRef : null}
@@ -108,6 +110,7 @@ export default function PaginatedResumePreview({
                   : "none",
                 width: width ? `${width}px` : "100%",
                 position: width ? "absolute" : "relative",
+                top: 0,
                 top: 0,
                 left: 0,
               } as React.CSSProperties

@@ -303,7 +303,7 @@ export default function Ats7({ resumeData, className }: ResumePreviewProps) {
         <div
           className="col-span-3 p-10"
           style={{
-            backgroundColor: "color-mix(in srgb, var(--accent) 30%, white)",
+            backgroundColor: "#C5D5C5",
           }}
         >
           {resumeData.photo ? (

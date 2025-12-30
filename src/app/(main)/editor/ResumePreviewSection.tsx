@@ -87,7 +87,7 @@ export default function ResumePreviewSection({
         />
         <ShareButton resumeData={resumeData} />
       </div>
-      <div className="relative flex w-full flex-col gap-6 overflow-auto bg-secondary p-6">
+      <div className="relative flex w-full flex-col overflow-auto bg-secondary">
         {ResumeStylePreview ? (
           <PaginatedResumePreview
             resumeData={resumeData}

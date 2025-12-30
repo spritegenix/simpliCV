@@ -355,7 +355,7 @@ function PersonalInfoHeader({
     <div
       className="mb-2 grid grid-cols-12 px-10 py-5"
       style={{
-        backgroundColor: hexBgColor,
+        backgroundColor: "#FFFFF0",
       }}
       data-resume-header
     >
@@ -380,7 +380,7 @@ function PersonalInfoHeader({
       </div>
       <div className="col-span-8 flex h-max flex-col">
         <div className={`gird flex flex-col justify-between`}>
-          <div className="flex flex-col items-start gap-x-1 text-white">
+          <div className="flex flex-col items-start gap-x-1 text-gray-900">
             <p
               className="font-bold"
               style={{
@@ -408,18 +408,17 @@ function PersonalInfoHeader({
           {(city || country) && (
             <p className="flex items-center gap-1">
               <span>
-                <BiSolidMap color={`${hexToRgbaPercent("#fff", 70)}`} />
+                <BiSolidMap color={`${hexToRgbaPercent("#000", 70)}`} />
               </span>
-
-              <span className="text-white">
-                color: "var(--accent)",
+              <span className="text-gray-900">
+                {city}
                 {city && country ? ", " : ""}
                 {country}
               </span>
             </p>
           )}
-          <ContactLinks text={phone} href={`tel:${phone}`} />
-          <ContactLinks text={email} href={`mailto:${email}`} />
+          <ContactLinks text={phone} href={`tel:${phone}`} color="#000" />
+          <ContactLinks text={email} href={`mailto:${email}`} color="#000" />
           {!!socialLinks &&
             socialLinks.length > 0 &&
             socialLinks.map((link, index) => (
@@ -427,10 +426,11 @@ function PersonalInfoHeader({
                 key={index}
                 text={link.split("://")?.[1]}
                 href={link}
+                color="#000"
               />
             ))}
           {portfolioLink && (
-            <ContactLinks text={"Portfolio"} href={portfolioLink} />
+            <ContactLinks text={"Portfolio"} href={portfolioLink} color="#000" />
           )}
         </div>
       </div>
@@ -460,7 +460,7 @@ function PersonalInfoHeader1({
     <div
       className="mb-2 space-y-1 p-10"
       style={{
-        backgroundColor: hexBgColor,
+        backgroundColor: "#FFFFF0",
       }}
       data-resume-header
     >
@@ -468,7 +468,7 @@ function PersonalInfoHeader1({
         href={resumeData.portfolioLink || "#"}
         className="block w-full cursor-pointer"
       >
-        <div className="flex flex-col items-start gap-x-3 text-white">
+        <div className="flex flex-col items-start gap-x-3 text-gray-900">
           <p
             className="font-bold"
             style={{
@@ -495,27 +495,28 @@ function PersonalInfoHeader1({
         data-resume-personal-details
       >
         {(city || country) && (
-          <p className="flex items-center gap-1 text-white">
+          <p className="flex items-center gap-1 text-gray-900">
             <span>
-              <BiSolidMap color={`${hexToRgbaPercent("#fff", 70)}`} />
+              <BiSolidMap color={`${hexToRgbaPercent("#000", 70)}`} />
             </span>
             {city}
             {city && country ? ", " : ""}
             {country}
           </p>
         )}
-        <ContactLinks text={phone} href={`tel:${phone}`} />
-        <ContactLinks text={email} href={`mailto:${email}`} />
+        <ContactLinks text={phone} href={`tel:${phone}`} color="#000" />
+        <ContactLinks text={email} href={`mailto:${email}`} color="#000" />
         {!!socialLinks &&
           socialLinks.map((link) => (
             <ContactLinks
               key={link}
               text={link.split("://")?.[1]}
               href={link}
+              color="#000"
             />
           ))}
         {portfolioLink && (
-          <ContactLinks text={"Portfolio"} href={portfolioLink} />
+          <ContactLinks text={"Portfolio"} href={portfolioLink} color="#000" />
         )}
       </div>
     </div>
@@ -543,12 +544,12 @@ function ContactLinks({
         >
           <span
             style={{
-              color: hexToRgbaPercent(color, 70),
+              color: "#000",
             }}
           >
             {icon ? icon : <SocialMediaIconFinder url={href ? href : ""} />}
           </span>
-          {text === "NO_TEXT" ? "" : <p className="text-white">{text}</p>}
+          {text === "NO_TEXT" ? "" : <p className="text-gray-900">{text}</p>}
         </Link>
       )}
     </>

@@ -80,9 +80,12 @@ function adaptLegacyTemplateComponent(
     // Hide photo for ATS templates that don't support images
     const photoRestrictedAtsTemplates = [
       "ats1",
+      "ats2",
+      "ats3",
       "ats4",
       "ats5",
       "ats6",
+      "ats7",
       "ats8",
       "ats11",
       "ats12",

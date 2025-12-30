@@ -62,7 +62,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
       >
         {/* Top Section  */}
         <div
-          className="border-b bg-[#f4f4f4] px-6 py-3"
+          className="border-b bg-[#f4f4f4] px-6 py-10"
           style={{
             borderColor: colorHex,
             borderBottomWidth: "calc(var(--resume-border-width) * 8)",

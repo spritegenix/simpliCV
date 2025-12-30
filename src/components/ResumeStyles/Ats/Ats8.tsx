@@ -274,9 +274,10 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
 
   return (
     <div
-      className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
+      className={cn("aspect-[210/297] h-fit w-full", className)}
       style={{
         color: "var(--text)",
+        backgroundColor: "#F5F5DC",
       }}
       ref={containerRef}
     >

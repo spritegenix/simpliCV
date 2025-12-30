@@ -44,7 +44,7 @@ export default function PersonalDetails({
     styleId === "ats14" ||
     styleId === "ats15" ||
     styleId === "modern5";
-  const isCompactDisabled = true; // Always disabled
+  const isCompactDisabled = styleId !== "ats12";
   const isLeftAlignDisabled = styleId === "ats14" || styleId === "ats15";
   const isCenterAlignDisabled = styleId === "ats5" || styleId === "ats10";
   const isRightAlignDisabled =
@@ -53,8 +53,8 @@ export default function PersonalDetails({
     styleId === "ats14" ||
     styleId === "ats15";
   const isCompactArrangementDisabled = styleId === "ats5";
-  const isBulletDisabled = true; // Always disabled
-  const isBarDisabled = true; // Always disabled
+  const isBulletDisabled = false;
+  const isBarDisabled = false;
 
   return (
     <Card>

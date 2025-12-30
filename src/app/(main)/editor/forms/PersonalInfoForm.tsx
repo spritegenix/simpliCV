@@ -58,10 +58,13 @@ export default function PersonalInfoForm({
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   const isImageFieldDisabled = [
+    "ats1",
     "ats2",
+    "ats3",
     "ats4",
     "ats5",
     "ats6",
+    "ats7",
     "ats8",
     "ats11",
     "ats12",
