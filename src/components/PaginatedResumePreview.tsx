@@ -39,9 +39,9 @@ export default function PaginatedResumePreview({
 
     const updatePageCount = () => {
       if (element) {
-        const scrollWidth = element.scrollWidth;
-        // We use a slightly larger buffer or just ceil
-        const pages = Math.ceil(scrollWidth / width);
+        const scrollHeight = element.scrollHeight;
+        // Calculate pages based on vertical overflow
+        const pages = Math.ceil(scrollHeight / pageHeight);
         setTotalPages(Math.max(1, pages));
       }
     };
@@ -51,7 +51,7 @@ export default function PaginatedResumePreview({
     const timer = setTimeout(updatePageCount, 100);
 
     return () => clearTimeout(timer);
-  }, [width, resumeData, styleId]);
+  }, [width, resumeData, styleId, pageHeight]);
 
   if (!ResumeStylePreview) {
     return null;
@@ -61,11 +61,17 @@ export default function PaginatedResumePreview({
   if (printMode) {
     return (
       <div
-        className={cn("w-full max-w-2xl bg-white", className)}
+        className={cn("w-full bg-white", className)}
         data-resume-preview="print"
         ref={containerRef}
       >
-        <ResumeStylePreview resumeData={resumeData} className="print-resume" />
+        <ResumeStylePreview
+          resumeData={resumeData}
+          className={cn(
+            "print-resume",
+            "[&.resume-root]:!p-0 [&>.resume-root]:!p-0"
+          )}
+        />
       </div>
     );
   }
@@ -111,7 +117,6 @@ export default function PaginatedResumePreview({
                 width: width ? `${width}px` : "100%",
                 position: width ? "absolute" : "relative",
                 top: 0,
-                top: 0,
                 left: 0,
               } as React.CSSProperties
             }
@@ -120,8 +125,9 @@ export default function PaginatedResumePreview({
               resumeData={resumeData}
               className={cn(
                 width > 0 &&
-                  "h-[var(--page-height)] [column-fill:auto] [column-gap:0px] [column-rule:none] [column-width:var(--page-width)]",
-                "!p-0 [&>#resumePreviewContent]:p-0",
+                   "h-[var(--page-height)] [column-fill:auto] [column-gap:0px] [column-rule:none] [column-width:var(--page-width)]",
+                "[&.resume-root]:!p-0 [&>.resume-root]:!p-0",
+
               )}
             />
           </div>

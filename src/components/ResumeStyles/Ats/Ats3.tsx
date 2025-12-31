@@ -49,7 +49,7 @@ export default function ATSStyle3({
   return (
     <div
       className={cn(
-        "resume-root aspect-[210/297] h-fit w-full bg-white p-6",
+        "resume-root aspect-[210/297] h-fit w-full bg-white",
         className,
       )}
       style={{
@@ -59,7 +59,7 @@ export default function ATSStyle3({
       ref={containerRef}
     >
       <div
-        className={cn("", !width && "invisible")}
+        className={cn("p-6", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
         }}

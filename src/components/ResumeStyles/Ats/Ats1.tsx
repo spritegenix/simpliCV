@@ -43,7 +43,7 @@ export default function Ats1({
   return (
     <div
       className={cn(
-        "resume-root aspect-[210/297] h-fit w-full bg-white p-6",
+        "resume-root aspect-[210/297] h-fit w-full bg-white",
         className,
       )}
       style={{
@@ -53,7 +53,7 @@ export default function Ats1({
       ref={containerRef}
     >
       <div
-        className={cn("flex flex-col", !width && "invisible")}
+        className={cn("flex flex-col p-6", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
         }}

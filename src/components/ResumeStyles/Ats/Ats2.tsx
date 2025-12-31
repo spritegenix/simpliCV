@@ -29,12 +29,12 @@ export default function Ats2({ resumeData, className }: ResumePreviewProps) {
   const orderedSections = normalizeSectionOrder(resumeData.sectionOrder);
   return (
     <div
-      className={cn("aspect-[210/297] h-fit w-full bg-white p-6", className)}
+      className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
       ref={containerRef}
       style={{ color: "var(--text)" }}
     >
       <div
-        className={cn("space-y-2 font-inter", !width && "invisible")}
+        className={cn("space-y-2 font-inter p-6", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
           fontSize: "var(--base-font)",

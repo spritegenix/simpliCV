@@ -14,7 +14,7 @@
   }
 
   .print-resume section,
-  .print-resume > div {
+  .print-resume>div {
     page-break-inside: avoid;
     break-inside: avoid;
   }
@@ -132,15 +132,13 @@ body {
   border-style: var(--resume-border-style, solid);
 }
 
-[data-resume-design-scope="ats"]
-  #resumePreviewContent
-  > :not([hidden])
-  ~ :not([hidden]) {
+[data-resume-design-scope="ats"] #resumePreviewContent> :not([hidden])~ :not([hidden]) {
   margin-top: var(--resume-section-gap, 0.5rem);
   margin-bottom: 0;
 }
 
 @media print {
+
   html,
   body {
     background: #fff !important;
@@ -154,6 +152,11 @@ body {
   [data-resume-preview-root] {
     background: transparent !important;
     padding: 0 !important;
+  }
+
+  [data-resume-preview="print"] {
+    max-width: none !important;
+    width: 100% !important;
   }
 
   [data-resume-preview="paginated"] {
@@ -178,13 +181,17 @@ body {
 
   #resumePreviewContent {
     zoom: 1 !important;
-    padding: 0;
+  }
+
+  /* Remove padding from resume templates during print */
+  .resume-root {
+    padding: 0 !important;
   }
 }
 
 @page {
   size: A4;
-  margin: 0.6cm;
+  margin: 0;
 }
 
 .tiptap {
@@ -398,6 +405,7 @@ body {
 }
 
 @keyframes bounce05 {
+
   85%,
   92%,
   100% {
@@ -475,6 +483,7 @@ body {
 }
 
 @keyframes keyboard05 {
+
   5%,
   12%,
   21%,

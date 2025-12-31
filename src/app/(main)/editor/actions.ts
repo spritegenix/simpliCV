@@ -147,7 +147,9 @@ export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
     portfolioLink: resumeValues.portfolioLink || undefined,
     styleId: resumeValues.styleId || undefined,
     baseFontSize: resumeValues.baseFontSize || undefined,
-    design: design || undefined,
+    design: design ||
+      // Set default section heading style to 2 for ATS2 template
+      (resumeValues.styleId === "ats2" ? { sectionHeadingStyle: 2 } : undefined),
   };
 
   if (id) {

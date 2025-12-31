@@ -41,14 +41,14 @@ export default function PurpleModern({
       }}
     >
       <div
-        className={`h-full ${!width ? "invisible" : ""}`}
+        className={`relative h-full ${!width ? "invisible" : ""}`}
         style={{
           zoom: (1 / 794) * width,
         }}
         id="resumePreviewContent"
       >
         {/* HEADER SECTION */}
-        <div className="relative h-[220px] w-full overflow-hidden">
+        <div className="relative z-20 h-[220px] w-full overflow-hidden">
           {/* Diagonal Background Shape */}
           <div
             className="absolute inset-0 z-0 h-full w-full"
@@ -87,7 +87,7 @@ export default function PurpleModern({
           </div>
 
           {/* Photo Circle - Overlapping */}
-          <div className="absolute left-[40px] top-[40px] z-20">
+          <div className="absolute left-[40px] top-[40px] z-30">
             <PhotoSection resumeData={resumeData} />
           </div>
         </div>
@@ -95,7 +95,7 @@ export default function PurpleModern({
         {/* MAIN 2-COLUMN LAYOUT */}
         <div className="grid h-full min-h-[850px] grid-cols-[300px_1fr] items-stretch">
           {/* LEFT COLUMN - Sidebar */}
-          <div className="space-y-10 bg-white py-10 pl-10 pr-6 pt-20">
+          <div className="relative z-10 space-y-10 bg-white py-10 pl-10 pr-6 pt-20">
             {/* ABOUT ME */}
             {resumeData.summary && (
               <div className="relative">
@@ -185,7 +185,7 @@ export default function PurpleModern({
 
           {/* RIGHT COLUMN - Main Content */}
           <div
-            className="space-y-10 px-10 py-10"
+            className="absolute left-[300px] top-0 h-full w-[calc(100%-300px)] space-y-10 px-10 pt-[220px]"
             style={{
               backgroundColor:
                 "color-mix(in srgb, var(--text) 5%, transparent)",
