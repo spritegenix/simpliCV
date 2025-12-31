@@ -25,9 +25,9 @@ export default function PaginatedResumePreview({
   const { width } = useDimensions(containerRef);
   const [totalPages, setTotalPages] = useState(1);
 
-  const ResumeStylePreview = resumeStyles.find(
-    (style) => style.id === styleId,
-  )?.component;
+  const currentStyle = resumeStyles.find((style) => style.id === styleId);
+  const ResumeStylePreview = currentStyle?.component;
+  const pageBackgroundColor = currentStyle?.pageBackgroundColor || "white";
 
   // Calculate A4 page height based on current width (Aspect Ratio 1:1.414)
   const pageHeight = width ? width * 1.414 : 0;
@@ -40,7 +40,9 @@ export default function PaginatedResumePreview({
     const updatePageCount = () => {
       if (element) {
         // Find the resume content element (the one with column layout)
-        const resumeContent = element.querySelector('[data-resume-preview-page-inner]')?.firstElementChild;
+        const resumeContent = element.querySelector(
+          "[data-resume-preview-page-inner]",
+        )?.firstElementChild;
         if (resumeContent) {
           // The resume content is using CSS columns
           // scrollWidth represents the total width needed for all columns
@@ -75,7 +77,7 @@ export default function PaginatedResumePreview({
           resumeData={resumeData}
           className={cn(
             "print-resume",
-            "[&.resume-root]:!p-0 [&>.resume-root]:!p-0"
+            "[&.resume-root]:!p-0 [&>.resume-root]:!p-0",
           )}
         />
       </div>
@@ -94,7 +96,7 @@ export default function PaginatedResumePreview({
         <div
           key={pageIndex}
           className={cn(
-            "relative aspect-[1/1.414] w-full max-w-2xl shrink-0 bg-white shadow-md",
+            "relative aspect-[1/1.414] w-full max-w-2xl shrink-0 shadow-md",
             pageIndex === 0 && onPageClick
               ? "cursor-pointer"
               : "pointer-events-none",
@@ -107,6 +109,7 @@ export default function PaginatedResumePreview({
             border: "1px solid #e5e7eb",
             padding: 0,
             margin: 0,
+            backgroundColor: pageBackgroundColor,
           }}
           onClick={() => pageIndex === 0 && onPageClick?.()}
           ref={pageIndex === 0 ? containerRef : null}
