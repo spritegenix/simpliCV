@@ -289,7 +289,6 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
         style={{
           zoom: (1 / 794) * width,
           fontSize: "var(--base-font)",
-          backgroundColor: "#F5F5DC",
         }}
         id="resumePreviewContent"
       >

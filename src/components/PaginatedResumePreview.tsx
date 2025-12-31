@@ -67,7 +67,7 @@ export default function PaginatedResumePreview({
   if (printMode) {
     return (
       <div
-        className={cn("w-full", className)}
+        className={cn("w-full bg-white", className)}
         data-resume-preview="print"
         ref={containerRef}
       >
@@ -94,7 +94,7 @@ export default function PaginatedResumePreview({
         <div
           key={pageIndex}
           className={cn(
-            "relative aspect-[1/1.414] w-full max-w-2xl shrink-0 shadow-md",
+            "relative aspect-[1/1.414] w-full max-w-2xl shrink-0 bg-white shadow-md",
             pageIndex === 0 && onPageClick
               ? "cursor-pointer"
               : "pointer-events-none",
