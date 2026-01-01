@@ -11,6 +11,7 @@ import dynamic from "next/dynamic";
 import { steps } from "./steps";
 import useAutoSaveResume from "./useAutoSaveResume";
 import AddContentModal from "@/components/AddContentModal";
+import ImportResumeButton from "@/components/ImportResumeButton";
 import CustomizationPanel from "./CustomizationPanel";
 import { Button } from "@/components/ui/button";
 import { Settings2, FileEdit } from "lucide-react";
@@ -41,7 +42,8 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
   const [showSmResumePreview, setShowSmResumePreview] = useState(false);
   const [showCustomization, setShowCustomization] = useState(false);
 
-  const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData);
+  const { isSaving, hasUnsavedChanges, resumeId } =
+    useAutoSaveResume(resumeData);
   // const { isSaving: isSavingP, hasUnsavedChanges: hasUnsavedChangesP } =
   //   useAutoSavePhoto(resumeData, setResumeData);
 
@@ -54,6 +56,20 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
       document.body.style.overflow = "auto";
     };
   }, []);
+
+  // Ensure newly created resumes (including imported ones) get their DB id
+  // into state, so preview/download URLs don't become /resume/undefined.
+  useEffect(() => {
+    if (!resumeId) return;
+    if (resumeData.content.id === resumeId) return;
+    setResumeData((prev) => ({
+      ...prev,
+      content: {
+        ...prev.content,
+        id: resumeId,
+      },
+    }));
+  }, [resumeId, resumeData.content.id]);
 
   const currentStep = searchParams.get("step") || steps[0].key;
   const currentStyleId = searchParams.get("styleId") || resumeData.styleId;
@@ -100,23 +116,32 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
                     setResumeData={setResumeData}
                   />
                 )}
-                <Button
-                  variant="outline"
-                  onClick={() => setShowCustomization(!showCustomization)}
-                  className="gap-2 py-4 text-base"
-                >
-                  {showCustomization ? (
-                    <>
-                      <FileEdit className="h-4 w-4" />
-                      <span className="hidden sm:inline">Editorial</span>
-                    </>
-                  ) : (
-                    <>
-                      <Settings2 className="h-4 w-4" />
-                      <span className="hidden sm:inline">Customize</span>
-                    </>
+
+                <div className="ml-auto flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCustomization(!showCustomization)}
+                    className="gap-2 py-4 text-base"
+                  >
+                    {showCustomization ? (
+                      <>
+                        <FileEdit className="h-4 w-4" />
+                        <span className="hidden sm:inline">Editorial</span>
+                      </>
+                    ) : (
+                      <>
+                        <Settings2 className="h-4 w-4" />
+                        <span className="hidden sm:inline">Customize</span>
+                      </>
+                    )}
+                  </Button>
+                  {!showCustomization && (
+                    <ImportResumeButton
+                      setResumeData={setResumeData}
+                      className="gap-2 py-4 text-base"
+                    />
                   )}
-                </Button>
+                </div>
               </div>
             </div>
             {showCustomization ? (

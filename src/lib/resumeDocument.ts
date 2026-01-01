@@ -35,7 +35,7 @@ export const defaultResumeDesign: ResumeDesign = {
   customization: {
     languageRegion: {
       language: "English",
-      dateFormat: "MM/DD/YYYY",
+      dateFormat: "MMM yyyy",
       pageFormat: "A4",
     },
     // Default order follows the editor steps order.
@@ -140,9 +140,9 @@ export function applyDesignToLegacy(
     dateFormat: design.formatting.dateFormat,
     ...(isAts
       ? {
-        colorHex: design.color.accent,
-        baseFontSize: design.typography.baseFontSize,
-      }
+          colorHex: design.color.accent,
+          baseFontSize: design.typography.baseFontSize,
+        }
       : null),
     styleId,
   };
@@ -167,4 +167,3 @@ export function toResumeDocument(legacy: ResumeValues): ResumeDocument {
     styleId,
   };
 }
-

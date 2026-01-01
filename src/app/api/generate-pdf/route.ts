@@ -28,11 +28,16 @@ export async function POST(req: NextRequest) {
     // Wait for network to be idle to ensure all content loads
     await page.goto(printUrl.toString(), { waitUntil: "networkidle" });
 
-    // Wait for the resume content to be visible
-    await page.waitForSelector("#resumePreviewContent", { timeout: 30000 });
+    // Wait for the resume content to exist in the DOM.
+    // In print mode, some layouts/CSS can make the element non-"visible" while
+    // still being renderable to PDF.
+    await page.waitForSelector("#resumePreviewContent", {
+      timeout: 30000,
+      state: "attached",
+    });
 
     // Additional wait for fonts and dynamic content to load
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(1200);
 
     const pdfBuffer = await page.pdf({
       format: "A4",

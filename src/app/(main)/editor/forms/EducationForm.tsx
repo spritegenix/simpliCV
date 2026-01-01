@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { YearPicker } from "@/components/ui/year-picker";
+import { MonthYearPicker } from "@/components/ui/month-year-picker";
 import { EditorFormProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { educationSchema, EducationValues } from "@/lib/validation";
@@ -56,7 +56,8 @@ export default function EducationForm({
         ...resumeData,
         content: {
           ...resumeData.content,
-          educations: values.educations?.filter((edu) => edu !== undefined) ?? [],
+          educations:
+            values.educations?.filter((edu) => edu !== undefined) ?? [],
         },
       });
     });
@@ -91,8 +92,8 @@ export default function EducationForm({
       <div className="space-y-1.5 text-center">
         <h2 className="text-2xl font-semibold">Education</h2>
         <p className="text-sm text-muted-foreground">
-          Add as many educations as you like. Leave fields blank if you don’t want
-          them on your resume.
+          Add as many educations as you like. Leave fields blank if you don’t
+          want them on your resume.
         </p>
       </div>
 
@@ -163,10 +164,13 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
     isDragging,
   } = useSortable({ id });
 
-  const startYear = form.watch(`educations.${index}.startDate`);
+  const startDateValue = form.watch(`educations.${index}.startDate`);
   const isPresent = form.watch(`educations.${index}.isPresent`);
 
   const currentYear = new Date().getFullYear();
+  const startYear = startDateValue
+    ? Number(startDateValue.slice(0, 4))
+    : undefined;
 
   return (
     <div
@@ -201,7 +205,11 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
             <FormItem>
               <FormLabel>{label}</FormLabel>
               <FormControl>
-                <Input {...field} value={field.value || ""} placeholder={placeholder} />
+                <Input
+                  {...field}
+                  value={field.value || ""}
+                  placeholder={placeholder}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -228,13 +236,13 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
         name={`educations.${index}.startDate`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Start Year</FormLabel>
+            <FormLabel>Start Date</FormLabel>
             <FormControl>
-              <YearPicker
+              <MonthYearPicker
                 value={field.value}
                 onChange={field.onChange}
                 minYear={currentYear - 50}
-                maxYear={currentYear}
+                maxYear={currentYear + 6}
               />
             </FormControl>
           </FormItem>
@@ -246,12 +254,16 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
         name={`educations.${index}.endDate`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>End Year</FormLabel>
+            <FormLabel>End Date</FormLabel>
             <FormControl>
-              <YearPicker
+              <MonthYearPicker
                 value={field.value}
                 onChange={field.onChange}
-                minYear={typeof startYear === "number" ? startYear : currentYear - 50}
+                minYear={
+                  typeof startYear === "number" && Number.isFinite(startYear)
+                    ? startYear
+                    : currentYear - 50
+                }
                 maxYear={currentYear + 6}
                 disabled={isPresent}
               />
@@ -262,7 +274,8 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
                 checked={isPresent}
                 onCheckedChange={(checked) => {
                   form.setValue(`educations.${index}.isPresent`, !!checked);
-                  if (checked) form.setValue(`educations.${index}.endDate`, undefined);
+                  if (checked)
+                    form.setValue(`educations.${index}.endDate`, undefined);
                 }}
               />
               <span className="text-sm">Present (currently studying)</span>

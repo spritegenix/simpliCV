@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { ResumeDocument } from "@/types/resumeDocument";
 import { steps } from "./steps";
 import LanguageRegion from "@/components/customisation/LanguageRegion";
@@ -183,6 +185,27 @@ export default function CustomizationPanel({
   // Everything else is intentionally frozen in Phase 2
   const language = "English";
   const dateFormat = resumeData.design.formatting?.dateFormat ?? "MMM yyyy";
+
+  const coerceMonthYearDateFormat = (value: string): string => {
+    const v = (value || "").trim();
+    switch (v) {
+      case "MM/dd/yyyy":
+      case "dd/MM/yyyy":
+      case "MM/DD/YYYY":
+        return "MM/yyyy";
+      case "yyyy-MM-dd":
+        return "yyyy-MM";
+      case "dd.MM.yyyy":
+        return "MM.yyyy";
+      default:
+        break;
+    }
+
+    if (/[dD]/.test(v)) return "MMM yyyy";
+    return v.length > 0 ? v : "MMM yyyy";
+  };
+
+  const normalizedDateFormat = coerceMonthYearDateFormat(dateFormat);
   const setDateFormat = (value: string) =>
     setResumeData({
       ...resumeData,
@@ -190,10 +213,16 @@ export default function CustomizationPanel({
         ...resumeData.design,
         formatting: {
           ...resumeData.design.formatting,
-          dateFormat: value,
+          dateFormat: coerceMonthYearDateFormat(value),
         },
       },
     });
+
+  useEffect(() => {
+    if (dateFormat === normalizedDateFormat) return;
+    setDateFormat(normalizedDateFormat);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateFormat, normalizedDateFormat]);
   const pageFormat = "A4";
   const orderableSteps = steps.filter(
     (step) => step.key !== "general-info" && step.key !== "personal-info",

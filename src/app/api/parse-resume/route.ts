@@ -1,7 +1,103 @@
 import { NextRequest, NextResponse } from "next/server";
-const PDFParser = require("pdf2json");
 import mammoth from "mammoth";
 import genAI from "@/lib/gemini";
+import { extractText } from "unpdf";
+
+// PDF parsing with unpdf (uses pdfjs-dist, handles Type3 fonts properly)
+const pdfParse = async (buffer: Buffer): Promise<string> => {
+  const uint8Array = new Uint8Array(buffer);
+  const { text } = await extractText(uint8Array, { mergePages: true });
+  return Array.isArray(text) ? text.join("\n") : text;
+};
+
+function stripMarkdownCodeFences(text: string): string {
+  // Remove only the fence markers, not the contents.
+  // Handles: ```json, ```JSON, ```
+  return text.replace(/```[a-zA-Z0-9_-]*\s*/g, "");
+}
+
+function extractJsonObjectSubstring(
+  text: string,
+  startIndex: number,
+): { json: string; endIndex: number } | null {
+  let depth = 0;
+  let inString = false;
+  let isEscaped = false;
+
+  for (let i = startIndex; i < text.length; i++) {
+    const ch = text[i];
+
+    if (inString) {
+      if (isEscaped) {
+        isEscaped = false;
+        continue;
+      }
+      if (ch === "\\") {
+        isEscaped = true;
+        continue;
+      }
+      if (ch === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (ch === '"') {
+      inString = true;
+      continue;
+    }
+
+    if (ch === "{") {
+      depth++;
+      continue;
+    }
+
+    if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        return { json: text.slice(startIndex, i + 1), endIndex: i };
+      }
+      if (depth < 0) {
+        return null;
+      }
+    }
+  }
+
+  return null;
+}
+
+function extractJSONObject(text: string): Record<string, unknown> {
+  const cleaned = stripMarkdownCodeFences(text).trim();
+
+  let lastValid: Record<string, unknown> | null = null;
+
+  for (let i = 0; i < cleaned.length; i++) {
+    if (cleaned[i] !== "{") continue;
+
+    const extracted = extractJsonObjectSubstring(cleaned, i);
+    if (!extracted) continue;
+
+    try {
+      const parsed: unknown = JSON.parse(extracted.json);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        lastValid = parsed as Record<string, unknown>;
+      }
+    } catch {
+      // Ignore and continue searching. We'll only fail if nothing valid is found.
+    }
+
+    // Skip ahead to reduce work; safe because nested braces are handled.
+    i = extracted.endIndex;
+  }
+
+  if (!lastValid) {
+    throw new SyntaxError(
+      "Could not find a valid JSON object in AI response (expected a final `{ ... }` block).",
+    );
+  }
+
+  return lastValid;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,24 +113,12 @@ export async function POST(req: NextRequest) {
     if (file.type === "application/pdf") {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      
-      text = await new Promise((resolve, reject) => {
-        const pdfParser = new PDFParser(null, 1);
 
-        pdfParser.on("pdfParser_dataError", (errData: any) =>
-          reject(errData.parserError),
-        );
-
-        pdfParser.on("pdfParser_dataReady", () => {
-          const content = (pdfParser as any).getRawTextContent();
-          resolve(content);
-        });
-
-        pdfParser.parseBuffer(buffer);
-      });
-      
+      // Use pdf-parse for better handling of complex PDFs
+      text = await pdfParse(buffer);
     } else if (
-      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      file.type ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
@@ -156,35 +240,46 @@ export async function POST(req: NextRequest) {
         result = await model.generateContent(prompt);
         break; // Success, exit loop
       } catch (error: any) {
-        const isOverloaded = error.response?.status === 503 || error.message?.includes("503") || error.message?.includes("overloaded");
-        const isRateLimited = error.response?.status === 429 || error.message?.includes("429") || error.message?.includes("quota");
+        const isOverloaded =
+          error.response?.status === 503 ||
+          error.message?.includes("503") ||
+          error.message?.includes("overloaded");
+        const isRateLimited =
+          error.response?.status === 429 ||
+          error.message?.includes("429") ||
+          error.message?.includes("quota");
 
         if ((isOverloaded || isRateLimited) && retryCount < maxRetries) {
           retryCount++;
           const delay = 1000 * Math.pow(2, retryCount); // 2s, 4s, 8s, 16s, 32s
-          console.warn(`Gemini error (${isOverloaded ? "503" : "429"}). Retrying in ${delay/1000}s... (${retryCount}/${maxRetries})`);
+          console.warn(
+            `Gemini error (${isOverloaded ? "503" : "429"}). Retrying in ${delay / 1000}s... (${retryCount}/${maxRetries})`,
+          );
           await new Promise((resolve) => setTimeout(resolve, delay));
         } else {
           throw error; // Not a retryable error or max retries reached
         }
       }
     }
-    
+
     if (!result) {
-        throw new Error("Failed to generate content after retries");
+      throw new Error("Failed to generate content after retries");
     }
 
     const response = await result.response;
-    const jsonString = response.text().replace(/```json|```/g, "").trim();
+    const rawModelText = response.text();
 
     try {
-        const parsedData = JSON.parse(jsonString);
-        return NextResponse.json(parsedData);
+      const parsedData = extractJSONObject(rawModelText);
+      return NextResponse.json(parsedData);
     } catch (error) {
-        console.error("Error parsing Gemini response:", error);
-        return NextResponse.json({ error: "Failed to parse resume data form AI response" }, { status: 500 });
+      console.error("Error parsing AI response:", error);
+      console.error("Raw AI response:", rawModelText);
+      return NextResponse.json(
+        { error: "Failed to parse resume data from AI response" },
+        { status: 500 },
+      );
     }
-
   } catch (error: any) {
     console.error("Error parsing resume:", error);
     return NextResponse.json(

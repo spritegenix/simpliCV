@@ -60,13 +60,16 @@ export default function useAutoSaveResume(resumeData: ResumeDocument) {
           toLegacyResumeValues(lastSavedData).photo === legacyToSave.photo;
 
         // Server Action to save Data in DataBase
-        const updatedResume = await saveResume({
-          ...legacyToSave,
-          // Skip sending photo if it hasn't changed
-          ...(skipPhotoUpload && { photo: undefined }),
-          id: resumeId,
-          styleId: newData.styleId,
-        }, newData.design);
+        const updatedResume = await saveResume(
+          {
+            ...legacyToSave,
+            // Skip sending photo if it hasn't changed
+            ...(skipPhotoUpload && { photo: undefined }),
+            id: resumeId,
+            styleId: newData.styleId,
+          },
+          newData.design,
+        );
 
         setResumeId(updatedResume.id);
         setLastSavedData(newData);
@@ -158,6 +161,7 @@ export default function useAutoSaveResume(resumeData: ResumeDocument) {
 
   return {
     isSaving,
+    resumeId,
     hasUnsavedChanges:
       JSON.stringify(resumeData, fileReplacer) !==
       JSON.stringify(lastSavedData, fileReplacer),

@@ -5,22 +5,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
 import { ResumeDocument } from "@/types/resumeDocument";
 import {
   Award,
   Briefcase,
-  CloudUpload,
   Contact,
   FileText,
   FolderGit2,
   GraduationCap,
   Heart,
-  Loader2,
   User,
   Zap,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import SectionCard from "./SectionCard";
 import { Button } from "./ui/button";
 
@@ -105,60 +102,10 @@ export default function AddContentModal({
   setResumeData,
 }: AddContentModalProps) {
   const [open, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
 
   const handleSelect = (key: string) => {
     onSelectSection(key);
     setOpen(false);
-  };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("/api/parse-resume", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to parse resume");
-      }
-
-      const parsedData = await response.json();
-      setResumeData((prev) => ({
-        ...prev,
-        content: {
-          ...prev.content,
-          ...parsedData,
-        },
-      }));
-
-      toast({
-        title: "Resume imported successfully",
-        description: "Your resume has been parsed and filled.",
-      });
-      setOpen(false);
-    } catch (error) {
-      console.error(error);
-      toast({
-        variant: "destructive",
-        title: "Error importing resume",
-        description: "Something went wrong while parsing your resume.",
-      });
-    } finally {
-      setIsLoading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
   };
 
   return (
@@ -174,26 +121,6 @@ export default function AddContentModal({
       <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
         <DialogHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <DialogTitle className="text-2xl font-bold">Add content</DialogTitle>
-          <input
-            type="file"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept=".pdf,.docx"
-          />
-          <Button
-            variant="secondary"
-            className="w-full gap-2 p-6 text-base sm:mr-10 sm:w-auto"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <CloudUpload className="h-4 w-4" />
-            )}
-            Import Resume
-          </Button>
         </DialogHeader>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {sections.map((section) => (
