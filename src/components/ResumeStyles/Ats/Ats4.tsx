@@ -62,7 +62,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
       >
         {/* Top Section  */}
         <div
-          className="border-b bg-[#f4f4f4] px-6 py-10"
+          className="border-b bg-[#f4f4f4] px-12 py-10"
           style={{
             borderColor: colorHex,
             borderBottomWidth: "calc(var(--resume-border-width) * 8)",
@@ -73,7 +73,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
         </div>
         {/* Summary */}
         {resumeData.summary && (
-          <div className="px-6 py-3">
+          <div className="px-12 py-3">
             <Heading colorHex={colorHex} isCenter className="mx-auto w-56">
               Professional Summary
             </Heading>
@@ -96,7 +96,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
             }}
           />
           {/* Left Side  */}
-          <div className="col-span-6 space-y-3 pl-6 pr-3">
+          <div className="col-span-6 space-y-3 pl-12 pr-6">
             {(() => {
               const sections: Record<ResumeSectionKey, React.ReactNode> = {
                 summary: null,
@@ -222,7 +222,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
             })()}
           </div>
           {/* Right Side  */}
-          <div className="col-span-6 space-y-3 pl-3 pr-6">
+          <div className="col-span-6 space-y-3 pl-6 pr-12">
             {(() => {
               const sections: Record<ResumeSectionKey, React.ReactNode> = {
                 summary: null,

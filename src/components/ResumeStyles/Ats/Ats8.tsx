@@ -326,7 +326,7 @@ export function PersonalInfoHeader({
     email,
     colorHex,
     borderStyle,
-    detailsArrangement,
+    detailsArrangement = "compact",
   } = resumeData;
 
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
@@ -559,7 +559,7 @@ export function Heading({
       >
         <h1
           data-resume-section-heading
-          className="text-wrap text-[1.1em] font-semibold"
+          className="text-wrap text-[0.8em] font-semibold"
           style={{
             color: colorHex,
           }}

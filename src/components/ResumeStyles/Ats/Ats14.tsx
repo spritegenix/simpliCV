@@ -276,7 +276,7 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
       ref={containerRef}
     >
       <div
-        className={cn("space-y-5 p-10 font-sans", !width && "invisible")}
+        className={cn("space-y-5 px-12 py-10 font-sans", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
           fontSize: "var(--base-font)",

@@ -59,7 +59,7 @@ export default function ATSStyle3({
       ref={containerRef}
     >
       <div
-        className={cn("p-6", !width && "invisible")}
+        className={cn("px-12 py-10", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
         }}

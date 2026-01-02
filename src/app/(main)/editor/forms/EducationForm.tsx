@@ -100,6 +100,7 @@ export default function EducationForm({
       <Form {...form}>
         <form className="space-y-3">
           <DndContext
+            id="education-dnd"
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}

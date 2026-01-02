@@ -300,7 +300,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
         id="resumePreviewContent"
       >
         {/* Left Side  */}
-        <div className="col-span-8 space-y-3 p-3 pl-6">
+        <div className="col-span-8 space-y-3 p-3 pl-12 pt-10">
           {/* Name And Job Title  */}
           <div className="my-auto" data-resume-header>
             <p
@@ -332,7 +332,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
           ))}
         </div>
         {/* Right Side  */}
-        <div className="col-span-4 space-y-3 p-3 pr-6">
+        <div className="col-span-4 space-y-3 p-3 pr-12 pt-10">
           <PersonalInfoHeader resumeData={resumeData} />
           {rightOrder.map((key) => (
             <React.Fragment key={key}>{sections[key]}</React.Fragment>

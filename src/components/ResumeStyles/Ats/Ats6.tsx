@@ -57,7 +57,7 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
         <section className="mb-[var(--section-gap)] break-inside-avoid">
           <Heading>Experience</Heading>
           <ul className="relative !mt-0 space-y-[calc(var(--section-gap)*0.25)] pl-4">
-            <div className="absolute inset-y-0 left-1 h-full w-0 border border-l [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+            <div className="absolute inset-y-0 left-1 h-full w-0 border border-l opacity-20 [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
             {resumeData.workExperiences?.map((exp, index) => (
               <li key={index} className="relative z-10 break-inside-avoid">
                 <span
@@ -118,7 +118,7 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
         <section className="mb-[var(--section-gap)] break-inside-avoid">
           <Heading>Project Work</Heading>
           <ul className="relative space-y-[calc(var(--section-gap)*0.25)] pl-4">
-            <div className="absolute inset-y-0 left-1 h-full w-0 border border-l [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+            <div className="absolute inset-y-0 left-1 h-full w-0 border border-l opacity-20 [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
             {resumeData.projectWorks?.map((item, index) => (
               <li key={index} className="relative z-10 break-inside-avoid">
                 <span
@@ -297,21 +297,21 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
         }}
         id="resumePreviewContent"
       >
-        <div className="absolute inset-y-0 left-[67%] h-full w-0 border [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
-        <div className="absolute inset-x-0 top-[10.7rem] h-0 w-full border [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+        <div className="absolute inset-y-0 left-[67%] h-full w-0 border opacity-20 [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
+        <div className="absolute inset-x-0 top-[10.7rem] h-0 w-full border opacity-20 [border-color:var(--accent)] [border-style:var(--resume-border-style)]" />
         {/* Top Section  */}
-        <div className="h-[8.5rem] p-6 pb-3">
+        <div className="h-[8.5rem] px-12 pb-3 pt-10">
           <PersonalInfoHeader resumeData={resumeData} />
         </div>
         <div className="grid h-full grid-cols-12 gap-x-3">
           {/* Left Side  */}
-          <div className="col-span-8 space-y-3 p-3 pl-6">
+          <div className="col-span-8 space-y-3 p-3 pl-12 pt-10">
             {leftOrder.map((key) => (
               <React.Fragment key={key}>{sections[key]}</React.Fragment>
             ))}
           </div>
           {/* Right Side  */}
-          <div className="col-span-4 space-y-3 p-3 pr-6">
+          <div className="col-span-4 space-y-3 p-3 pr-12 pt-10">
             {/* Social Links  */}
             {resumeData.photo && (
               <section

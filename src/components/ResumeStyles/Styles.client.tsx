@@ -384,19 +384,19 @@ function adaptLegacyTemplateComponent(
           // Size
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-size=\"S\"] [data-resume-section-heading],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-size=\"S\"] [data-resume-section-heading] * {\n` +
-          `  font-size: 1em !important;\n` +
+          `  font-size: 0.7em !important;\n` +
           `}\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-size=\"M\"] [data-resume-section-heading],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-size=\"M\"] [data-resume-section-heading] * {\n` +
-          `  font-size: 1.1em !important;\n` +
+          `  font-size: 0.8em !important;\n` +
           `}\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-size=\"L\"] [data-resume-section-heading],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-size=\"L\"] [data-resume-section-heading] * {\n` +
-          `  font-size: 1.25em !important;\n` +
+          `  font-size: 0.9em !important;\n` +
           `}\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-size=\"XL\"] [data-resume-section-heading],\n` +
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-size=\"XL\"] [data-resume-section-heading] * {\n` +
-          `  font-size: 1.4em !important;\n` +
+          `  font-size: 1em !important;\n` +
           `}\n` +
           // Icons (if a template uses SVGs inside headings)
           `[data-resume-scope=\"${resumeScope}\"] #resumePreviewContent[data-section-heading-icons=\"none\"] [data-resume-section-heading] svg {\n` +

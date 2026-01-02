@@ -311,7 +311,7 @@ export default function Ats9({ resumeData, className }: ResumePreviewProps) {
         ) : (
           <PersonalInfoHeader1 resumeData={resumeData} hexBgColor={colorHex} />
         )}
-        <div className="space-y-2 p-10 pt-3">
+        <div className="space-y-2 px-12 py-10 pt-3">
           {orderedSections.map((key) => (
             <React.Fragment key={key}>{sections[key]}</React.Fragment>
           ))}
@@ -353,13 +353,13 @@ function PersonalInfoHeader({
 
   return (
     <div
-      className="mb-2 grid grid-cols-12 p-10"
+      className="mb-2 grid grid-cols-12 items-center px-12 py-10"
       style={{
         backgroundColor: hexBgColor,
       }}
       data-resume-header
     >
-      <div className="col-span-10 flex h-max flex-col">
+      <div className="col-span-10 flex h-max flex-col justify-between">
         <div className={`gird flex flex-col justify-between`}>
           <div
             className="my-auto flex items-end gap-x-2 text-white"
@@ -461,7 +461,7 @@ function PersonalInfoHeader1({
 
   return (
     <div
-      className="mb-2 space-y-1 p-10"
+      className="mb-2 space-y-1 px-12 py-10"
       style={{
         backgroundColor: hexBgColor,
       }}

@@ -302,7 +302,7 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
     >
       <div
         className={cn(
-          "space-y-6 p-10 font-serif", // Changed to font-serif
+          "space-y-6 px-12 py-10 font-serif", // Changed to font-serif
           !width && "invisible",
         )}
         style={{

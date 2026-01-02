@@ -34,7 +34,7 @@ export default function Ats2({ resumeData, className }: ResumePreviewProps) {
       style={{ color: "var(--text)" }}
     >
       <div
-        className={cn("space-y-2 font-inter p-6", !width && "invisible")}
+        className={cn("space-y-2 font-inter px-12 py-10", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
           fontSize: "var(--base-font)",
