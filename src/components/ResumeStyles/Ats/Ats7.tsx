@@ -165,7 +165,7 @@ export default function Ats7({ resumeData, className }: ResumePreviewProps) {
                     <span
                       data-resume-entry-subtitle
                       data-entry-subtitle-slot="inline"
-                      className="text-[1.4em] font-semibold italic"
+                      className="text-[1.4em] font-medium italic"
                     >
                       {exp.position}
                     </span>
@@ -185,7 +185,7 @@ export default function Ats7({ resumeData, className }: ResumePreviewProps) {
                   <span
                     data-resume-entry-subtitle
                     data-entry-subtitle-slot="newline"
-                    className="text-[1.4em] font-semibold italic"
+                    className="text-[1.4em] font-medium italic"
                   >
                     {exp.position}
                   </span>
@@ -236,7 +236,7 @@ export default function Ats7({ resumeData, className }: ResumePreviewProps) {
                     <span
                       data-resume-entry-subtitle
                       data-entry-subtitle-slot="inline"
-                      className="italic"
+                      className="font-medium italic"
                     >
                       {item.company}
                     </span>
@@ -255,7 +255,7 @@ export default function Ats7({ resumeData, className }: ResumePreviewProps) {
                     <span
                       data-resume-entry-subtitle
                       data-entry-subtitle-slot="newline"
-                      className="italic"
+                      className="font-medium italic"
                     >
                       {item.company}
                     </span>
@@ -288,9 +288,35 @@ export default function Ats7({ resumeData, className }: ResumePreviewProps) {
       style={{ color: "var(--text)" }}
       ref={containerRef}
     >
+      <style>
+        {`
+          /* ATS 7 default font hierarchy (Preview + Print/PDF)
+             - Heading: Merriweather Bold / SemiBold
+             - Subtitle: Merriweather Medium / Italic
+             - Body: Source Serif 4 Regular (driven by --resume-font-family)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-entry-title],
+          #resumePreviewContent [data-resume-header] .font-bold {
+            font-family: var(--font-merriweather) !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] .font-bold {
+            font-weight: 700 !important;
+          }
+
+          #resumePreviewContent [data-resume-entry-subtitle],
+          #resumePreviewContent [data-resume-header] .font-medium {
+            font-family: var(--font-merriweather) !important;
+            font-weight: 500 !important;
+            font-style: italic !important;
+          }
+        `}
+      </style>
       <div
         className={cn(
-          "grid h-full grid-cols-6 gap-x-4 space-y-2 font-inter",
+          "grid h-full grid-cols-6 gap-x-4 space-y-2",
           !width && "invisible",
         )}
         style={{

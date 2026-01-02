@@ -1,9 +1,14 @@
 import {
   Lora,
+  Montserrat,
+  Raleway,
+  Merriweather,
+  Open_Sans,
   Zilla_Slab,
   PT_Serif,
   Literata,
   EB_Garamond,
+  Libre_Baskerville,
   Lato,
   Aleo,
   Crimson_Pro,
@@ -19,6 +24,35 @@ import {
 // They are loaded globally as CSS variables so templates can switch fonts via CSS.
 
 const lora = Lora({ subsets: ["latin"], variable: "--font-lora", display: "swap" });
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
+const raleway = Raleway({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-raleway",
+  display: "swap",
+});
+
+const merriweather = Merriweather({
+  subsets: ["latin"],
+  weight: ["400", "700", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-merriweather",
+  display: "swap",
+});
+
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-open-sans",
+  display: "swap",
+});
 
 const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
@@ -49,6 +83,13 @@ const literata = Literata({
 const ebGaramond = EB_Garamond({
   subsets: ["latin"],
   variable: "--font-eb-garamond",
+  display: "swap",
+});
+
+const libreBaskerville = Libre_Baskerville({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-libre-baskerville",
   display: "swap",
 });
 
@@ -106,11 +147,16 @@ const alegreya = Alegreya({
 
 export const resumeFonts = {
   lora,
+  montserrat,
+  raleway,
+  merriweather,
+  openSans,
   sourceSerif,
   zillaSlab,
   ptSerif,
   literata,
   ebGaramond,
+  libreBaskerville,
   lato,
   aleo,
   crimsonPro,

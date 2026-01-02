@@ -101,13 +101,24 @@ function adaptLegacyTemplateComponent(
     const selectedFontLabel =
       resumeData.design.customization?.font?.selectedFont?.trim() ?? "";
 
+    // ATS 1 has its own default typography (Body=Inter). Historically the global
+    // default selectedFont was "Lora"; treat that as a non-user override for ATS 1.
+    const effectiveSelectedFontLabel =
+      styleId === "ats1" && selectedFontLabel === "Lora"
+        ? ""
+        : selectedFontLabel;
+
     const customFontFamilyByLabel: Record<string, string> = {
       Lora: "var(--font-lora)",
+      Montserrat: "var(--font-montserrat)",
+      "Open Sans": "var(--font-open-sans)",
+      "Source Serif 4": "var(--font-source-serif)",
       "Source Serif Pro": "var(--font-source-serif)",
       "Zilla Slab": "var(--font-zilla-slab)",
       "PT Serif": "var(--font-pt-serif)",
       Literata: "var(--font-literata)",
       "EB Garamond": "var(--font-eb-garamond)",
+      "Libre Baskerville": "var(--font-libre-baskerville)",
       // UI label uses 'Lato Modern' but the actual font is Lato.
       "Lato Modern": "var(--font-lato)",
       Aleo: "var(--font-aleo)",
@@ -120,7 +131,8 @@ function adaptLegacyTemplateComponent(
     };
 
     const resumeFontFamily =
-      (selectedFontLabel && customFontFamilyByLabel[selectedFontLabel]) ||
+      (effectiveSelectedFontLabel &&
+        customFontFamilyByLabel[effectiveSelectedFontLabel]) ||
       fontFamilyToCss(resumeData.design.typography.fontFamily);
 
     const rawHeaderPosition =

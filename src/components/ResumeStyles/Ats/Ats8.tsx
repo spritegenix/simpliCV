@@ -62,7 +62,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                     <span
                       data-resume-entry-subtitle
                       data-entry-subtitle-slot="inline"
-                      className="text-[1.4em] font-semibold"
+                      className="text-[1.4em] font-medium"
                     >
                       {exp.position}
                     </span>
@@ -84,7 +84,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                   <span
                     data-resume-entry-subtitle
                     data-entry-subtitle-slot="newline"
-                    className="text-[1.4em] font-semibold"
+                    className="text-[1.4em] font-medium"
                   >
                     {exp.position}
                   </span>
@@ -133,7 +133,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                       <span
                         data-resume-entry-subtitle
                         data-entry-subtitle-slot="inline"
-                        className="italic"
+                        className="font-medium"
                       >
                         {item.company}
                       </span>
@@ -165,7 +165,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
                   <span
                     data-resume-entry-subtitle
                     data-entry-subtitle-slot="newline"
-                    className="italic"
+                    className="font-medium"
                   >
                     {item.company}
                   </span>
@@ -282,10 +282,7 @@ export default function Ats8({ resumeData, className }: ResumePreviewProps) {
       ref={containerRef}
     >
       <div
-        className={cn(
-          "h-full gap-x-4 space-y-2 font-inter",
-          !width && "invisible",
-        )}
+        className={cn("h-full gap-x-4 space-y-2", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
           fontSize: "var(--base-font)",
@@ -388,9 +385,9 @@ export function PersonalInfoHeader({
       <div
         className={cn(
           "gap-x-2 pb-4",
-          detailsArrangement === "stacked" 
+          detailsArrangement === "stacked"
             ? "flex flex-col items-center gap-y-1"
-            : "flex flex-wrap justify-center"
+            : "flex flex-wrap justify-center",
         )}
         data-resume-personal-details
       >
@@ -404,12 +401,14 @@ export function PersonalInfoHeader({
         )}
         {phone && (
           <>
-            <ContactLinks text={phone} href={`tel:${phone}`} /> {detailsArrangement !== "stacked" && "|"}
+            <ContactLinks text={phone} href={`tel:${phone}`} />{" "}
+            {detailsArrangement !== "stacked" && "|"}
           </>
         )}
         {email && (
           <>
-            <ContactLinks text={email} href={`mailto:${email}`} /> {detailsArrangement !== "stacked" && "|"}
+            <ContactLinks text={email} href={`mailto:${email}`} />{" "}
+            {detailsArrangement !== "stacked" && "|"}
           </>
         )}
         {!!socialLinks &&
@@ -418,9 +417,10 @@ export function PersonalInfoHeader({
             <span key={index} className="flex items-center gap-1">
               <ContactLinks text={link.split("://")?.[1]} href={link} />
 
-              {detailsArrangement !== "stacked" && (index !== socialLinks.length - 1 || portfolioLink) && (
-                <span>|</span>
-              )}
+              {detailsArrangement !== "stacked" &&
+                (index !== socialLinks.length - 1 || portfolioLink) && (
+                  <span>|</span>
+                )}
             </span>
           ))}
         {portfolioLink && (
@@ -466,7 +466,8 @@ export function PersonalInfoHeader1({
               className="font-medium"
               style={{
                 color: colorHex,
-                fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
               }}
             >
               {jobTitle}

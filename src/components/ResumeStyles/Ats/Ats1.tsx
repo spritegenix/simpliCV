@@ -13,11 +13,18 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { BiSolidMap } from "react-icons/bi";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
+import { Poppins } from "next/font/google";
 import {
   normalizeSectionOrder,
   type ResumeSectionKey,
 } from "@/lib/sectionOrder";
 import { createSectionOrderIndex } from "../sectionOrder";
+
+const ats1HeadingFont = Poppins({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
+});
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -52,6 +59,30 @@ export default function Ats1({
       }}
       ref={containerRef}
     >
+      <style>
+        {`
+          /* ATS 1 default font hierarchy (Preview + Print/PDF)
+             - Heading: Poppins SemiBold/Bold
+             - Subtitle: Poppins Medium
+             - Body: Inter Regular (handled by --resume-font-family)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-header] p.font-bold {
+            font-family: ${ats1HeadingFont.style.fontFamily} !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] p.font-bold {
+            font-weight: 700 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] p.font-medium,
+          #resumePreviewContent [data-resume-entry-subtitle] {
+            font-family: ${ats1HeadingFont.style.fontFamily} !important;
+            font-weight: 500 !important;
+          }
+        `}
+      </style>
       <div
         className={cn("flex flex-col p-6", !width && "invisible")}
         style={{
@@ -457,10 +488,11 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         {!!socialLinks &&
           socialLinks.length > 0 &&
           socialLinks.map((link, index) => (
-            <p key={index} className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
-              <ContactLinks
-                text={link.split("://")?.[1]}
-              />
+            <p
+              key={index}
+              className="flex items-center gap-[calc(var(--section-gap)*0.25)]"
+            >
+              <ContactLinks text={link.split("://")?.[1]} />
             </p>
           ))}
         {portfolioLink && (
@@ -510,7 +542,7 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
       {/* Social Links  */}
       <div
         className={cn(
-          "mx-auto flex flex-wrap justify-center font-normal gap-x-2 gap-y-1",
+          "mx-auto flex flex-wrap justify-center gap-x-2 gap-y-1 font-normal",
           detailsArrangement === "stacked" && "flex-col items-center",
         )}
         style={{
@@ -539,10 +571,11 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
         )}
         {!!socialLinks &&
           socialLinks.map((link, index) => (
-            <p key={link} className="flex items-center gap-[calc(var(--section-gap)*0.25)]">
-              <ContactLinks
-                text={link.split("://")?.[1]}
-              />
+            <p
+              key={link}
+              className="flex items-center gap-[calc(var(--section-gap)*0.25)]"
+            >
+              <ContactLinks text={link.split("://")?.[1]} />
             </p>
           ))}
         {portfolioLink && (

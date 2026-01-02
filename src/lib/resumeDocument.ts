@@ -140,9 +140,9 @@ export function applyDesignToLegacy(
     dateFormat: design.formatting.dateFormat,
     ...(isAts
       ? {
-          colorHex: design.color.accent,
-          baseFontSize: design.typography.baseFontSize,
-        }
+        colorHex: design.color.accent,
+        baseFontSize: design.typography.baseFontSize,
+      }
       : null),
     styleId,
   };

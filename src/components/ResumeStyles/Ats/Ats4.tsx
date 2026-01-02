@@ -52,6 +52,30 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
       }}
       ref={containerRef}
     >
+      <style>
+        {`
+          /* ATS 4 default font hierarchy (Preview + Print/PDF)
+             - Heading: Cormorant Garamond SemiBold / Bold
+             - Subtitle: Cormorant Garamond Medium
+             - Body: Libre Baskerville Regular (handled by --resume-font-family)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-header] p.font-bold {
+            font-family: var(--font-cormorant-garamond) !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] p.font-bold {
+            font-weight: 700 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] p.font-medium,
+          #resumePreviewContent [data-resume-entry-subtitle] {
+            font-family: var(--font-cormorant-garamond) !important;
+            font-weight: 500 !important;
+          }
+        `}
+      </style>
       <div
         className={cn(!width && "invisible")}
         style={{
@@ -265,7 +289,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
                                   <span
                                     data-resume-entry-subtitle
                                     data-entry-subtitle-slot="inline"
-                                    className="text-[1.1em] font-semibold italic"
+                                    className="text-[1.1em] font-medium italic"
                                   >
                                     {exp.position}
                                   </span>
@@ -285,7 +309,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
                                 <span
                                   data-resume-entry-subtitle
                                   data-entry-subtitle-slot="newline"
-                                  className="text-[1.1em] font-semibold italic"
+                                  className="text-[1.1em] font-medium italic"
                                 >
                                   {exp.position}
                                 </span>
@@ -337,7 +361,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
                                 <span
                                   data-resume-entry-subtitle
                                   data-entry-subtitle-slot="inline"
-                                  className="italic"
+                                  className="font-medium italic"
                                 >
                                   {item.company}
                                 </span>
@@ -366,7 +390,7 @@ export default function Ats4({ resumeData, className }: ResumePreviewProps) {
                               <span
                                 data-resume-entry-subtitle
                                 data-entry-subtitle-slot="newline"
-                                className="italic"
+                                className="font-medium italic"
                               >
                                 {item.company}
                               </span>

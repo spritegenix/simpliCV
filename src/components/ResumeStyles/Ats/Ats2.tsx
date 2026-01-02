@@ -8,10 +8,18 @@ import React, { useEffect, useRef, useState } from "react";
 import SocialMediaIconFinder from "@/components/SocialMediaIconFinder";
 import Link from "next/link";
 import { BiSolidMap } from "react-icons/bi";
+import { Playfair_Display } from "next/font/google";
 import {
   normalizeSectionOrder,
   type ResumeSectionKey,
 } from "@/lib/sectionOrder";
+
+const ats2HeadingFont = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -33,8 +41,36 @@ export default function Ats2({ resumeData, className }: ResumePreviewProps) {
       ref={containerRef}
       style={{ color: "var(--text)" }}
     >
+      <style>
+        {`
+          /* ATS 2 default font hierarchy (Preview + Print/PDF)
+             - Heading: Playfair Display Bold / SemiBold
+             - Subtitle: Playfair Display Medium / Italic
+             - Body: Lora Regular (handled by --resume-font-family via customization)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-header] p.font-bold {
+            font-family: ${ats2HeadingFont.style.fontFamily} !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] p.font-bold {
+            font-weight: 700 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] p.font-medium,
+          #resumePreviewContent [data-resume-entry-subtitle] {
+            font-family: ${ats2HeadingFont.style.fontFamily} !important;
+            font-weight: 500 !important;
+            font-style: italic !important;
+          }
+        `}
+      </style>
       <div
-        className={cn("space-y-2 font-inter px-12 py-10", !width && "invisible")}
+        className={cn(
+          "space-y-2 px-12 py-10 font-inter",
+          !width && "invisible",
+        )}
         style={{
           zoom: (1 / 794) * width,
           fontSize: "var(--base-font)",

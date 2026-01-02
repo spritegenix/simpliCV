@@ -34,7 +34,339 @@ export default function ResumeTemplateAside({
   const router = useRouter();
   const searchParams = useSearchParams();
   async function handleSelectResumeTemplate(styleId: string) {
-    setResumeData((prev) => ({ ...prev, styleId }));
+    setResumeData((prev) => {
+      if (styleId === "ats1") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats2") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Lora",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats3") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats4") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Libre Baskerville",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats5") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: "Open Sans",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats6") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: "Open Sans",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats7") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Source Serif 4",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats8") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats9") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats10") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Source Serif 4",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats12") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Libre Baskerville",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats13") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats14") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats15") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Libre Baskerville",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats16") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Libre Baskerville",
+              },
+            },
+          },
+        };
+      }
+
+      return { ...prev, styleId };
+    });
     // Update styleId in URL without losing other query params
     const params = new URLSearchParams(searchParams.toString());
     params.set("styleId", styleId);

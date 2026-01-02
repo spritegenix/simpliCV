@@ -14,6 +14,7 @@ import { PiCertificate, PiPuzzlePiece, PiSuitcaseSimple } from "react-icons/pi";
 import { FaRegFolderOpen } from "react-icons/fa";
 import { BsPersonGear } from "react-icons/bs";
 import { HiOutlineAcademicCap } from "react-icons/hi2";
+import { Poppins } from "next/font/google";
 import {
   normalizeSectionOrder,
   type ResumeSectionKey,
@@ -22,6 +23,12 @@ interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
 }
+
+const ats9HeadingFont = Poppins({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
+});
 
 export default function Ats9({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -71,7 +78,7 @@ export default function Ats9({ resumeData, className }: ResumePreviewProps) {
                       <span
                         data-resume-entry-subtitle
                         data-entry-subtitle-slot="inline"
-                        className="text-[1.1em] font-semibold italic"
+                        className="text-[1.1em] font-medium"
                       >
                         {exp.position}
                       </span>
@@ -91,7 +98,7 @@ export default function Ats9({ resumeData, className }: ResumePreviewProps) {
                     <span
                       data-resume-entry-subtitle
                       data-entry-subtitle-slot="newline"
-                      className="text-[1.1em] font-semibold italic"
+                      className="text-[1.1em] font-medium"
                     >
                       {exp.position}
                     </span>
@@ -142,7 +149,7 @@ export default function Ats9({ resumeData, className }: ResumePreviewProps) {
                     <span
                       data-resume-entry-subtitle
                       data-entry-subtitle-slot="inline"
-                      className="italic"
+                      className="font-medium"
                     >
                       {item.company}
                     </span>
@@ -174,7 +181,7 @@ export default function Ats9({ resumeData, className }: ResumePreviewProps) {
                   <span
                     data-resume-entry-subtitle
                     data-entry-subtitle-slot="newline"
-                    className="italic"
+                    className="font-medium"
                   >
                     {item.company}
                   </span>
@@ -298,8 +305,34 @@ export default function Ats9({ resumeData, className }: ResumePreviewProps) {
       ref={containerRef}
       style={{ color: "var(--text)" }}
     >
+      <style>
+        {`
+          /* ATS 9 default font hierarchy (Preview + Print/PDF)
+             - Heading: Poppins SemiBold
+             - Subtitle: Poppins Medium
+             - Body: Inter Regular (driven by --resume-font-family)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-header] p.font-bold,
+          #resumePreviewContent [data-resume-entry-title] {
+            font-family: ${ats9HeadingFont.style.fontFamily} !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] p.font-bold {
+            font-weight: 700 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] p.font-medium,
+          #resumePreviewContent [data-resume-entry-subtitle] {
+            font-family: ${ats9HeadingFont.style.fontFamily} !important;
+            font-weight: 500 !important;
+            font-style: normal !important;
+          }
+        `}
+      </style>
       <div
-        className={cn("space-y-2 font-inter", !width && "invisible")}
+        className={cn("space-y-2", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
           fontSize: "var(--base-font)",

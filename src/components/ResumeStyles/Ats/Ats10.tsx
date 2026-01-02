@@ -298,8 +298,34 @@ export default function Ats10({ resumeData, className }: ResumePreviewProps) {
       ref={containerRef}
       style={{ color: "var(--text)" }}
     >
+      <style>
+        {`
+          /* ATS 10 default font hierarchy (Preview + Print/PDF)
+             - Heading: Merriweather Bold / SemiBold
+             - Subtitle: Merriweather Medium
+             - Body: Source Serif 4 Regular (driven by --resume-font-family)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-entry-title],
+          #resumePreviewContent [data-resume-header] .font-bold {
+            font-family: var(--font-merriweather) !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] .font-bold {
+            font-weight: 700 !important;
+          }
+
+          #resumePreviewContent [data-resume-entry-subtitle],
+          #resumePreviewContent [data-resume-header] .font-medium {
+            font-family: var(--font-merriweather) !important;
+            font-weight: 500 !important;
+            font-style: normal !important;
+          }
+        `}
+      </style>
       <div
-        className={cn("space-y-2 font-inter", !width && "invisible")}
+        className={cn("space-y-2", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
           fontSize: "var(--base-font)",
@@ -430,13 +456,18 @@ function PersonalInfoHeader({
               />
             ))}
           {portfolioLink && (
-            <ContactLinks text={"Portfolio"} href={portfolioLink} color="#000" />
+            <ContactLinks
+              text={"Portfolio"}
+              href={portfolioLink}
+              color="#000"
+            />
           )}
         </div>
       </div>
     </div>
   );
 }
+
 function PersonalInfoHeader1({
   resumeData,
   hexBgColor,
@@ -499,9 +530,11 @@ function PersonalInfoHeader1({
             <span>
               <BiSolidMap color={`${hexToRgbaPercent("#000", 70)}`} />
             </span>
-            {city}
-            {city && country ? ", " : ""}
-            {country}
+            <span>
+              {city}
+              {city && country ? ", " : ""}
+              {country}
+            </span>
           </p>
         )}
         <ContactLinks text={phone} href={`tel:${phone}`} color="#000" />
@@ -549,7 +582,7 @@ function ContactLinks({
           >
             {icon ? icon : <SocialMediaIconFinder url={href ? href : ""} />}
           </span>
-          {text === "NO_TEXT" ? "" : <p className="text-gray-900">{text}</p>}
+          {text === "NO_TEXT" ? null : <p className="text-gray-900">{text}</p>}
         </Link>
       )}
     </>
