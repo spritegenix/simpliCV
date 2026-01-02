@@ -146,7 +146,8 @@ export const otherSchema = z.object({
       title: optionalString,
       description: optionalString,
     })
-    .optional(),
+    .optional()
+    .nullable(),
 });
 
 export type OtherValues = z.infer<typeof otherSchema>;
