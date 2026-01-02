@@ -5,6 +5,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import ImportResumeButton from "@/components/ImportResumeButton";
 import { ResumeDocument } from "@/types/resumeDocument";
 import {
   Award,
@@ -121,6 +122,10 @@ export default function AddContentModal({
       <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
         <DialogHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <DialogTitle className="text-2xl font-bold">Add content</DialogTitle>
+          <ImportResumeButton
+            setResumeData={setResumeData}
+            className="gap-2 py-4 text-base"
+          />
         </DialogHeader>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {sections.map((section) => (
