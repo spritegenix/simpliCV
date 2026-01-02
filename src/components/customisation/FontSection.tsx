@@ -9,8 +9,15 @@ export default function FontSection({
   selectedFont,
   setSelectedFont,
 }: FontSectionProps) {
+  const normalizedSelectedFont =
+    selectedFont === "Source Serif Pro" ? "Source Serif 4" : selectedFont;
+
   const fontVarByLabel: Record<string, string> = {
     Lora: "var(--font-lora)",
+    Montserrat: "var(--font-montserrat)",
+    "Open Sans": "var(--font-open-sans)",
+    "Libre Baskerville": "var(--font-libre-baskerville)",
+    "Source Serif 4": "var(--font-source-serif)",
     "Source Serif Pro": "var(--font-source-serif)",
     "Zilla Slab": "var(--font-zilla-slab)",
     "PT Serif": "var(--font-pt-serif)",
@@ -28,7 +35,10 @@ export default function FontSection({
 
   const fontLabelList = [
     "Lora",
-    "Source Serif Pro",
+    "Montserrat",
+    "Open Sans",
+    "Libre Baskerville",
+    "Source Serif 4",
     "Zilla Slab",
     "PT Serif",
     "Literata",
@@ -56,7 +66,7 @@ export default function FontSection({
               key={font}
               onClick={() => setSelectedFont(font)}
               className={`rounded-lg border px-3 py-2 text-left text-sm transition-all ${
-                selectedFont === font
+                normalizedSelectedFont === font
                   ? "border-primary bg-primary/10 text-primary"
                   : "border-muted hover:border-primary/50"
               }`}

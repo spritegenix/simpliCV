@@ -36,7 +36,7 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
           dangerouslySetInnerHTML={{
             __html: resumeData.summary || "",
           }}
-          className="richTextEditorStyle !m-0 whitespace-pre-line text-justify leading-relaxed text-slate-700 pt-1"
+          className="richTextEditorStyle !m-0 whitespace-pre-line pt-1 text-justify leading-relaxed text-slate-700"
         />
       </section>
     ) : null,
@@ -275,8 +275,25 @@ export default function Ats14({ resumeData, className }: ResumePreviewProps) {
       }}
       ref={containerRef}
     >
+      <style>
+        {`
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-entry-title],
+          #resumePreviewContent [data-resume-header] .font-extrabold,
+          #resumePreviewContent [data-resume-header] .font-bold {
+            font-weight: 600 !important;
+            font-style: normal !important;
+          }
+
+          #resumePreviewContent [data-resume-entry-subtitle],
+          #resumePreviewContent [data-resume-header] .font-medium {
+            font-weight: 500 !important;
+            font-style: normal !important;
+          }
+        `}
+      </style>
       <div
-        className={cn("space-y-5 px-12 py-10 font-sans", !width && "invisible")}
+        className={cn("space-y-5 px-12 py-10", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
           fontSize: "var(--base-font)",

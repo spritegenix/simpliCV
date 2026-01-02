@@ -115,7 +115,7 @@ export default function ATSStyle3({
                                 <span
                                   data-resume-entry-subtitle
                                   data-entry-subtitle-slot="inline"
-                                  className="font-semibold italic"
+                                  className="font-medium italic"
                                 >
                                   {exp.position}
                                 </span>
@@ -142,7 +142,7 @@ export default function ATSStyle3({
                               <span
                                 data-resume-entry-subtitle
                                 data-entry-subtitle-slot="newline"
-                                className="font-semibold italic"
+                                className="font-medium italic"
                               >
                                 {exp.position}
                               </span>

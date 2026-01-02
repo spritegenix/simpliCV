@@ -73,7 +73,7 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                       <span
                         data-resume-entry-subtitle
                         data-entry-subtitle-slot="inline"
-                        className="text-[1.1em] font-semibold italic"
+                        className="text-[1.1em] font-medium"
                       >
                         {exp.position}
                       </span>
@@ -93,7 +93,7 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                     <span
                       data-resume-entry-subtitle
                       data-entry-subtitle-slot="newline"
-                      className="text-[1.1em] font-semibold italic"
+                      className="text-[1.1em] font-medium"
                     >
                       {exp.position}
                     </span>
@@ -143,7 +143,7 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                       <span
                         data-resume-entry-subtitle
                         data-entry-subtitle-slot="inline"
-                        className="italic"
+                        className="font-medium"
                       >
                         {item.company}
                       </span>
@@ -172,7 +172,7 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
                     <span
                       data-resume-entry-subtitle
                       data-entry-subtitle-slot="newline"
-                      className="italic"
+                      className="font-medium"
                     >
                       {item.company}
                     </span>
@@ -288,6 +288,28 @@ export default function Ats6({ resumeData, className }: ResumePreviewProps) {
       className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
       ref={containerRef}
     >
+      <style>
+        {`
+          /* ATS 6 default font hierarchy (Preview + Print/PDF)
+             - Heading: Raleway SemiBold
+             - Subtitle: Raleway Medium
+             - Body: Open Sans Regular (driven by --resume-font-family)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-entry-title],
+          #resumePreviewContent [data-resume-header] .font-bold {
+            font-family: var(--font-raleway) !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-entry-subtitle],
+          #resumePreviewContent [data-resume-header] .font-medium {
+            font-family: var(--font-raleway) !important;
+            font-weight: 500 !important;
+            font-style: normal !important;
+          }
+        `}
+      </style>
       <div
         className={cn("resume-root", !width && "invisible", "relative")}
         style={{

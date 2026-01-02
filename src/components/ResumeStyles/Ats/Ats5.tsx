@@ -75,7 +75,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
                       <span
                         data-resume-entry-subtitle
                         data-entry-subtitle-slot="inline"
-                        className="text-[1.1em] font-semibold italic"
+                        className="text-[1.1em] font-medium"
                       >
                         {exp.position}
                       </span>
@@ -95,7 +95,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
                     <span
                       data-resume-entry-subtitle
                       data-entry-subtitle-slot="newline"
-                      className="text-[1.1em] font-semibold italic"
+                      className="text-[1.1em] font-medium"
                     >
                       {exp.position}
                     </span>
@@ -140,7 +140,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
                     <span
                       data-resume-entry-subtitle
                       data-entry-subtitle-slot="inline"
-                      className="italic"
+                      className="font-medium"
                     >
                       {item.company}
                     </span>
@@ -169,7 +169,7 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
                   <span
                     data-resume-entry-subtitle
                     data-entry-subtitle-slot="newline"
-                    className="italic"
+                    className="font-medium"
                   >
                     {item.company}
                   </span>
@@ -279,15 +279,38 @@ export default function Ats5({ resumeData, className }: ResumePreviewProps) {
 
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white font-arial",
-        className,
-      )}
+      className={cn("aspect-[210/297] h-fit w-full bg-white", className)}
       style={{
         color: "var(--text)",
       }}
       ref={containerRef}
     >
+      <style>
+        {`
+          /* ATS 5 default font hierarchy (Preview + Print/PDF)
+             - Heading: Montserrat SemiBold/Bold
+             - Subtitle: Montserrat Medium
+             - Body: Open Sans Regular (driven by --resume-font-family)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-entry-title],
+          #resumePreviewContent [data-resume-header] .font-bold {
+            font-family: var(--font-montserrat) !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] .font-bold {
+            font-weight: 700 !important;
+          }
+
+          #resumePreviewContent [data-resume-entry-subtitle],
+          #resumePreviewContent [data-resume-header] .font-medium {
+            font-family: var(--font-montserrat) !important;
+            font-weight: 500 !important;
+            font-style: normal !important;
+          }
+        `}
+      </style>
       <div
         className={cn(
           "grid h-full grid-cols-12 space-y-2",
