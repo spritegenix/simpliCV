@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+// Trigger type update
 import { ResumeDocument } from "@/types/resumeDocument";
 
 export interface EditorFormProps {

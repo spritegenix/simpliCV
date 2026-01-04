@@ -78,6 +78,7 @@ model Education {
   startDate   DateTime?
   endDate     DateTime?
   description String?
+  isPresent   String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   resumeId    String

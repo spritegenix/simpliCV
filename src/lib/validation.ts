@@ -97,7 +97,7 @@ export const educationSchema = z.object({
         description: optionalString,
         startDate: optionalString,
         endDate: optionalString,
-        isPresent: z.boolean().optional(),
+        isPresent: optionalString,
       }),
     )
     .optional(),

@@ -106,7 +106,7 @@ export function mapToResumeValues(
       startDate: edu.startDate?.toISOString().split("T")[0],
       endDate: edu.endDate?.toISOString().split("T")[0],
       description: edu.description || undefined,
-      isPresent: edu.isPresent,
+      isPresent: (edu as any).isPresent || undefined,
     })),
     projectWorks: data.projectWorks?.map((proj) => ({
       company: proj.company || undefined,
