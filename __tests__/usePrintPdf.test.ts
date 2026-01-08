@@ -10,6 +10,7 @@ mock.module("@/components/GeneratingPdfModal", () => ({
     setOpen: (...args: unknown[]) => {
       setOpenCalls.push(args);
     },
+    setAbort: (..._args: unknown[]) => {},
   }),
 }));
 

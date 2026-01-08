@@ -3,6 +3,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { OfferLetterDocument } from "@/lib/offer-letter/offerLetterDocument";
+import type { OfferLetterValues } from "@/lib/offer-letter/types";
+
+import CompanyForm from "./forms/CompanyForm";
+import CandidateForm from "./forms/CandidateForm";
+import JobForm from "./forms/jobForm";
+import CompensationForm from "./forms/CompensationForm";
+import LegalityForm from "./forms/LegalityForm";
+import ClosingSignatureForm from "./forms/ClosingSignatureForm";
+import useAutoSaveOfferLetter from "./useAutoSaveOfferLetter";
+import PaginatedOfferLetterPreview from "./PaginatedOfferLetterPreview";
+import FullScreenPreviewButton from "../../editor/FullScreenPreviewButton";
+import OfferDownloadButton from "./OfferDownloadButton";
 
 interface OfferLetterEditorProps {
   initialDocument: OfferLetterDocument;
@@ -19,6 +31,24 @@ export default function OfferLetterEditor({
     ...initialDocument,
     styleId: styleId ?? initialDocument.styleId ?? undefined,
   }));
+
+  useAutoSaveOfferLetter({
+    offerId,
+    document,
+  });
+
+  function updateSection<K extends keyof OfferLetterValues>(
+    key: K,
+    value: OfferLetterValues[K],
+  ) {
+    setDocument((prev) => ({
+      ...prev,
+      content: {
+        ...prev.content,
+        [key]: value,
+      },
+    }));
+  }
 
   const router = useRouter();
   const pathname = usePathname();
@@ -64,6 +94,54 @@ export default function OfferLetterEditor({
   useMemo(() => setStyleId, [setStyleId]);
   useMemo(() => document, [document]);
 
-  // Phase 4: editor shell only (no forms/preview/persistence yet)
-  return <div />;
+  return (
+    <div className="editor-layout mx-auto max-w-6xl gap-6 p-4 lg:grid lg:grid-cols-2">
+      <div className="editor-forms space-y-8">
+        <CompanyForm
+          value={document.content.company}
+          onChange={(v) => updateSection("company", v)}
+        />
+
+        <CandidateForm
+          value={document.content.candidate}
+          onChange={(v) => updateSection("candidate", v)}
+        />
+
+        <JobForm
+          value={document.content.job}
+          onChange={(v) => updateSection("job", v)}
+        />
+
+        <CompensationForm
+          value={document.content.compensation}
+          onChange={(v) => updateSection("compensation", v)}
+        />
+
+        <LegalityForm
+          value={document.content.legality}
+          onChange={(v) => updateSection("legality", v)}
+        />
+
+        <ClosingSignatureForm
+          value={document.content.closingSignature}
+          onChange={(v) => updateSection("closingSignature", v)}
+        />
+      </div>
+
+      <div className="editor-preview group relative overflow-auto">
+        <div className="absolute left-1 top-1 z-10 flex flex-none flex-col gap-3 opacity-50 transition-opacity group-hover:opacity-100">
+          <FullScreenPreviewButton
+            href={
+              document.styleId
+                ? `/offer/${offerId}?styleId=${encodeURIComponent(document.styleId)}`
+                : `/offer/${offerId}`
+            }
+          />
+          <OfferDownloadButton offerId={offerId} styleId={document.styleId} />
+        </div>
+
+        <PaginatedOfferLetterPreview document={document} />
+      </div>
+    </div>
+  );
 }

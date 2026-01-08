@@ -1,4 +1,3 @@
-
 // import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { useToast } from "./use-toast";
@@ -6,13 +5,20 @@ import { usePdfGeneratingModalState } from "@/components/GeneratingPdfModal";
 
 export function usePrintPdf() {
   const controllerRef = useRef<AbortController | null>(null);
-  const { setOpen } = usePdfGeneratingModalState()
+  const { setOpen, setAbort } = usePdfGeneratingModalState();
   const { toast } = useToast();
 
   async function handlePrintPdf(url: string) {
     const controller = new AbortController();
     controllerRef.current = controller;
     setOpen(true);
+    setAbort(() => {
+      try {
+        controller.abort();
+      } catch (e) {
+        console.error("Error aborting PDF generation:", e);
+      }
+    });
     try {
       const response = await fetch("/api/generate-pdf", {
         method: "POST",
@@ -60,7 +66,7 @@ export function usePrintPdf() {
         toast({
           variant: "destructive",
           description: "PDF generation cancelled by user.",
-        })
+        });
       } else {
         console.error("Print error:", error);
         toast({
@@ -71,6 +77,7 @@ export function usePrintPdf() {
     } finally {
       setOpen(false);
       controllerRef.current = null;
+      setAbort(null);
     }
   }
   const abortPdfGeneration = () => {
@@ -78,6 +85,7 @@ export function usePrintPdf() {
     controllerRef.current?.abort();
     console.log("Current controller", controllerRef.current);
     setOpen(false);
+    setAbort(null);
   };
   return { handlePrintPdf, abortPdfGeneration };
 }

@@ -9,32 +9,44 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import { usePrintPdf } from "@/hooks/usePrintPdf";
+// NOTE: modal uses shared Zustand store for abort handling set by print hooks
 
 // Zustand store
 interface PdfGeneratingModalState {
   open: boolean;
   setOpen: (open: boolean) => void;
+  // optional abort handler set by the active print hook
+  abort?: (() => void) | null;
+  setAbort: (fn: (() => void) | null) => void;
 }
 
 export const usePdfGeneratingModalState = create<PdfGeneratingModalState>(
   (set) => ({
     open: false,
+    abort: null,
     setOpen: (open: boolean) => {
       console.log("PDF Generating Modal State Changed:", open);
       set({ open });
+    },
+    setAbort: (fn: (() => void) | null) => {
+      console.log("PDF Generating Modal Abort Handler Set:", !!fn);
+      set({ abort: fn });
     },
   }),
 );
 
 // Component
 export default function GeneratingPdfModal() {
-  const { open , setOpen } = usePdfGeneratingModalState();
-  const { abortPdfGeneration } = usePrintPdf();
+  const { open, setOpen, abort } = usePdfGeneratingModalState();
 
   const handleClose = (isOpen: boolean) => {
     if (!isOpen) {
-      abortPdfGeneration(); // 👈 abort when user closes
+      // call the shared abort handler if present
+      try {
+        abort?.();
+      } catch (e) {
+        console.error("Error calling abort handler:", e);
+      }
     } else {
       setOpen(true);
     }
