@@ -352,6 +352,24 @@ body {
   outline: none;
 }
 
+.ProseMirror p {
+  margin-bottom: 1em;
+}
+
+.ProseMirror p:last-child {
+  margin-bottom: 0;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.25rem;
+  margin-bottom: 1em;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.25em;
+}
+
 .cl-rootBox {
   font-family: "Rubik", sans-serif;
 }

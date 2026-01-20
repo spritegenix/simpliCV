@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import type { OfferLetterValues } from "@/lib/offer-letter/types";
 import type { OfferEditorFormProps } from "./types";
 
@@ -19,28 +20,29 @@ export default function CandidateForm({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-1">
-        <h2 className="text-lg font-semibold">Candidate</h2>
-      </div>
-
-      <div className="grid gap-3">
+    <div className="rounded-xl bg-muted/30 p-4 sm:p-6">
+      <h2 className="mb-4 text-2xl font-semibold">Candidate Details</h2>
+      <div className="space-y-4">
         <div className="space-y-1">
-          <Label>Full Name</Label>
+          <Label>Candidate Name</Label>
           <Input
             value={value.fullName}
             onChange={(e) => update({ fullName: e.target.value })}
-            placeholder="Full name"
+            placeholder="Enter candidate name"
           />
         </div>
 
         <div className="space-y-1">
-          <Label>Email</Label>
-          <Input
-            type="email"
-            value={value.email}
-            onChange={(e) => update({ email: e.target.value })}
-            placeholder="email@example.com"
+          <Label>Address</Label>
+          <Textarea
+            value={value.address ?? ""}
+            onChange={(e) =>
+              update({
+                address: e.target.value.trim() ? e.target.value : undefined,
+              })
+            }
+            placeholder="Enter candidate address"
+            rows={3}
           />
         </div>
       </div>

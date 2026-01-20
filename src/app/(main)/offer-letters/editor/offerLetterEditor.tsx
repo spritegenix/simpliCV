@@ -4,17 +4,15 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { OfferLetterDocument } from "@/lib/offer-letter/offerLetterDocument";
 import type { OfferLetterValues } from "@/lib/offer-letter/types";
+import { cn } from "@/lib/utils";
 
 import CompanyForm from "./forms/CompanyForm";
+import DateForm from "./forms/DateForm";
 import CandidateForm from "./forms/CandidateForm";
-import JobForm from "./forms/jobForm";
-import CompensationForm from "./forms/CompensationForm";
-import LegalityForm from "./forms/LegalityForm";
+import BodyForm from "./forms/BodyForm";
 import ClosingSignatureForm from "./forms/ClosingSignatureForm";
 import useAutoSaveOfferLetter from "./useAutoSaveOfferLetter";
-import PaginatedOfferLetterPreview from "./PaginatedOfferLetterPreview";
-import FullScreenPreviewButton from "../../editor/FullScreenPreviewButton";
-import OfferDownloadButton from "./OfferDownloadButton";
+import OfferLetterPreviewSection from "./OfferLetterPreviewSection";
 
 interface OfferLetterEditorProps {
   initialDocument: OfferLetterDocument;
@@ -27,21 +25,23 @@ export default function OfferLetterEditor({
   offerId,
   styleId,
 }: OfferLetterEditorProps) {
-  const [document, setDocument] = useState<OfferLetterDocument>(() => ({
-    ...initialDocument,
-    styleId: styleId ?? initialDocument.styleId ?? undefined,
-  }));
+  const [offerDocument, setOfferDocument] = useState<OfferLetterDocument>(
+    () => ({
+      ...initialDocument,
+      styleId: styleId ?? initialDocument.styleId ?? undefined,
+    }),
+  );
 
   useAutoSaveOfferLetter({
     offerId,
-    document,
+    document: offerDocument,
   });
 
   function updateSection<K extends keyof OfferLetterValues>(
     key: K,
     value: OfferLetterValues[K],
   ) {
-    setDocument((prev) => ({
+    setOfferDocument((prev) => ({
       ...prev,
       content: {
         ...prev.content,
@@ -56,7 +56,7 @@ export default function OfferLetterEditor({
 
   // Keep local state in sync when the server updates props (e.g., refresh or URL edits)
   useEffect(() => {
-    setDocument((prev) => {
+    setOfferDocument((prev) => {
       const nextStyleId = styleId ?? initialDocument.styleId ?? undefined;
       if (prev === initialDocument && prev.styleId === nextStyleId) {
         return prev;
@@ -71,7 +71,7 @@ export default function OfferLetterEditor({
 
   const setStyleId = useCallback(
     (nextStyleId?: string) => {
-      setDocument((prev) => ({
+      setOfferDocument((prev) => ({
         ...prev,
         styleId: nextStyleId,
       }));
@@ -92,55 +92,62 @@ export default function OfferLetterEditor({
 
   // Keep the helper referenced to avoid unused lint errors later
   useMemo(() => setStyleId, [setStyleId]);
-  useMemo(() => document, [document]);
+  useMemo(() => offerDocument, [offerDocument]);
+
+  // Prevent body scroll - only editor panel should scroll
+  useEffect(() => {
+    window.document.body.style.overflow = "hidden";
+    return () => {
+      window.document.body.style.overflow = "auto";
+    };
+  }, []);
 
   return (
-    <div className="editor-layout mx-auto max-w-6xl gap-6 p-4 lg:grid lg:grid-cols-2">
-      <div className="editor-forms space-y-8">
-        <CompanyForm
-          value={document.content.company}
-          onChange={(v) => updateSection("company", v)}
-        />
+    <div className="flex h-screen flex-col pt-20">
+      {/* Main content area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left editor panel */}
+        <div className="flex w-full flex-col md:w-1/2">
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-y-auto px-4 pb-6">
+            <div className="mx-auto max-w-3xl space-y-8 py-6">
+              <CompanyForm
+                value={offerDocument.content.company}
+                onChange={(v) => updateSection("company", v)}
+              />
 
-        <CandidateForm
-          value={document.content.candidate}
-          onChange={(v) => updateSection("candidate", v)}
-        />
+              <DateForm
+                value={offerDocument.content.date}
+                onChange={(v) => updateSection("date", v)}
+              />
 
-        <JobForm
-          value={document.content.job}
-          onChange={(v) => updateSection("job", v)}
-        />
+              <CandidateForm
+                value={offerDocument.content.candidate}
+                onChange={(v) => updateSection("candidate", v)}
+              />
 
-        <CompensationForm
-          value={document.content.compensation}
-          onChange={(v) => updateSection("compensation", v)}
-        />
+              <BodyForm
+                value={offerDocument.content.body}
+                onChange={(v) => updateSection("body", v)}
+              />
 
-        <LegalityForm
-          value={document.content.legality}
-          onChange={(v) => updateSection("legality", v)}
-        />
-
-        <ClosingSignatureForm
-          value={document.content.closingSignature}
-          onChange={(v) => updateSection("closingSignature", v)}
-        />
-      </div>
-
-      <div className="editor-preview group relative overflow-auto">
-        <div className="absolute left-1 top-1 z-10 flex flex-none flex-col gap-3 opacity-50 transition-opacity group-hover:opacity-100">
-          <FullScreenPreviewButton
-            href={
-              document.styleId
-                ? `/offer/${offerId}?styleId=${encodeURIComponent(document.styleId)}`
-                : `/offer/${offerId}`
-            }
-          />
-          <OfferDownloadButton offerId={offerId} styleId={document.styleId} />
+              <ClosingSignatureForm
+                value={offerDocument.content.closingSignature}
+                onChange={(v) => updateSection("closingSignature", v)}
+              />
+            </div>
+          </div>
         </div>
 
-        <PaginatedOfferLetterPreview document={document} />
+        {/* Divider */}
+        <div className="hidden md:block md:border-r" />
+
+        {/* Right preview panel */}
+        <OfferLetterPreviewSection
+          document={offerDocument}
+          offerId={offerId}
+          className="hidden md:flex md:w-1/2"
+        />
       </div>
     </div>
   );

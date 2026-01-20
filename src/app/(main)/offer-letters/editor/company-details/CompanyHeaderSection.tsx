@@ -2,7 +2,13 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Camera, Loader2, Trash2, UploadCloud } from "lucide-react";
+import {
+  Camera,
+  ExternalLink,
+  Loader2,
+  Trash2,
+  UploadCloud,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,33 +16,46 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { uploadFileToS3 } from "@/lib/upload-file";
 import { cn } from "@/lib/utils";
-import type { OfferLetterValues } from "@/lib/offer-letter/types";
-import type { OfferEditorFormProps } from "./types";
+import type { CompanyHeaderValues } from "./types";
 
-type ClosingSignatureSection = OfferLetterValues["closingSignature"];
+interface CompanyHeaderSectionProps {
+  value: CompanyHeaderValues;
+  onChange: (next: CompanyHeaderValues) => void;
+}
 
-export default function ClosingSignatureForm({
+export default function CompanyHeaderSection({
   value,
   onChange,
-}: OfferEditorFormProps<ClosingSignatureSection>) {
+}: CompanyHeaderSectionProps) {
   const [isUploading, setIsUploading] = useState(false);
 
-  const update = (patch: Partial<ClosingSignatureSection>) => {
+  const normalizeWebsiteUrl = (input: string) => {
+    const trimmed = input.trim();
+    if (!trimmed) return "";
+
+    // If user already provided a scheme, keep it.
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+
+    // Otherwise, treat it as a domain/path and default to https.
+    return `https://${trimmed}`;
+  };
+
+  const update = (patch: Partial<CompanyHeaderValues>) => {
     onChange({
       ...value,
       ...patch,
     });
   };
 
-  const signaturePreviewUrl = useMemo(() => {
-    if (value.signatureImage?.type === "upload" && value.signatureImage.value) {
-      return value.signatureImage.value;
-    }
-    if (value.signatureUrl) {
-      return value.signatureUrl;
+  const website = value.website?.trim() ?? "";
+  const websiteHref = normalizeWebsiteUrl(website);
+
+  const logoPreviewUrl = useMemo(() => {
+    if (value.companyLogo?.type === "upload" && value.companyLogo.value) {
+      return value.companyLogo.value;
     }
     return undefined;
-  }, [value.signatureImage, value.signatureUrl]);
+  }, [value.companyLogo]);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -47,8 +66,9 @@ export default function ClosingSignatureForm({
         setIsUploading(true);
         const uploadedUrl = await uploadFileToS3(file);
         update({
-          signatureImage: { type: "upload", value: uploadedUrl },
-          signatureUrl: uploadedUrl,
+          companyLogo: { type: "upload", value: uploadedUrl },
+          // Keep legacy logoUrl in sync for existing preview/PDF code.
+          logoUrl: uploadedUrl,
         });
       } catch (error) {
         toast({
@@ -56,13 +76,13 @@ export default function ClosingSignatureForm({
           description:
             error instanceof Error
               ? error.message
-              : "Failed to upload signature. Please try again.",
+              : "Failed to upload logo. Please try again.",
         });
       } finally {
         setIsUploading(false);
       }
     },
-    [update],
+    [value, onChange],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -70,88 +90,87 @@ export default function ClosingSignatureForm({
     multiple: false,
     maxFiles: 1,
     accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
+      "image/*": [".png", ".jpg", ".jpeg", ".webp", ".svg"],
     },
     disabled: isUploading,
   });
 
   return (
     <div className="rounded-xl bg-muted/30 p-4 sm:p-6">
-      <h2 className="mb-4 text-2xl font-semibold">Closing & Signature</h2>
+      <h2 className="mb-4 text-2xl font-semibold">Company Details</h2>
       <div className="grid gap-6 lg:grid-cols-[1fr_200px] lg:items-start">
-        <div className="grid gap-3">
+        <div className="space-y-4">
           <div className="space-y-1">
-            <Label>Name</Label>
+            <Label>Company name</Label>
             <Input
               value={value.name}
               onChange={(e) => update({ name: e.target.value })}
-              placeholder="Your name"
+              placeholder="Enter company name"
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="space-y-1">
-              <Label>Title</Label>
-              <Input
-                value={value.title ?? ""}
-                onChange={(e) =>
-                  update({
-                    title: e.target.value.trim() ? e.target.value : undefined,
-                  })
-                }
-                placeholder="e.g. HR Manager"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <Label>Company Name</Label>
-              <Input
-                value={value.companyName ?? ""}
-                onChange={(e) =>
-                  update({
-                    companyName: e.target.value.trim()
-                      ? e.target.value
-                      : undefined,
-                  })
-                }
-                placeholder="Company"
-              />
-            </div>
+          <div className="space-y-1">
+            <Label>Email</Label>
+            <Input
+              type="email"
+              value={value.email ?? ""}
+              onChange={(e) =>
+                update({
+                  email: e.target.value.trim() ? e.target.value : undefined,
+                })
+              }
+              placeholder="Enter email"
+            />
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="space-y-1">
-              <Label>Email</Label>
-              <Input
-                type="email"
-                value={value.email ?? ""}
-                onChange={(e) =>
-                  update({
-                    email: e.target.value.trim() ? e.target.value : undefined,
-                  })
-                }
-                placeholder="name@company.com"
-              />
-            </div>
+          <div className="space-y-1">
+            <Label>Phone</Label>
+            <Input
+              value={value.phone ?? ""}
+              onChange={(e) =>
+                update({
+                  phone: e.target.value.trim() ? e.target.value : undefined,
+                })
+              }
+              placeholder="Enter phone"
+            />
+          </div>
 
-            <div className="space-y-1">
-              <Label>Phone</Label>
+          <div className="space-y-1">
+            <Label>Website</Label>
+            <div className="relative">
               <Input
-                value={value.phone ?? ""}
+                type="url"
+                value={value.website ?? ""}
                 onChange={(e) =>
                   update({
-                    phone: e.target.value.trim() ? e.target.value : undefined,
+                    website: e.target.value.trim() ? e.target.value : undefined,
                   })
                 }
-                placeholder="Phone"
+                placeholder="Enter website"
+                className="pr-10"
               />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                onClick={() => {
+                  if (!websiteHref) return;
+                  window.open(websiteHref, "_blank", "noopener,noreferrer");
+                }}
+                disabled={!websiteHref}
+                aria-label="Open website"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
 
         <div className="flex justify-center lg:justify-end">
           <div className="space-y-3">
-            <Label>Signature</Label>
+            <Label>Company logo</Label>
 
             <div className="relative">
               <div
@@ -161,15 +180,15 @@ export default function ClosingSignatureForm({
                   isDragActive && "border-primary bg-primary/10",
                   isUploading && "cursor-not-allowed opacity-70",
                 )}
-                aria-label="Signature upload"
+                aria-label="Company logo upload"
               >
                 <input {...getInputProps()} />
 
-                {signaturePreviewUrl ? (
+                {logoPreviewUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={signaturePreviewUrl}
-                    alt="Signature"
+                    src={logoPreviewUrl}
+                    alt="Company logo"
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -188,7 +207,7 @@ export default function ClosingSignatureForm({
                   </div>
                 )}
 
-                {signaturePreviewUrl && !isUploading && (
+                {value.companyLogo?.value && !isUploading && (
                   <div className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100">
                     <Button
                       type="button"
@@ -199,11 +218,11 @@ export default function ClosingSignatureForm({
                         e.preventDefault();
                         e.stopPropagation();
                         update({
-                          signatureImage: undefined,
-                          signatureUrl: undefined,
+                          companyLogo: undefined,
+                          logoUrl: undefined,
                         });
                       }}
-                      aria-label="Remove signature"
+                      aria-label="Remove logo"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

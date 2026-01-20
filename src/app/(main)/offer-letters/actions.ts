@@ -3,11 +3,9 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { OfferStatus } from "@prisma/client";
-import {
-  emptyOfferLetterValues,
-  type OfferLetterDesign,
-  type OfferLetterValues,
-} from "@/types/offerLetter";
+import { EMPTY_OFFER_LETTER_VALUES } from "@/lib/offer-letter/defaults";
+import type { OfferLetterDesign } from "@/lib/offer-letter/offerLetterDesign";
+import type { OfferLetterValues } from "@/lib/offer-letter/types";
 
 export async function createOfferLetter() {
   const { userId } = await auth();
@@ -19,7 +17,7 @@ export async function createOfferLetter() {
     data: {
       userId,
       status: OfferStatus.DRAFT,
-      content: emptyOfferLetterValues as any,
+      content: EMPTY_OFFER_LETTER_VALUES as any,
     },
     select: { id: true },
   });
