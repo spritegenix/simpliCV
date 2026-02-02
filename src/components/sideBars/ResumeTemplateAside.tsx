@@ -52,6 +52,10 @@ export default function ResumeTemplateAside({
                 category: "sans",
                 selectedFont: undefined,
               },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+              },
             },
           },
         };
@@ -74,6 +78,10 @@ export default function ResumeTemplateAside({
                 category: "serif",
                 selectedFont: "Lora",
               },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+              },
             },
           },
         };
@@ -95,6 +103,10 @@ export default function ResumeTemplateAside({
                 ...prev.design.customization?.font,
                 category: "sans",
                 selectedFont: undefined,
+              },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
               },
             },
           },
@@ -139,6 +151,11 @@ export default function ResumeTemplateAside({
                 ...prev.design.customization?.font,
                 category: "sans",
                 selectedFont: "Open Sans",
+              },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "stacked",
+                detailsAlign: "left",
               },
             },
           },
@@ -206,6 +223,10 @@ export default function ResumeTemplateAside({
                 category: "sans",
                 selectedFont: undefined,
               },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+              },
             },
           },
         };
@@ -272,6 +293,11 @@ export default function ResumeTemplateAside({
                 category: "serif",
                 selectedFont: "Libre Baskerville",
               },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+                detailsAlign: "center",
+              },
             },
           },
         };
@@ -316,6 +342,10 @@ export default function ResumeTemplateAside({
                 category: "sans",
                 selectedFont: undefined,
               },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+              },
             },
           },
         };
@@ -343,7 +373,50 @@ export default function ResumeTemplateAside({
         };
       }
 
-      if (styleId === "ats16") {
+      if (styleId === "ats1") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            color: {
+              ...prev.design.color,
+              // ATS 1 thumbnail/brand uses a yellow accent by default.
+              accent: "#f59e0b",
+            },
+          },
+        };
+      }
+
+      if (styleId === "modern1") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            color: {
+              ...prev.design.color,
+              // Modern 1 uses a navy sidebar in the template thumbnail.
+              accent: "#1F3D4F",
+            },
+            typography: {
+              ...prev.design.typography,
+              // Body is driven by selectedFont (Open Sans). Keep base family stable.
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: "Open Sans",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "modern2") {
         return {
           ...prev,
           styleId,
@@ -351,14 +424,46 @@ export default function ResumeTemplateAside({
             ...prev.design,
             typography: {
               ...prev.design.typography,
-              fontFamily: "serif",
+              // Body is driven by selectedFont (Lora). Keep base family stable.
+              fontFamily: "inter",
             },
             customization: {
               ...prev.design.customization,
               font: {
                 ...prev.design.customization?.font,
                 category: "serif",
-                selectedFont: "Libre Baskerville",
+                selectedFont: "Lora",
+              },
+              sectionHeadings: {
+                ...prev.design.customization?.sectionHeadings,
+                // Modern 2 default heading bar is wired to style 1.
+                headingStyle: 1,
+                headingCapitalization: "uppercase",
+                headingSize: "S",
+                headingIcons: "filled",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "modern4") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              // Body is driven by selectedFont (Open Sans). Keep base family stable.
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: "Open Sans",
               },
             },
           },

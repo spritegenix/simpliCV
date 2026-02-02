@@ -22,18 +22,53 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
   return (
     <div
       className={cn(
-        "resume-root modern aspect-[210/297] h-fit w-full bg-white p-6",
+        "resume-root modern aspect-[210/297] h-fit w-full bg-white",
         className,
       )}
       style={{
         color: "var(--text)",
         fontSize: "var(--base-font)",
+        fontFamily: "var(--resume-font-family)",
+        lineHeight: "var(--resume-line-height)",
       }}
       ref={containerRef}
     >
+      <style>
+        {`
+          /* Modern 2 default font hierarchy (Preview + Print/PDF)
+             - Heading: Montserrat SemiBold / Bold
+             - Subtitle: Montserrat Medium
+             - Body: Lora Regular (driven by --resume-font-family)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-entry-title] {
+            font-family: var(--font-montserrat) !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-entry-subtitle] {
+            font-family: var(--font-montserrat) !important;
+            font-weight: 500 !important;
+          }
+
+          /* Modern 2 default section heading background (like reference image)
+             - Applies when Section Headings style = 1 (default)
+             - Other heading styles still work via the global heading-style system
+          */
+          #resumePreviewContent [data-resume-section-heading] {
+            display: block;
+            padding: 0.25em 0.5em;
+          }
+
+          #resumePreviewContent[data-section-heading-style="1"] [data-resume-section-heading] {
+            background: color-mix(in srgb, var(--text) 60%, transparent) !important;
+            color: white !important;
+          }
+        `}
+      </style>
       <div
         className={cn(
-          "space-y-[calc(var(--section-gap)*0.5)] font-inter",
+          "space-y-[calc(var(--section-gap)*0.5)] px-8 py-6",
           !width && "invisible",
         )}
         style={{
@@ -324,7 +359,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             <p
               style={{
                 color: "var(--accent)",
-                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                fontSize: "calc(var(--name-font-size) * 1.15)",
                 fontWeight: "var(--name-font-weight)" as any,
               }}
             >
@@ -334,8 +369,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
               className="font-medium"
               style={{
                 color: "var(--accent)",
-                fontSize:
-                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                fontSize: "calc(var(--name-font-size) * 0.65)",
               }}
             >
               {jobTitle}
@@ -396,7 +430,7 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
         <p
           style={{
             color: "var(--accent)",
-            fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+            fontSize: "calc(var(--name-font-size) * 1.15)",
             fontWeight: "var(--name-font-weight)" as any,
           }}
         >
@@ -406,7 +440,7 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
           className="font-medium"
           style={{
             color: "var(--accent)",
-            fontSize: "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+            fontSize: "calc(var(--name-font-size) * 0.65)",
           }}
         >
           {jobTitle}
@@ -483,12 +517,6 @@ function Heading({ children }: { children: string }) {
       className="!mb-1 w-full break-inside-avoid text-[1.2em] font-bold tracking-[0.2em] text-[var(--accent)]"
       style={{
         fontSize: "calc(1em * var(--heading-scale))",
-        padding: "0.25em 0.5em",
-        backgroundColor:
-          "color-mix(in srgb, var(--accent) 16%, transparent)",
-        borderBottomWidth: "var(--resume-border-width)",
-        borderBottomStyle: "var(--resume-border-style)" as any,
-        borderBottomColor: "currentColor",
       }}
     >
       {children}

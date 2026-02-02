@@ -13,6 +13,58 @@ import { deleteFromS3 } from "@/lib/s3";
 
 import { ResumeDesign } from "@/types/resumeDesign";
 
+/**
+ * Remove null bytes from strings to prevent PostgreSQL UTF8 encoding errors
+ * Also handles other invalid characters that might cause encoding issues
+ */
+function sanitizeString(value: string): string {
+  // Remove null bytes and other control characters except newline, tab, and carriage return
+  return value.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F]/g, '');
+}
+
+/**
+ * Deeply sanitize an object by removing null bytes from all strings
+ * and pruning undefined values
+ */
+function deepSanitizeAndPrune<T>(value: T): T {
+  if (value === undefined || value === null) return value;
+
+  // Handle strings - sanitize them
+  if (typeof value === "string") {
+    return sanitizeString(value) as T;
+  }
+
+  // Handle arrays
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => deepSanitizeAndPrune(item))
+      .filter((item) => item !== undefined) as T;
+  }
+
+  // Handle objects (but preserve special types like Date)
+  if (typeof value === "object") {
+    // Preserve Date objects as-is
+    if (value instanceof Date) return value;
+
+    const result: Record<string, unknown> = {};
+    for (const [key, nested] of Object.entries(value as any)) {
+      const sanitized = deepSanitizeAndPrune(nested);
+      if (sanitized !== undefined) {
+        result[key] = sanitized;
+      }
+    }
+    return result as T;
+  }
+
+  // Return primitives as-is (numbers, booleans, etc.)
+  return value;
+}
+
+// Keep the old function name for backward compatibility with design sanitization
+function pruneUndefinedDeep<T>(value: T): T {
+  return deepSanitizeAndPrune(value);
+}
+
 export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
   const { id } = values;
 
@@ -128,8 +180,9 @@ export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
   const { dateFormat: _dateFormat, ...resumeValuesWithoutDateFormat } =
     resumeValues;
 
-  // Sanitize resumeValues to remove nulls or undefined where not allowed
-  const sanitizedResumeValues = {
+  // Sanitize ALL resume values to remove null bytes and undefined values
+  // pruneUndefinedDeep now also sanitizes all strings recursively
+  const sanitizedResumeValues = pruneUndefinedDeep({
     ...resumeValuesWithoutDateFormat,
     colorHex: resumeValues.colorHex || undefined, // Required in DB, default provided by DB if undefined, but if null we must use undefined
     borderStyle: resumeValues.borderStyle || undefined,
@@ -147,20 +200,19 @@ export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
     portfolioLink: resumeValues.portfolioLink || undefined,
     styleId: resumeValues.styleId || undefined,
     baseFontSize: resumeValues.baseFontSize || undefined,
-    design: design ||
-      // Set default section heading style to 2 for ATS2 template
-      (resumeValues.styleId === "ats2" ? { sectionHeadingStyle: 2 } : undefined),
-  };
+    // Persist full design only when provided (and scrub undefineds for Prisma JSON).
+    design: design ? pruneUndefinedDeep(design) : undefined,
+  });
 
   if (id) {
     return prisma.resume.update({
       where: { id },
       data: {
         ...sanitizedResumeValues,
-        photoUrl: newPhotoUrl,
+        photoUrl: newPhotoUrl ? sanitizeString(newPhotoUrl) : newPhotoUrl,
         workExperiences: {
           deleteMany: {},
-          create: workExperiences?.map((exp) => ({
+          create: workExperiences?.map((exp) => deepSanitizeAndPrune({
             ...exp,
             startDate: exp.startDate ? new Date(exp.startDate) : undefined,
             endDate: exp.endDate ? new Date(exp.endDate) : undefined,
@@ -168,7 +220,7 @@ export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
         },
         educations: {
           deleteMany: {},
-          create: educations?.map((edu) => ({
+          create: educations?.map((edu) => deepSanitizeAndPrune({
             ...edu,
             startDate: edu.startDate ? new Date(edu.startDate) : undefined,
             endDate: edu.endDate ? new Date(edu.endDate) : undefined,
@@ -176,19 +228,19 @@ export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
         },
         certifications: {
           deleteMany: {},
-          create: certifications?.map((cert) => ({
+          create: certifications?.map((cert) => deepSanitizeAndPrune({
             ...cert,
           })),
         },
         skills: {
           deleteMany: {},
-          create: skills?.map((skill) => ({
+          create: skills?.map((skill) => deepSanitizeAndPrune({
             ...skill,
           })),
         },
         projectWorks: {
           deleteMany: {},
-          create: projectWorks?.map((project) => ({
+          create: projectWorks?.map((project) => deepSanitizeAndPrune({
             ...project,
             startDate: project.startDate
               ? new Date(project.startDate)
@@ -199,8 +251,8 @@ export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
         others: others
           ? {
             upsert: {
-              update: { ...others },
-              create: { ...others },
+              update: deepSanitizeAndPrune({ ...others }),
+              create: deepSanitizeAndPrune({ ...others }),
             },
           }
           : undefined,
@@ -211,33 +263,33 @@ export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
       data: {
         ...sanitizedResumeValues,
         userId,
-        photoUrl: newPhotoUrl,
+        photoUrl: newPhotoUrl ? sanitizeString(newPhotoUrl) : newPhotoUrl,
         workExperiences: {
-          create: workExperiences?.map((exp) => ({
+          create: workExperiences?.map((exp) => deepSanitizeAndPrune({
             ...exp,
             startDate: exp.startDate ? new Date(exp.startDate) : undefined,
             endDate: exp.endDate ? new Date(exp.endDate) : undefined,
           })),
         },
         educations: {
-          create: educations?.map((edu) => ({
+          create: educations?.map((edu) => deepSanitizeAndPrune({
             ...edu,
             startDate: edu.startDate ? new Date(edu.startDate) : undefined,
             endDate: edu.endDate ? new Date(edu.endDate) : undefined,
           })),
         },
         certifications: {
-          create: certifications?.map((cert) => ({
+          create: certifications?.map((cert) => deepSanitizeAndPrune({
             ...cert,
           })),
         },
         skills: {
-          create: skills?.map((skill) => ({
+          create: skills?.map((skill) => deepSanitizeAndPrune({
             ...skill,
           })),
         },
         projectWorks: {
-          create: projectWorks?.map((project) => ({
+          create: projectWorks?.map((project) => deepSanitizeAndPrune({
             ...project,
             startDate: project.startDate
               ? new Date(project.startDate)
@@ -246,7 +298,7 @@ export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
           })),
         },
         others: {
-          create: others || undefined,
+          create: others ? deepSanitizeAndPrune(others) : undefined,
         },
       },
     });

@@ -44,6 +44,40 @@ export default function Modern6({
           zoom: (1 / 794) * width,
         }}
       >
+        <style>{`
+          /* Modern 6 Font Hierarchy:
+             - Heading: Poppins SemiBold/Bold
+             - Subtitle: Poppins Medium
+             - Body: Roboto Regular (driven by --resume-font-family)
+          */
+          
+          /* Section headings: Poppins Bold */
+          #resumePreviewContent [data-resume-section-heading] {
+            font-family: var(--font-poppins), var(--resume-font-family) !important;
+            font-weight: 700 !important;
+          }
+
+          /* Entry titles: Poppins SemiBold */
+          #resumePreviewContent [data-resume-entry-title] {
+            font-family: var(--font-poppins), var(--resume-font-family) !important;
+            font-weight: 600 !important;
+          }
+
+          /* Entry subtitles: Poppins Medium */
+          #resumePreviewContent [data-resume-entry-subtitle] {
+            font-family: var(--font-poppins), var(--resume-font-family) !important;
+            font-weight: 500 !important;
+          }
+
+          /* Header name: Poppins Bold */
+          #resumePreviewContent [data-resume-header] h1 {
+            font-family: var(--font-poppins), var(--resume-font-family) !important;
+            font-weight: 700 !important;
+          }
+
+          /* Body text uses Roboto Regular via --resume-font-family */
+        `}</style>
+
         {/* HEADER */}
         <div
           data-resume-header

@@ -401,7 +401,7 @@ function SectionHeader({
   style?: React.CSSProperties;
 }) {
   return (
-    <div className="mb-4 px-0 py-1.5 text-center">
+    <div className="mb-4 bg-slate-100 px-12 py-1.5 text-center">
       <h3
         data-resume-section-heading
         className="text-sm font-bold tracking-wide"

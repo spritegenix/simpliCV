@@ -18,6 +18,9 @@ import {
   Crimson_Text,
   Alegreya,
   Source_Serif_4,
+  Poppins,
+  Inter,
+  Roboto,
 } from "next/font/google";
 
 // These fonts are used by the resume Customization Panel (Font section).
@@ -145,6 +148,27 @@ const alegreya = Alegreya({
   display: "swap",
 });
 
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-poppins",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-roboto",
+  display: "swap",
+});
+
 export const resumeFonts = {
   lora,
   montserrat,
@@ -165,6 +189,9 @@ export const resumeFonts = {
   amiri,
   crimsonText,
   alegreya,
+  poppins,
+  inter,
+  roboto,
 } as const;
 
 export const resumeFontVariableClassName = Object.values(resumeFonts)

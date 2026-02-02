@@ -29,20 +29,46 @@ export default function TealModern({
         fontSize: "var(--base-font)",
       }}
     >
-      {/* Montserrat Font */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-          `,
-        }}
-      />
+      {/* Font styles */}
+      <style>{`
+        /* Modern 8 Font Hierarchy:
+           - Heading: Montserrat SemiBold/Bold
+           - Subtitle: Montserrat Medium
+           - Body: Open Sans Regular (driven by --resume-font-family)
+        */
+        
+        /* Section headings: Montserrat Bold */
+        #resumePreviewContent [data-resume-section-heading] {
+          font-family: var(--font-montserrat), var(--resume-font-family) !important;
+          font-weight: 700 !important;
+        }
+
+        /* Entry titles: Montserrat SemiBold */
+        #resumePreviewContent [data-resume-entry-title] {
+          font-family: var(--font-montserrat), var(--resume-font-family) !important;
+          font-weight: 600 !important;
+        }
+
+        /* Entry subtitles: Montserrat Medium */
+        #resumePreviewContent [data-resume-entry-subtitle] {
+          font-family: var(--font-montserrat), var(--resume-font-family) !important;
+          font-weight: 500 !important;
+        }
+
+        /* Header name: Montserrat Bold */
+        #resumePreviewContent [data-resume-header] h1 {
+          font-family: var(--font-montserrat), var(--resume-font-family) !important;
+          font-weight: 700 !important;
+        }
+
+        /* Body text uses Open Sans Regular via --resume-font-family */
+      `}</style>
 
       <div
         className={`h-full ${!width ? "invisible" : ""}`}
         style={{
           zoom: (1 / 794) * width,
-          fontFamily: "'Montserrat', sans-serif",
+          fontFamily: "var(--resume-font-family)",
           direction: "ltr",
           borderTop: `18px solid ${accentColor}`,
           borderBottom: `18px solid ${accentColor}`,

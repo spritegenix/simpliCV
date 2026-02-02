@@ -35,8 +35,10 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
       <section>
         <h3
           data-resume-section-heading
-          className="mb-2 text-sm font-bold"
-          style={{ borderColor: colorHex }}
+          className="mb-2 pb-1 text-sm font-bold"
+          style={{
+            borderBottom: `calc(var(--resume-border-width) * 1) var(--resume-border-style) ${colorHex}`,
+          }}
         >
           Profile
         </h3>
@@ -53,8 +55,10 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
         <section>
           <h3
             data-resume-section-heading
-            className="mb-3 text-sm font-bold"
-            style={{ borderColor: colorHex }}
+            className="mb-3 pb-1 text-sm font-bold"
+            style={{
+              borderBottom: `calc(var(--resume-border-width) * 1) var(--resume-border-style) ${colorHex}`,
+            }}
           >
             Professional Experience
           </h3>
@@ -122,8 +126,10 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
         <section>
           <h3
             data-resume-section-heading
-            className="mb-3 text-sm font-bold"
-            style={{ borderColor: colorHex }}
+            className="mb-3 pb-1 text-sm font-bold"
+            style={{
+              borderBottom: `calc(var(--resume-border-width) * 1) var(--resume-border-style) ${colorHex}`,
+            }}
           >
             Education
           </h3>
@@ -157,8 +163,10 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
         <section>
           <h3
             data-resume-section-heading
-            className="mb-2 text-sm font-bold"
-            style={{ borderColor: colorHex }}
+            className="mb-2 pb-1 text-sm font-bold"
+            style={{
+              borderBottom: `calc(var(--resume-border-width) * 1) var(--resume-border-style) ${colorHex}`,
+            }}
           >
             Skills
           </h3>
@@ -181,8 +189,10 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
         <section>
           <h3
             data-resume-section-heading
-            className="mb-3 text-sm font-bold"
-            style={{ borderColor: colorHex }}
+            className="mb-3 pb-1 text-sm font-bold"
+            style={{
+              borderBottom: `calc(var(--resume-border-width) * 1) var(--resume-border-style) ${colorHex}`,
+            }}
           >
             Projects
           </h3>
@@ -253,8 +263,10 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
         <section>
           <h3
             data-resume-section-heading
-            className="mb-2 text-sm font-bold"
-            style={{ borderColor: colorHex }}
+            className="mb-2 pb-1 text-sm font-bold"
+            style={{
+              borderBottom: `calc(var(--resume-border-width) * 1) var(--resume-border-style) ${colorHex}`,
+            }}
           >
             Awards & Certifications
           </h3>
@@ -277,8 +289,10 @@ export default function Ats15({ resumeData, className }: ResumePreviewProps) {
         <section>
           <h3
             data-resume-section-heading
-            className="mb-2 text-sm font-bold"
-            style={{ borderColor: colorHex }}
+            className="mb-2 pb-1 text-sm font-bold"
+            style={{
+              borderBottom: `calc(var(--resume-border-width) * 1) var(--resume-border-style) ${colorHex}`,
+            }}
           >
             {resumeData.others?.title || "Other"}
           </h3>

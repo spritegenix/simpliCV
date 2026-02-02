@@ -31,6 +31,9 @@ export default function FontSection({
     Amiri: "var(--font-amiri)",
     "Crimson Text": "var(--font-crimson-text)",
     Alegreya: "var(--font-alegreya)",
+    Poppins: "var(--font-poppins)",
+    Inter: "var(--font-inter)",
+    Roboto: "var(--font-roboto)",
   };
 
   const fontLabelList = [
@@ -51,6 +54,9 @@ export default function FontSection({
     "Amiri",
     "Crimson Text",
     "Alegreya",
+    "Poppins",
+    "Inter",
+    "Roboto",
   ];
 
   return (

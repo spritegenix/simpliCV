@@ -14,7 +14,6 @@ import {
   Ats13,
   Ats14,
   Ats15,
-  Ats16,
   Ats2,
   Ats3,
   Ats4,
@@ -101,12 +100,35 @@ function adaptLegacyTemplateComponent(
     const selectedFontLabel =
       resumeData.design.customization?.font?.selectedFont?.trim() ?? "";
 
-    // ATS 1 has its own default typography (Body=Inter). Historically the global
-    // default selectedFont was "Lora"; treat that as a non-user override for ATS 1.
-    const effectiveSelectedFontLabel =
-      styleId === "ats1" && selectedFontLabel === "Lora"
-        ? ""
-        : selectedFontLabel;
+    // Default font behavior by template:
+    // - ATS 1 has its own default typography (Body=Inter). Historically the global
+    //   default selectedFont was "Lora"; treat that as a non-user override for ATS 1.
+    // - Modern 1 defaults to Open Sans for body text when no explicit selection exists.
+    let effectiveSelectedFontLabel = selectedFontLabel;
+    if (styleId === "ats1" && effectiveSelectedFontLabel === "Lora") {
+      effectiveSelectedFontLabel = "";
+    }
+    if (styleId === "modern1" && !effectiveSelectedFontLabel) {
+      effectiveSelectedFontLabel = "Open Sans";
+    }
+    if (styleId === "modern2" && !effectiveSelectedFontLabel) {
+      effectiveSelectedFontLabel = "Lora";
+    }
+    if (styleId === "modern4" && !effectiveSelectedFontLabel) {
+      effectiveSelectedFontLabel = "Open Sans";
+    }
+    if (styleId === "modern5" && !effectiveSelectedFontLabel) {
+      effectiveSelectedFontLabel = "Inter";
+    }
+    if (styleId === "modern6" && !effectiveSelectedFontLabel) {
+      effectiveSelectedFontLabel = "Roboto";
+    }
+    if (styleId === "modern7" && !effectiveSelectedFontLabel) {
+      effectiveSelectedFontLabel = "Inter";
+    }
+    if (styleId === "modern8" && !effectiveSelectedFontLabel) {
+      effectiveSelectedFontLabel = "Open Sans";
+    }
 
     const customFontFamilyByLabel: Record<string, string> = {
       Lora: "var(--font-lora)",
@@ -128,6 +150,9 @@ function adaptLegacyTemplateComponent(
       Amiri: "var(--font-amiri)",
       "Crimson Text": "var(--font-crimson-text)",
       Alegreya: "var(--font-alegreya)",
+      Poppins: "var(--font-poppins)",
+      Inter: "var(--font-inter)",
+      Roboto: "var(--font-roboto)",
     };
 
     const resumeFontFamily =
@@ -1011,7 +1036,6 @@ const legacyComponentById: Record<
   ats13: Ats13,
   ats14: Ats14,
   ats15: Ats15,
-  ats16: Ats16,
 
   modern1: Modern1,
   modern2: Modern2,

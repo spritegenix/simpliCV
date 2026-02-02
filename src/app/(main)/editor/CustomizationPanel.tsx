@@ -472,43 +472,57 @@ export default function CustomizationPanel({
   const rawDetailsLayout = resumeData.design.customization?.personalDetails
     ?.detailsLayout as string | undefined;
   const isAts1 = resumeData.styleId === "ats1";
+  const isAts2 = resumeData.styleId === "ats2";
+  const isAts3 = resumeData.styleId === "ats3";
   const isAts4 = resumeData.styleId === "ats4";
   const isAts6 = resumeData.styleId === "ats6";
   const isAts7 = resumeData.styleId === "ats7";
   const isModern1 = resumeData.styleId === "modern1";
   const isModern3 = resumeData.styleId === "modern3";
   const isModern5 = resumeData.styleId === "modern5";
-  const detailsLayout: "stacked" | "compact" = isAts1
-    ? "compact"
-    : isAts4
-      ? "stacked"
-      : isAts5
+  const detailsLayout: "stacked" | "compact" =
+    isAts1 || isAts2 || isAts3
+      ? rawDetailsLayout === "stacked"
         ? "stacked"
-        : isAts6
+        : "compact"
+      : isAts4
+        ? "stacked"
+        : isAts5
           ? "stacked"
-          : isAts7
+          : isAts6
             ? "stacked"
-            : isAts8
-              ? "compact"
-              : isAts10
-                ? "compact"
-                : isAts14
-                  ? "compact"
-                  : isAts15
-                    ? "compact"
-                    : isModern1
+            : isAts7
+              ? "stacked"
+              : isAts8
+                ? rawDetailsLayout === "stacked"
+                  ? "stacked"
+                  : "compact"
+                : isAts10
+                  ? rawDetailsLayout === "stacked"
+                    ? "stacked"
+                    : "compact"
+                  : isAts14
+                    ? rawDetailsLayout === "stacked"
                       ? "stacked"
-                      : isModern3
+                      : "compact"
+                    : isAts15
+                      ? rawDetailsLayout === "stacked"
                         ? "stacked"
-                        : isModern5
-                          ? "compact"
-                          : isModern4
-                            ? "stacked"
-                            : rawDetailsLayout === "compact"
-                              ? "compact"
-                              : "stacked";
+                        : "compact"
+                      : isModern1
+                        ? "stacked"
+                        : isModern3
+                          ? "stacked"
+                          : isModern5
+                            ? rawDetailsLayout === "stacked"
+                              ? "stacked"
+                              : "compact"
+                            : isModern4
+                              ? "stacked"
+                              : rawDetailsLayout === "compact"
+                                ? "compact"
+                                : "stacked";
   const setDetailsLayout = (value: "stacked" | "compact") => {
-    if (isAts1 && value === "stacked") return; // Prevent setting to stacked for ats1
     if (
       (isAts4 || isAts5 || isAts6 || isAts7 || isModern1 || isModern3) &&
       value === "compact"

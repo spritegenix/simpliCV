@@ -13,7 +13,6 @@ import a12 from "@/assets/resume-styles/ats/a12.png";
 import a13 from "@/assets/resume-styles/ats/a13.png";
 import a14 from "@/assets/resume-styles/ats/a14.png";
 import a15 from "@/assets/resume-styles/ats/a15.png";
-import a16 from "@/assets/resume-styles/ats/a16.png";
 
 // Creative
 
@@ -35,7 +34,7 @@ import m8 from "@/assets/resume-styles/modern/m8.jpg"
 import m9 from "@/assets/resume-styles/modern/m9.jpg"
 // -------------------------------- //
 export {
-    a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a12, a13, a14, a15, a16,
+    a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a12, a13, a14, a15,
 
     st1, st2, st3,
 

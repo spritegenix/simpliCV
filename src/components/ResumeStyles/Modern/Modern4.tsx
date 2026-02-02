@@ -29,7 +29,8 @@ export default function MillieSmithResume({
       )}
       ref={containerRef}
       style={{
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        fontFamily: "var(--resume-font-family)",
+        lineHeight: "var(--resume-line-height)",
         color: "var(--text)",
         fontSize: "var(--base-font)",
       }}
@@ -41,6 +42,46 @@ export default function MillieSmithResume({
         }}
         id="resumePreviewContent"
       >
+        <style>{`
+          /* Modern 4 Font Hierarchy:
+             - Heading: Montserrat SemiBold/Bold
+             - Subtitle: Montserrat Medium
+             - Body: Open Sans Regular (driven by --resume-font-family)
+          */
+          
+          /* Section headings: Montserrat Bold */
+          #resumePreviewContent [data-resume-section-heading] {
+            font-family: var(--font-montserrat), var(--resume-font-family) !important;
+            font-weight: 700 !important;
+          }
+
+          /* Entry titles (company names, etc): Montserrat SemiBold */
+          #resumePreviewContent [data-resume-entry-title] {
+            font-family: var(--font-montserrat), var(--resume-font-family) !important;
+            font-weight: 600 !important;
+          }
+
+          /* Entry subtitles (position, etc): Montserrat Medium */
+          #resumePreviewContent [data-resume-entry-subtitle] {
+            font-family: var(--font-montserrat), var(--resume-font-family) !important;
+            font-weight: 500 !important;
+          }
+
+          /* Header name: Montserrat SemiBold/Bold */
+          #resumePreviewContent [data-resume-header] h1 {
+            font-family: var(--font-montserrat), var(--resume-font-family) !important;
+            font-weight: 600 !important;
+          }
+
+          /* Header job title: Montserrat Medium */
+          #resumePreviewContent [data-resume-header] p {
+            font-family: var(--font-montserrat), var(--resume-font-family) !important;
+            font-weight: 500 !important;
+          }
+
+          /* Body text uses Open Sans Regular via --resume-font-family */
+        `}</style>
+
         {/* Header Section */}
         <div
           className="px-10 pb-4 pt-8 text-center"
@@ -180,14 +221,16 @@ const LeftColumn: React.FC<SectionProps> = ({ resumeData, colorHex }) => {
       )}
 
       {/* Horizontal Divider */}
-      <div
-        className="h-0 border-t"
-        style={{
-          borderTopWidth: "var(--resume-border-width)",
-          borderStyle: "var(--resume-border-style)" as any,
-          borderColor: "color-mix(in srgb, var(--text) 25%, transparent)",
-        }}
-      />
+      {resumeData.summary && (
+        <div
+          className="h-0 border-t"
+          style={{
+            borderTopWidth: "var(--resume-border-width)",
+            borderStyle: "var(--resume-border-style)" as any,
+            borderColor: "color-mix(in srgb, var(--text) 25%, transparent)",
+          }}
+        />
+      )}
 
       {/* Contact Section */}
       <ContactSection resumeData={resumeData} colorHex={colorHex} />

@@ -3,6 +3,46 @@ import mammoth from "mammoth";
 import genAI from "@/lib/gemini";
 import { extractText } from "unpdf";
 
+/**
+ * Remove null bytes and other invalid characters from strings to prevent PostgreSQL UTF8 encoding errors
+ * PostgreSQL doesn't allow null bytes (\x00) in text fields
+ */
+function sanitizeString(value: string): string {
+  // Remove null bytes and other control characters except newline, tab, and carriage return
+  return value.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F]/g, '');
+}
+
+/**
+ * Deeply sanitize an object by removing null bytes from all strings
+ */
+function deepSanitize<T>(value: T): T {
+  if (value === undefined || value === null) return value;
+
+  // Handle strings - sanitize them
+  if (typeof value === "string") {
+    return sanitizeString(value) as T;
+  }
+
+  // Handle arrays
+  if (Array.isArray(value)) {
+    return value.map((item) => deepSanitize(item)) as T;
+  }
+
+  // Handle objects (but preserve special types like Date)
+  if (typeof value === "object") {
+    if (value instanceof Date) return value;
+
+    const result: Record<string, unknown> = {};
+    for (const [key, nested] of Object.entries(value as any)) {
+      result[key] = deepSanitize(nested);
+    }
+    return result as T;
+  }
+
+  // Return primitives as-is (numbers, booleans, etc.)
+  return value;
+}
+
 // PDF parsing with unpdf (uses pdfjs-dist, handles Type3 fonts properly)
 const pdfParse = async (buffer: Buffer): Promise<string> => {
   const uint8Array = new Uint8Array(buffer);
@@ -271,7 +311,9 @@ export async function POST(req: NextRequest) {
 
     try {
       const parsedData = extractJSONObject(rawModelText);
-      return NextResponse.json(parsedData);
+      // Sanitize the parsed data to remove null bytes that cause PostgreSQL errors
+      const sanitizedData = deepSanitize(parsedData);
+      return NextResponse.json(sanitizedData);
     } catch (error) {
       console.error("Error parsing AI response:", error);
       console.error("Raw AI response:", rawModelText);

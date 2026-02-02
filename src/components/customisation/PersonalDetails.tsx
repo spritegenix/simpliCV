@@ -38,14 +38,18 @@ export default function PersonalDetails({
       typeof setNameBold === "function");
 
   const isStackedDisabled =
-    styleId === "ats1" ||
     styleId === "ats8" ||
     styleId === "ats10" ||
     styleId === "ats14" ||
     styleId === "ats15" ||
     styleId === "modern5";
-  const isCompactDisabled = 
-    styleId !== "ats2" && styleId !== "ats3" && styleId !== "ats8" && styleId !== "ats12";
+  const isCompactDisabled =
+    styleId !== "ats1" &&
+    styleId !== "ats2" &&
+    styleId !== "ats3" &&
+    styleId !== "ats8" &&
+    styleId !== "ats12" &&
+    styleId !== "ats14";
   const isLeftAlignDisabled = styleId === "ats14" || styleId === "ats15";
   const isCenterAlignDisabled = styleId === "ats5" || styleId === "ats10";
   const isRightAlignDisabled =

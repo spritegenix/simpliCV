@@ -616,19 +616,34 @@ function Text({ children }: { children: string }) {
 }
 
 function Heading({ children }: { children: string }) {
+  const accentColorCss = "var(--resume-accent-color, var(--accent, #f59e0b))";
+
   return (
     <>
       <div
         data-resume-section-heading-wrap
-        className="flex break-inside-avoid gap-x-[calc(var(--section-gap)*0.1)]"
+        className="flex break-inside-avoid items-center gap-x-[calc(var(--section-gap)*0.25)]"
       >
         <h1
           data-resume-section-heading
-          className="text-nowrap font-semibold text-[var(--accent)]"
-          style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+          className="text-nowrap font-semibold"
+          style={{
+            fontSize: "calc(1em * var(--heading-scale))",
+            color: accentColorCss,
+          }}
         >
           {children}
         </h1>
+
+        <div
+          data-resume-section-heading-line
+          aria-hidden="true"
+          className="h-0 min-w-0 flex-1 border-b"
+          style={{
+            borderBottomColor: accentColorCss,
+            borderBottomWidth: "var(--resume-border-width, 1px)",
+          }}
+        />
       </div>
     </>
   );

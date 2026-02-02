@@ -44,9 +44,44 @@ export default function PurpleModern({
         className={`relative h-full ${!width ? "invisible" : ""}`}
         style={{
           zoom: (1 / 794) * width,
+          fontFamily: "var(--resume-font-family)",
         }}
         id="resumePreviewContent"
       >
+        <style>{`
+          /* Modern 7 Font Hierarchy:
+             - Heading: Poppins SemiBold/Bold
+             - Subtitle: Poppins Medium
+             - Body: Inter Regular (driven by --resume-font-family)
+          */
+          
+          /* Section headings: Poppins Bold */
+          #resumePreviewContent [data-resume-section-heading] {
+            font-family: var(--font-poppins), var(--resume-font-family) !important;
+            font-weight: 700 !important;
+          }
+
+          /* Entry titles: Poppins SemiBold */
+          #resumePreviewContent [data-resume-entry-title] {
+            font-family: var(--font-poppins), var(--resume-font-family) !important;
+            font-weight: 600 !important;
+          }
+
+          /* Entry subtitles: Poppins Medium */
+          #resumePreviewContent [data-resume-entry-subtitle] {
+            font-family: var(--font-poppins), var(--resume-font-family) !important;
+            font-weight: 500 !important;
+          }
+
+          /* Header name: Poppins Bold */
+          #resumePreviewContent [data-resume-header] h1 {
+            font-family: var(--font-poppins), var(--resume-font-family) !important;
+            font-weight: 700 !important;
+          }
+
+          /* Body text uses Inter Regular via --resume-font-family */
+        `}</style>
+
         {/* HEADER SECTION */}
         <div className="relative z-20 h-[220px] w-full overflow-hidden">
           {/* Diagonal Background Shape */}

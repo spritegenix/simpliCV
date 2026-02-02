@@ -95,7 +95,27 @@ export const defaultResumeDesign: ResumeDesign = {
 export function createEmptyResumeDocument(): ResumeDocument {
   return {
     content: {},
-    design: defaultResumeDesign,
+    // ATS1 is the default template; use its intended default accent (yellow)
+    // without changing defaults for other templates.
+    design: {
+      ...defaultResumeDesign,
+      color: {
+        ...defaultResumeDesign.color,
+        accent: "#f59e0b",
+      },
+      customization: {
+        ...(defaultResumeDesign.customization ?? {}),
+        personalDetails: {
+          ...(defaultResumeDesign.customization?.personalDetails ?? {
+            detailsAlign: "center",
+            detailsLayout: "stacked",
+            detailsArrangement: "icon",
+            detailsIconStyle: 0,
+          }),
+          detailsLayout: "compact",
+        },
+      },
+    },
     styleId: DEFAULT_STYLE_ID,
   };
 }

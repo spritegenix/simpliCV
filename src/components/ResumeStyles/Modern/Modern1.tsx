@@ -15,7 +15,11 @@ interface ResumePreviewProps {
   dateFormat?: string;
 }
 
-export default function Modern1({ resumeData, className, dateFormat = "MMM yyyy" }: ResumePreviewProps) {
+export default function Modern1({
+  resumeData,
+  className,
+  dateFormat = "MMM yyyy",
+}: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
@@ -23,20 +27,119 @@ export default function Modern1({ resumeData, className, dateFormat = "MMM yyyy"
   return (
     <div
       className={cn(
-        "resume-root modern aspect-[210/297] h-fit w-full bg-white font-arial",
+        "resume-root modern aspect-[210/297] h-fit w-full bg-white",
         className,
       )}
       style={{
         color: "var(--text)",
         fontSize: "var(--base-font)",
+        fontFamily: "var(--resume-font-family)",
+        lineHeight: "var(--resume-line-height)",
       }}
       ref={containerRef}
     >
+      <style>
+        {`
+          /* Modern 1 default font hierarchy (Preview + Print/PDF)
+             - Heading: Montserrat SemiBold / Bold
+             - Subtitle: Montserrat Medium
+             - Body: Open Sans Regular (driven by --resume-font-family)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-entry-title] {
+            font-family: var(--font-montserrat) !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-entry-subtitle],
+          #resumePreviewContent [data-resume-header] .font-medium {
+            font-family: var(--font-montserrat) !important;
+            font-weight: 500 !important;
+          }
+
+          #resumePreviewContent [data-resume-header] {
+            font-family: var(--font-montserrat) !important;
+          }
+
+          /* Name underline: wired to Section Headings style (Modern1 only) */
+          #resumePreviewContent [data-modern1-name] {
+            position: relative;
+            display: inline-block;
+          }
+
+          #resumePreviewContent[data-section-heading-style="0"] [data-modern1-name] {
+            padding-bottom: 0 !important;
+            border-bottom: 0 !important;
+          }
+
+          /* Style 1: use the template's border variables (solid/whatever user chose) */
+          #resumePreviewContent[data-section-heading-style="1"] [data-modern1-name] {
+            padding-bottom: 0.25em;
+            border-bottom-width: var(--resume-border-width);
+            border-bottom-style: var(--resume-border-style);
+            border-bottom-color: var(--accent);
+          }
+
+          /* Style 2/3/4/5: mirror the global section heading underline styles */
+          #resumePreviewContent[data-section-heading-style="2"] [data-modern1-name],
+          #resumePreviewContent[data-section-heading-style="3"] [data-modern1-name] {
+            padding-bottom: 0.25em;
+          }
+
+          #resumePreviewContent[data-section-heading-style="2"] [data-modern1-name]::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-bottom: calc(var(--resume-border-width) * 2) solid var(--accent);
+            opacity: 0.35;
+          }
+
+          #resumePreviewContent[data-section-heading-style="3"] [data-modern1-name]::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-bottom: calc(var(--resume-border-width) * 2) dotted var(--accent);
+            opacity: 0.35;
+          }
+
+          #resumePreviewContent[data-section-heading-style="4"] [data-modern1-name]::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -0.15em;
+            width: 50%;
+            border-bottom: calc(var(--resume-border-width) * 2) solid var(--accent);
+            opacity: 0.35;
+          }
+
+          #resumePreviewContent[data-section-heading-style="5"] [data-modern1-name]::before,
+          #resumePreviewContent[data-section-heading-style="5"] [data-modern1-name]::after {
+            content: "";
+            position: absolute;
+            bottom: -0.15em;
+            width: 22%;
+            border-bottom: calc(var(--resume-border-width) * 2) solid var(--accent);
+            opacity: 0.35;
+          }
+          #resumePreviewContent[data-section-heading-style="5"] [data-modern1-name]::before { left: 0; }
+          #resumePreviewContent[data-section-heading-style="5"] [data-modern1-name]::after { left: 28%; }
+
+          /* Sidebar (left column) typography: headings + icons should be white */
+          #resumePreviewContent [data-resume-sidebar] [data-resume-section-heading] {
+            color: white !important;
+          }
+
+          #resumePreviewContent [data-resume-sidebar] [data-contact-icon] {
+            color: white !important;
+          }
+        `}
+      </style>
       <div
-        className={cn(
-          "grid h-full grid-cols-[1fr_2fr]",
-          !width && "invisible",
-        )}
+        className={cn("grid h-full grid-cols-[1fr_2fr]", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
           direction: "ltr",
@@ -55,15 +158,14 @@ export default function Modern1({ resumeData, className, dateFormat = "MMM yyyy"
             }}
           >
             <p
+              data-modern1-name
               className="leading-none"
               style={{
                 fontSize: "var(--name-font-size)",
                 fontWeight: "var(--name-font-weight)",
               }}
             >
-              <span>
-                {resumeData.firstName}
-              </span>{" "}
+              <span>{resumeData.firstName}</span>{" "}
               <span style={{ color: "var(--accent)" }}>
                 {resumeData.lastName}
               </span>
@@ -257,8 +359,9 @@ export default function Modern1({ resumeData, className, dateFormat = "MMM yyyy"
         {/* Sidebar column */}
         <div
           className="order-1 h-full min-w-0 text-white"
+          data-resume-sidebar
           style={{
-            backgroundColor: "#334e5c",
+            backgroundColor: "var(--accent)",
             borderRightColor: "var(--accent)",
             borderRightStyle: "var(--resume-border-style)" as any,
             borderRightWidth: "var(--resume-border-width)",
@@ -275,19 +378,16 @@ export default function Modern1({ resumeData, className, dateFormat = "MMM yyyy"
               }}
             >
               <Heading>Skills</Heading>
-              {resumeData.skills?.map((skill, index) => (
-                <div key={index} className="!m-0 break-inside-avoid">
-                  <div className="!m-0 flex items-center justify-between">
-                    <p>
-                      <span className="font-semibold">{skill.title}</span>
-                      {skill.skillName && skill.skillName.length > 0 && (
-                        <span>- {skill.skillName?.join(", ")}</span>
-                      )}
-                    </p>
-                  </div>
-                  <p className="whitespace-pre-line"></p>
-                </div>
-              ))}
+              <ul className="list-disc space-y-1 pl-4">
+                {resumeData.skills?.map((skill, index) => (
+                  <li key={index} className="break-inside-avoid">
+                    <span className="font-semibold">{skill.title}</span>
+                    {skill.skillName && skill.skillName.length > 0 && (
+                      <span> - {skill.skillName.join(", ")}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
             </section>
           )}
           {/* Academics */}
@@ -424,7 +524,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             width={500}
             height={500}
             alt="Author photo"
-            className="aspect-square h-[120px] w-[120px] border object-cover object-center"
+            className="aspect-square h-[140px] w-[140px] border object-cover object-center"
             style={{
               borderColor: "var(--accent)",
               borderStyle: "var(--resume-border-style)" as any,
@@ -451,7 +551,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
           <Heading>Contact</Heading>
           {(city || country) && (
             <p className="flex items-center gap-1">
-              <span style={{ color: "var(--accent)" }}>
+              <span className="text-white">
                 <BiSolidMap />
               </span>
               {city}
@@ -495,7 +595,7 @@ function ContactLinks({
           target="_blank"
           className="flex items-center gap-1"
         >
-          <span className="text-[var(--accent)]">
+          <span data-contact-icon className="text-[var(--accent)]">
             {icon ? icon : <SocialMediaIconFinder url={href ? href : ""} />}
           </span>
           {text === "NO_TEXT" ? "" : <p>{text}</p>}
@@ -519,6 +619,7 @@ function Heading({ children }: { children: string }) {
           style={{
             fontSize: "calc(1em * var(--heading-scale))",
             paddingBottom: "0.25em",
+            marginBottom: "calc(var(--section-gap) * 0.25)",
             borderBottomWidth: "var(--resume-border-width)",
             borderBottomStyle: "var(--resume-border-style)" as any,
             borderBottomColor: "currentColor",

@@ -6,7 +6,6 @@ import {
   a13,
   a14,
   a15,
-  a16,
   a2,
   a3,
   a4,
@@ -198,16 +197,6 @@ export const resumeStyles: ResumeStyle[] = [
     tags: ["Multi Page"],
     price: "FREE",
     priority: 15,
-  },
-  {
-    id: "ats16",
-    name: "Executive Academic Resume",
-    desc: "A prestigious, high-impact design featuring uppercase headers and bold typography. Ideal for experienced professionals and academics.",
-    samplePic: a16,
-    category: ["All", "ATS Friendly"],
-    tags: ["Multi Page"],
-    price: "FREE",
-    priority: 16,
   },
 
   // Modern
