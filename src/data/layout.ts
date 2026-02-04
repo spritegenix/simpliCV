@@ -16,5 +16,13 @@ export const header = {
       iconStyle: "",
       subNav: [],
     },
+    {
+      id: 3,
+      icon: "",
+      label: "Your Offer Letters",
+      href: "/offer-letters",
+      iconStyle: "",
+      subNav: [],
+    },
   ],
 };

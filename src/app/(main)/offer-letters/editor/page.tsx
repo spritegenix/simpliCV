@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { toOfferLetterDocument } from "@/lib/offer-letter/transformers";
 import { auth } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
+import Layout from "@/components/layout/Layout";
 import OfferLetterEditor from "./offerLetterEditor";
 
 import { createOfferLetter } from "../actions";
@@ -59,10 +60,12 @@ export default async function Page({ searchParams }: PageProps) {
   };
 
   return (
-    <OfferLetterEditor
-      initialDocument={document}
-      offerId={offerId}
-      styleId={styleId}
-    />
+    <Layout>
+      <OfferLetterEditor
+        initialDocument={document}
+        offerId={offerId}
+        styleId={styleId}
+      />
+    </Layout>
   );
 }

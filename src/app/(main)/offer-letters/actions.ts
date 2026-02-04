@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { OfferStatus } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 import { EMPTY_OFFER_LETTER_VALUES } from "@/lib/offer-letter/defaults";
 import type { OfferLetterDesign } from "@/lib/offer-letter/offerLetterDesign";
 import type { OfferLetterValues } from "@/lib/offer-letter/types";
@@ -113,6 +114,8 @@ export async function deleteOfferLetter(id: string) {
     where: { id },
     data: { status: OfferStatus.ARCHIVED },
   });
+
+  revalidatePath("/offer-letters");
 
   return { ok: true } as const;
 }
