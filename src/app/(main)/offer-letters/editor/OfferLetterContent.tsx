@@ -6,8 +6,10 @@ import OfferLetterDebugContent from "./OfferLetterDebugContent";
 
 export default function OfferLetterContent({
   document,
+  includePadding = true,
 }: {
   document: OfferLetterDocument;
+  includePadding?: boolean;
 }) {
   const { content } = document;
 
@@ -15,8 +17,10 @@ export default function OfferLetterContent({
     return <OfferLetterDebugContent document={document} />;
   }
 
+  const wrapperClass = includePadding ? "p-[24mm]" : "";
+
   return (
-    <div className="p-[24mm] leading-relaxed">
+    <div className={wrapperClass}>
       {/* Company Header */}
       <section className="offer-section mb-6">
         {content.company.logoUrl && (
