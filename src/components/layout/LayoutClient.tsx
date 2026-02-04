@@ -2,6 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import Header from "./header/Header/Header";
 import Footer from "./footer/Footer";
 
@@ -9,7 +10,7 @@ export default function LayoutClient({
   header1Data,
   headerStyle = 1,
   children,
-  footerStyle = false
+  footerStyle = false,
 }: any) {
   const upperNavItems = header1Data?.upperNav;
   // Mobile Menu
@@ -17,6 +18,8 @@ export default function LayoutClient({
   const [show, setShow] = useState<string>("translate-y-0");
   const [lastScrollY, setLastScrollY] = useState<number>(0);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
+
+  const { isLoaded, isSignedIn } = useAuth();
 
   const pathname = usePathname();
   const router = useRouter();
@@ -26,7 +29,6 @@ export default function LayoutClient({
       if (window.scrollY > 200) {
         if (window.scrollY > lastScrollY && !isMobileMenuOpen) {
           setShow("-translate-y-[75px]");
-          
         } else {
           setShow("shadow-sm");
         }
@@ -63,12 +65,25 @@ export default function LayoutClient({
         window.removeEventListener("scroll", controlNavbar);
       };
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastScrollY, isMobileMenuOpen]);
 
   const handleNavItemClick = (itemId: string, href: string) => {
     setActiveItemId(itemId.toString());
     setIsMobileMenuOpen(false);
+
+    const basePath = getBasePath(href);
+    const isProtectedNav =
+      basePath === "/resumes" ||
+      basePath === "/offer-letters" ||
+      basePath === "/editor" ||
+      basePath === "/_billing";
+
+    if (isLoaded && !isSignedIn && isProtectedNav) {
+      router.push(`/sign-in?redirect_url=${encodeURIComponent(href)}`);
+      return;
+    }
+
     router.push(href);
   };
 
@@ -86,7 +101,7 @@ export default function LayoutClient({
         />
       )}
       <main>{children}</main>
-      {footerStyle===true && <Footer  />}
+      {footerStyle === true && <Footer />}
     </>
   );
 }
