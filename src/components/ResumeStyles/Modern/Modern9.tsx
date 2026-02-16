@@ -1,66 +1,70 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
+import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
 import { ResumeValues } from "@/lib/validation";
-import { cn } from "@/lib/utils";
 import useDimensions from "@/hooks/useDimensions";
 import { safeFormatDate } from "@/lib/utils";
-import Image from "next/image";
-import { MapPin, Phone, Mail, Globe } from "lucide-react";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
+  dateFormat?: string;
 }
 
-export default function Modern9({ resumeData, className }: ResumePreviewProps) {
+export default function ModernSidebar({
+  resumeData,
+  className = "",
+  dateFormat = "MMM yyyy",
+}: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
-
-  // Default colors
-  // Red Accent from description description
-  const primaryColor =
-    resumeData.colorHex === "#000000" || !resumeData.colorHex
-      ? "#DC2626" // Red-600
-      : resumeData.colorHex;
+  const primaryColor = "var(--accent)";
 
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white text-slate-800 shadow-sm",
-        className,
-      )}
+      className={`resume-root modern aspect-[210/297] h-fit w-full bg-white ${className}`}
       ref={containerRef}
+      style={{
+        color: "var(--text)",
+        fontSize: "var(--base-font)",
+      }}
     >
-      {/* Montserrat Font Injection */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
-        `,
-        }}
-      />
-
       <div
-        className={cn(
-          "relative h-full font-['Montserrat',sans-serif]",
-          !width && "invisible",
-        )}
+        id="resumePreviewContent"
+        className={`h-full ${!width ? "invisible" : ""}`}
         style={{
           zoom: (1 / 794) * width,
+          direction: "ltr",
         }}
-        id="resumePreviewContent"
       >
         <div className="flex h-full">
           {/* LEFT COLUMN - Fixed Width Sidebar with Grey Background */}
-          <div className="flex w-[300px] shrink-0 flex-col bg-slate-100 pt-12 text-slate-700">
+          <div
+            className="flex w-[300px] shrink-0 flex-col pt-12"
+            style={{
+              backgroundColor:
+                "color-mix(in srgb, var(--text) 8%, transparent)",
+              color: "color-mix(in srgb, var(--text) 75%, transparent)",
+            }}
+          >
             {/* Profile Image */}
             <div className="mb-10 flex justify-center px-6">
               <PhotoSection resumeData={resumeData} colorHex={primaryColor} />
             </div>
 
             {/* Contact Section */}
-            <div className="mb-10 space-y-5 px-8">
-              <h3 className="mb-4 border-b-2 border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest text-slate-800">
+            <div className="mb-10 space-y-5 px-8" data-resume-personal-details>
+              <h3
+                data-resume-section-heading
+                className="mb-4 border-b pb-2 text-sm font-bold tracking-widest"
+                style={{
+                  color: primaryColor,
+                  borderColor: primaryColor,
+                  fontSize: "calc(1em * var(--heading-scale))",
+                  borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+                  borderStyle: "var(--resume-border-style)" as any,
+                }}
+              >
                 Contact
               </h3>
               <ContactSection resumeData={resumeData} colorHex={primaryColor} />
@@ -77,11 +81,23 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
                   <div className="space-y-6">
                     {resumeData.certifications.map((item, idx) => (
                       <div key={idx}>
-                        <h4 className="text-xs font-bold uppercase text-slate-900">
+                        <h4
+                          className="text-xs font-bold"
+                          style={{
+                            fontSize: "calc(1em * var(--heading-scale))",
+                            color: "var(--text)",
+                          }}
+                        >
                           {item.title}
                         </h4>
                         {item.description && (
-                          <p className="mt-1 text-[10px] text-slate-600">
+                          <p
+                            className="mt-1 text-[10px]"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 70%, transparent)",
+                            }}
+                          >
                             {item.description}
                           </p>
                         )}
@@ -104,7 +120,10 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
                     colorHex={primaryColor}
                   />
                   <div
-                    className="text-[11px] leading-relaxed text-slate-600"
+                    className="text-[11px] leading-relaxed"
+                    style={{
+                      color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                    }}
                     dangerouslySetInnerHTML={{
                       __html: resumeData.others.description || "",
                     }}
@@ -116,15 +135,38 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
           {/* RIGHT COLUMN - Main Content */}
           <div className="flex-1 bg-white px-10 py-12">
             {/* Header Name (Top of Right Column) */}
-            <div className="mb-12 border-b-2 border-slate-100 pb-8">
-              <h1 className="mb-2 text-5xl font-black uppercase leading-none tracking-tight text-slate-900">
+            <div
+              data-resume-header
+              className="mb-12 border-b pb-8"
+              style={{
+                borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+                borderColor: "color-mix(in srgb, var(--text) 20%, transparent)",
+                borderStyle: "var(--resume-border-style)" as any,
+              }}
+            >
+              <h1
+                className="mb-2 leading-none tracking-tight"
+                style={{
+                  fontSize:
+                    "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                  fontWeight: "var(--name-font-weight)",
+                  color: "var(--text)",
+                }}
+              >
                 {resumeData.firstName}{" "}
                 <span style={{ color: primaryColor }}>
                   {resumeData.lastName}
                 </span>
               </h1>
               {resumeData.jobTitle && (
-                <p className="text-xl font-bold uppercase tracking-[0.3em] text-slate-400">
+                <p
+                  className="font-bold tracking-[0.3em]"
+                  style={{
+                    fontSize:
+                      "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                    color: "color-mix(in srgb, var(--text) 60%, transparent)",
+                  }}
+                >
                   {resumeData.jobTitle}
                 </p>
               )}
@@ -134,13 +176,19 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
             {resumeData.summary && (
               <div className="mb-10">
                 <SectionHeaderMain title="About Me" colorHex={primaryColor} />
-                <p className="text-justify text-sm font-medium leading-relaxed text-slate-600">
-                  {resumeData.summary}
-                </p>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: resumeData.summary || "",
+                  }}
+                  className="richTextEditorStyle !m-0 whitespace-pre-line text-justify text-sm font-medium leading-relaxed"
+                  style={{
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
+                />
               </div>
             )}
 
-            {/* JOB EXPERIENCE - 2 Column Grid Subsection */}
+            {/* JOB EXPERIENCE */}
             {resumeData.workExperiences &&
               resumeData.workExperiences.length > 0 && (
                 <div className="mb-10">
@@ -148,45 +196,69 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
                     title="Job Experience"
                     colorHex={primaryColor}
                   />
-                  <div className="grid grid-cols-1 gap-x-8 gap-y-8">
-                    {/* Note: Prompt asked for "Two-column subsections". 
-                                 However, long descriptions in 2 cols can look bad. 
-                                 I'll stick to 1 col for readability unless strictly needed small items. 
-                                 Actually, widely used "Job Experience" in resume templates often is 1 col.
-                                 But if user insists on 2-col subsections, I will try a grid for the *Items* if they are short, or maybe internal layout.
-                                 Let's allow 2 cols for items if there are enough.
-                             */}
-                    <div className="grid grid-cols-1 gap-6">
-                      {resumeData.workExperiences.map((exp, idx) => (
-                        <div key={idx} className="relative break-inside-avoid">
-                          <div className="mb-1 flex items-baseline justify-between">
-                            <h4 className="text-md font-bold uppercase text-slate-800">
-                              {exp.position}
-                            </h4>
-                            <span className="text-xs font-bold text-slate-400">
-                              {exp.startDate &&
-                                safeFormatDate(exp.startDate, "yyyy")}{" "}
-                              -{" "}
-                              {exp.endDate
-                                ? safeFormatDate(exp.endDate, "yyyy")
-                                : "Present"}
-                            </span>
-                          </div>
+                  <div className="grid grid-cols-1 gap-6">
+                    {resumeData.workExperiences.map((exp, idx) => (
+                      <div key={idx} className="relative break-inside-avoid">
+                        <div className="mb-1 flex items-baseline justify-between">
+                          <h4
+                            className="text-md font-bold"
+                            style={{
+                              fontSize: "calc(1em * var(--heading-scale))",
+                              color: "var(--text)",
+                            }}
+                          >
+                            <span data-resume-entry-title>{exp.position}</span>
+                            {exp.company && (
+                              <span
+                                data-resume-entry-subtitle
+                                data-entry-subtitle-slot="inline"
+                                className="font-semibold"
+                              >
+                                {exp.company}
+                              </span>
+                            )}
+                          </h4>
+                          <span
+                            className="text-xs font-bold"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 60%, transparent)",
+                            }}
+                          >
+                            {exp.startDate &&
+                              safeFormatDate(exp.startDate, dateFormat)}{" "}
+                            -{" "}
+                            {exp.endDate
+                              ? safeFormatDate(exp.endDate, dateFormat)
+                              : "Present"}
+                          </span>
+                        </div>
+
+                        {exp.company && (
                           <div
-                            className="mb-2 text-xs font-bold uppercase tracking-wide"
+                            data-resume-entry-subtitle
+                            data-entry-subtitle-slot="newline"
+                            className="mb-2 text-xs font-bold tracking-wide"
                             style={{ color: primaryColor }}
                           >
                             {exp.company}
                           </div>
+                        )}
+
+                        {exp.description && (
                           <div
-                            className="text-justify text-xs leading-relaxed text-slate-600"
+                            className="text-justify text-xs leading-relaxed"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 70%, transparent)",
+                            }}
                             dangerouslySetInnerHTML={{
                               __html: exp.description || "",
                             }}
                           />
-                        </div>
-                      ))}
-                    </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -198,24 +270,40 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
                 <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                   {resumeData.educations.map((edu, idx) => (
                     <div key={idx} className="break-inside-avoid">
-                      <h4 className="mb-0.5 text-sm font-bold uppercase text-slate-800">
+                      <h4
+                        className="mb-0.5 text-sm font-bold"
+                        style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                      >
                         {edu.degree}
                       </h4>
                       <div
-                        className="mb-1 text-xs font-bold uppercase text-slate-400"
+                        className="mb-1 text-xs font-bold"
                         style={{ color: primaryColor }}
                       >
                         {edu.school}
                       </div>
-                      <span className="mb-1 block text-[10px] font-bold text-slate-400">
-                        {edu.startDate && safeFormatDate(edu.startDate, "yyyy")}{" "}
+                      <span
+                        className="mb-1 block text-[10px] font-bold"
+                        style={{
+                          color:
+                            "color-mix(in srgb, var(--text) 60%, transparent)",
+                        }}
+                      >
+                        {edu.startDate &&
+                          safeFormatDate(edu.startDate, dateFormat)}{" "}
                         -{" "}
                         {edu.endDate
-                          ? safeFormatDate(edu.endDate, "yyyy")
+                          ? safeFormatDate(edu.endDate, dateFormat)
                           : "Present"}
                       </span>
                       {edu.description && (
-                        <div className="text-[11px] text-slate-600">
+                        <div
+                          className="text-[11px]"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--text) 70%, transparent)",
+                          }}
+                        >
                           {edu.description}
                         </div>
                       )}
@@ -236,11 +324,24 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
                   {resumeData.skills.map((skill, idx) => (
                     <div key={idx}>
                       <div className="mb-1 flex justify-between">
-                        <h4 className="text-xs font-bold uppercase text-slate-700">
+                        <h4
+                          className="text-xs font-bold"
+                          style={{
+                            fontSize: "calc(1em * var(--heading-scale))",
+                            color:
+                              "color-mix(in srgb, var(--text) 80%, transparent)",
+                          }}
+                        >
                           {skill.title}
                         </h4>
                       </div>
-                      <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className="h-2 w-full overflow-hidden rounded-full"
+                        style={{
+                          backgroundColor:
+                            "color-mix(in srgb, var(--text) 10%, transparent)",
+                        }}
+                      >
                         {/* Randomized percent for visual if skillName is plain strings, or use skill items count */}
                         <div
                           className="h-full rounded-full"
@@ -252,7 +353,14 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
                       </div>
                       <div className="mt-1 flex flex-wrap gap-x-2">
                         {skill.skillName?.map((item, i) => (
-                          <span key={i} className="text-[10px] text-slate-500">
+                          <span
+                            key={i}
+                            className="text-[10px]"
+                            style={{
+                              color:
+                                "color-mix(in srgb, var(--text) 65%, transparent)",
+                            }}
+                          >
                             {item}
                           </span>
                         ))}
@@ -273,42 +381,18 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
                     colorHex={primaryColor}
                   />
                   <div
-                    className="border-l-4 pl-3 text-xs leading-relaxed text-slate-600"
-                    style={{ borderColor: primaryColor }}
+                    className="border-l pl-3 text-xs leading-relaxed"
+                    style={{
+                      borderColor: primaryColor,
+                      borderLeftWidth: "calc(var(--resume-border-width) * 4)",
+                      color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                    }}
                     dangerouslySetInnerHTML={{
                       __html: resumeData.others.description || "",
                     }}
                   />
                 </div>
               )}
-
-              {/* LANGUAGES (Mock) - "Languages with percentage bars" */}
-              {/* Using a static mock or repurposing data if available. Since strict "Languages section" demanded. */}
-              <div>
-                <SectionHeaderMain title="Languages" colorHex={primaryColor} />
-                <div className="space-y-3">
-                  {["English", "Spanish", "French"].map((lang, idx) => (
-                    <div key={idx}>
-                      <div className="mb-1 flex justify-between text-[10px] font-bold text-slate-600">
-                        <span>{lang}</span>
-                        <span>
-                          {idx === 0 ? "100%" : idx === 1 ? "80%" : "60%"}
-                        </span>
-                      </div>
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                        <div
-                          className="h-full rounded-full"
-                          style={{
-                            width:
-                              idx === 0 ? "100%" : idx === 1 ? "80%" : "60%",
-                            backgroundColor: primaryColor,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -321,13 +405,174 @@ export default function Modern9({ resumeData, className }: ResumePreviewProps) {
 // COMPONENTS
 // ----------------------------------------------------------------------
 
+// Photo Section Component
 const PhotoSection = ({
   resumeData,
+  colorHex,
 }: {
   resumeData: ResumeValues;
   colorHex: string;
 }) => {
-  const { photo } = resumeData;
+  const [photoSrc, setPhotoSrc] = useState<string>(
+    resumeData.photo instanceof File ? "" : resumeData.photo || "",
+  );
+
+  useEffect(() => {
+    if (resumeData.photo instanceof File) {
+      const objectUrl = URL.createObjectURL(resumeData.photo);
+      setPhotoSrc(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+    if (resumeData.photo === null) setPhotoSrc("");
+  }, [resumeData.photo]);
+
+  const getBorderRadius = () => {
+    if (resumeData.borderStyle === "square") return "0px";
+    if (resumeData.borderStyle === "circle") return "50%";
+    return "10px";
+  };
+
+  if (!photoSrc) return null;
+
+  return (
+    <div
+      className="h-36 w-36 overflow-hidden border shadow-lg"
+      style={{
+        borderRadius: getBorderRadius(),
+        borderColor: colorHex,
+        borderWidth: "calc(var(--resume-border-width) * 4)",
+      }}
+    >
+      <img
+        src={photoSrc}
+        alt="Profile"
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
+};
+
+// Contact Section Component
+const ContactSection = ({
+  resumeData,
+  colorHex,
+}: {
+  resumeData: ResumeValues;
+  colorHex: string;
+}) => {
+  const { phone, email, city, country, portfolioLink, socialLinks } =
+    resumeData;
+
+  return (
+    <div
+      className="space-y-3 text-xs"
+      style={{ color: "color-mix(in srgb, var(--text) 75%, transparent)" }}
+    >
+      {phone && (
+        <div className="flex items-center gap-2">
+          <Phone size={14} style={{ color: colorHex }} />
+          <span>{phone}</span>
+        </div>
+      )}
+      {email && (
+        <div className="flex items-center gap-2">
+          <Mail size={14} style={{ color: colorHex }} />
+          <span className="break-all">{email}</span>
+        </div>
+      )}
+      {(city || country) && (
+        <div className="flex items-center gap-2">
+          <MapPin size={14} style={{ color: colorHex }} />
+          <span>{[city, country].filter(Boolean).join(", ")}</span>
+        </div>
+      )}
+      {portfolioLink && (
+        <div className="flex items-center gap-2">
+          <Globe size={14} style={{ color: colorHex }} />
+          <span className="break-all">{portfolioLink}</span>
+        </div>
+      )}
+      {socialLinks?.map((link, idx) => (
+        <div key={idx} className="flex items-center gap-2">
+          <LinkIcon size={14} style={{ color: colorHex }} />
+          <span className="break-all">
+            {link.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Section Header for Sidebar
+const SectionHeaderSide = ({
+  title,
+  colorHex,
+}: {
+  title: string;
+  colorHex: string;
+}) => {
+  return (
+    <h3
+      data-resume-section-heading
+      className="mb-4 border-b pb-2 text-sm font-bold tracking-widest"
+      style={{
+        color: colorHex,
+        borderColor: colorHex,
+        fontSize: "calc(1em * var(--heading-scale))",
+        borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+        borderStyle: "var(--resume-border-style)" as any,
+      }}
+    >
+      {title}
+    </h3>
+  );
+};
+
+// Section Header for Main Content
+const SectionHeaderMain = ({
+  title,
+  colorHex,
+}: {
+  title: string;
+  colorHex: string;
+}) => {
+  return (
+    <h3
+      data-resume-section-heading
+      className="mb-6 border-b pb-2 text-lg font-bold tracking-wide"
+      style={{
+        borderColor: colorHex,
+        color: colorHex,
+        fontSize: "calc(1em * var(--heading-scale))",
+        borderBottomWidth: "calc(var(--resume-border-width) * 2)",
+        borderStyle: "var(--resume-border-style)" as any,
+      }}
+    >
+      {title}
+    </h3>
+  );
+};
+
+const Sidebar = ({
+  resumeData,
+  colorHex,
+}: {
+  resumeData: ResumeValues;
+  colorHex: string;
+}) => {
+  const {
+    photo,
+    borderStyle,
+    phone,
+    email,
+    portfolioLink,
+    socialLinks,
+    city,
+    country,
+    certifications,
+    others,
+  } = resumeData;
   const [photoSrc, setPhotoSrc] = useState<string>(
     photo instanceof File ? "" : photo || "",
   );
@@ -341,110 +586,648 @@ const PhotoSection = ({
     if (photo === null) setPhotoSrc("");
   }, [photo]);
 
-  if (!photoSrc) return null;
+  const getBorderRadius = () => {
+    if (borderStyle === "square") return "0px";
+    if (borderStyle === "circle") return "50%";
+    return "10px";
+  };
 
   return (
-    <div className="relative h-[180px] w-[180px]">
-      <Image
-        src={photoSrc}
-        fill
-        alt="Profile"
-        className="rounded-full border-[8px] border-white object-cover shadow-sm"
+    <aside style={{ background: "#e6e6e6", padding: "30px 20px" }}>
+      {/* Profile Photo */}
+      {photoSrc && (
+        <div
+          style={{
+            width: "160px",
+            height: "160px",
+            margin: "0 auto 30px",
+            borderStyle: "solid",
+            borderWidth: "calc(var(--resume-border-width) * 6)",
+            borderColor: "#ddd",
+            overflow: "hidden",
+            borderRadius: getBorderRadius(),
+          }}
+        >
+          <img
+            src={photoSrc}
+            alt="Profile"
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </div>
+      )}
+
+      {/* Contact Section */}
+      <div
+        style={{
+          background: colorHex,
+          color: "white",
+          textAlign: "center",
+          padding: "8px",
+          fontSize: "14px",
+          fontWeight: 600,
+          margin: "25px 0 10px",
+        }}
+      >
+        CONTACT ME
+      </div>
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        {phone && (
+          <li
+            style={{
+              fontSize: "13px",
+              margin: "8px 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <Phone size={14} /> {phone}
+          </li>
+        )}
+        {email && (
+          <li
+            style={{
+              fontSize: "13px",
+              margin: "8px 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <Mail size={14} /> {email}
+          </li>
+        )}
+        {portfolioLink && (
+          <li
+            style={{
+              fontSize: "13px",
+              margin: "8px 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <Globe size={14} />{" "}
+            {portfolioLink.replace(/^https?:\/\/(www\.)?/, "")}
+          </li>
+        )}
+        {(city || country) && (
+          <li
+            style={{
+              fontSize: "13px",
+              margin: "8px 0",
+              display: "flex",
+              alignItems: "start",
+              gap: "8px",
+            }}
+          >
+            <MapPin size={14} style={{ marginTop: "2px" }} />
+            <span>{[city, country].filter(Boolean).join(", ")}</span>
+          </li>
+        )}
+        {socialLinks &&
+          socialLinks.map((link, idx) => (
+            <li
+              key={idx}
+              style={{
+                fontSize: "13px",
+                margin: "8px 0",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              <LinkIcon size={14} />
+              <a
+                href={link}
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: "inherit", textDecoration: "none" }}
+              >
+                {link.replace(/^https?:\/\/(www\.)?/, "")}
+              </a>
+            </li>
+          ))}
+      </ul>
+
+      {/* Divider */}
+      <div
+        style={{
+          height: "6px",
+          background: "color-mix(in srgb, var(--text) 20%, transparent)",
+          margin: "20px 0",
+          borderRadius: "5px",
+        }}
       />
-    </div>
+
+      {/* References */}
+      {certifications && certifications.length > 0 && (
+        <>
+          <div
+            style={{
+              background: colorHex,
+              color: "white",
+              textAlign: "center",
+              padding: "8px",
+              fontSize: "14px",
+              fontWeight: 600,
+              margin: "25px 0 10px",
+            }}
+          >
+            References
+          </div>
+          {certifications.map((ref, idx) => (
+            <div key={idx} style={{ marginBottom: "15px", fontSize: "12px" }}>
+              <h4
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  margin: "0 0 4px 0",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "calc(1em * var(--heading-scale))",
+                  }}
+                >
+                  {ref.title}
+                </span>
+              </h4>
+              {ref.description && (
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "11px",
+                    color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                  }}
+                >
+                  {ref.description}
+                </p>
+              )}
+              {ref.link && (
+                <a
+                  href={ref.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    fontSize: "11px",
+                    color: "var(--accent)",
+                    textDecoration: "underline",
+                  }}
+                >
+                  {ref.link.replace(/^https?:\/\/(www\.)?/, "")}
+                </a>
+              )}
+            </div>
+          ))}
+          <div
+            style={{
+              height: "6px",
+              background: "color-mix(in srgb, var(--text) 20%, transparent)",
+              margin: "20px 0",
+              borderRadius: "5px",
+            }}
+          />
+        </>
+      )}
+
+      {/* Awards */}
+      {others && (
+        <>
+          <div
+            style={{
+              background: colorHex,
+              color: "white",
+              textAlign: "center",
+              padding: "8px",
+              fontSize: "14px",
+              fontWeight: 600,
+              margin: "25px 0 10px",
+            }}
+          >
+            {others.title || "Awards"}
+          </div>
+          <div
+            className="richTextEditorStyle whitespace-pre-line"
+            style={{
+              fontSize: "12px",
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
+            }}
+            dangerouslySetInnerHTML={{ __html: others.description || "" }}
+          />
+        </>
+      )}
+    </aside>
   );
 };
 
-// Red Label Header for Main Content
-const SectionHeaderMain = ({
-  title,
-  colorHex,
-}: {
-  title: string;
-  colorHex: string;
-}) => (
-  <div className="mb-6 border-b border-slate-200 pb-2">
-    <span
-      className="inline-block px-4 py-1.5 text-sm font-extrabold uppercase tracking-widest text-white"
-      style={{ backgroundColor: colorHex }}
-    >
-      {title}
-    </span>
-  </div>
-);
-
-// Sidebar Header (Red Text)
-const SectionHeaderSide = ({
-  title,
-  colorHex,
-}: {
-  title: string;
-  colorHex: string;
-}) => (
-  <h3
-    className="mb-4 border-b-2 border-slate-300 pb-2 text-sm font-bold uppercase tracking-widest"
-    style={{ color: colorHex }}
-  >
-    {title}
-  </h3>
-);
-
-const ContactSection = ({
+const MainContent = ({
   resumeData,
   colorHex,
 }: {
   resumeData: ResumeValues;
   colorHex: string;
 }) => {
-  const { city, country, phone, email, portfolioLink } = resumeData;
-
-  // Icon circle
-  const Wrapper = ({
-    icon: Icon,
-    text,
-    href,
-  }: {
-    icon: React.ElementType; // Fixed: Changed from any to React.ElementType
-    text: string;
-    href?: string;
-  }) => (
-    <div className="flex items-start gap-4">
-      <div
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white"
-        style={{ backgroundColor: colorHex }}
-      >
-        <Icon size={14} />
-      </div>
-      <div className="flex-1 pt-1.5">
-        {href ? (
-          <a
-            href={href}
-            className="block break-all text-[11px] font-bold text-slate-600 hover:text-slate-900"
-          >
-            {text}
-          </a>
-        ) : (
-          <span className="block text-[11px] font-bold text-slate-600">
-            {text}
-          </span>
-        )}
-      </div>
-    </div>
-  );
+  const {
+    firstName,
+    lastName,
+    jobTitle,
+    summary,
+    workExperiences,
+    educations,
+    projectWorks,
+    skills,
+    others,
+  } = resumeData;
 
   return (
-    <div className="space-y-4">
-      {phone && <Wrapper icon={Phone} text={phone} href={`tel:${phone}`} />}
-      {email && <Wrapper icon={Mail} text={email} href={`mailto:${email}`} />}
-      {(city || country) && (
-        <Wrapper
-          icon={MapPin}
-          text={[city, country].filter(Boolean).join(", ")}
-        />
+    <main style={{ padding: "40px" }}>
+      {/* Header */}
+      <header style={{ marginBottom: "20px" }} data-resume-header>
+        <h1
+          style={{
+            fontWeight: "var(--name-font-weight)",
+            margin: 0,
+            fontSize: "var(--name-font-size)",
+          }}
+        >
+          <span style={{ color: colorHex }}>{firstName}</span> {lastName}
+        </h1>
+        {jobTitle && (
+          <h2
+            style={{
+              fontSize: "calc(var(--name-font-size) * 0.71)",
+              letterSpacing: "3px",
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              margin: "8px 0 0 0",
+              fontWeight: 400,
+            }}
+          >
+            {jobTitle}
+          </h2>
+        )}
+      </header>
+
+      {/* About Me */}
+      {summary && (
+        <>
+          <div
+            style={{
+              display: "inline-block",
+              background: colorHex,
+              color: "white",
+              padding: "6px 16px",
+              margin: "20px 0 10px",
+              fontSize: "13px",
+              fontWeight: 600,
+            }}
+          >
+            About me
+          </div>
+          <div
+            dangerouslySetInnerHTML={{ __html: summary || "" }}
+            className="richTextEditorStyle !m-0 whitespace-pre-line"
+            style={{
+              fontSize: "13px",
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              margin: "0 0 20px 0",
+            }}
+          />
+        </>
       )}
-      {portfolioLink && (
-        <Wrapper icon={Globe} text="Portfolio" href={portfolioLink} />
+
+      {/* Experience & Education - Two Columns */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "30px",
+          marginBottom: "20px",
+        }}
+      >
+        {/* Job Experience */}
+        <section>
+          {workExperiences && workExperiences.length > 0 && (
+            <>
+              <div
+                style={{
+                  display: "inline-block",
+                  background: colorHex,
+                  color: "white",
+                  padding: "6px 16px",
+                  margin: "20px 0 10px",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                }}
+              >
+                JOB EXPERIENCE
+              </div>
+              {workExperiences.map((exp, idx) => (
+                <div key={idx} style={{ marginBottom: "20px" }}>
+                  <h3
+                    style={{
+                      fontSize: "14px",
+                      margin: "0 0 4px 0",
+                      fontWeight: 600,
+                    }}
+                  >
+                    <span
+                      data-resume-entry-title
+                      style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                    >
+                      {exp.position}
+                    </span>
+                    {exp.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        style={{
+                          fontSize: "calc(1em * var(--heading-scale))",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {exp.company}
+                      </span>
+                    )}
+                  </h3>
+                  {exp.company ? (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      style={{
+                        fontSize: "12px",
+                        color:
+                          "color-mix(in srgb, var(--text) 65%, transparent)",
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {exp.company}
+                    </span>
+                  ) : (
+                    <span />
+                  )}
+                  <div
+                    className="richTextEditorStyle whitespace-pre-line"
+                    style={{
+                      fontSize: "12px",
+                      color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                      marginBottom: "4px",
+                    }}
+                    dangerouslySetInnerHTML={{ __html: exp.description || "" }}
+                  />
+                  <small
+                    style={{
+                      fontSize: "11px",
+                      color: "color-mix(in srgb, var(--text) 80%, transparent)",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {exp.startDate && safeFormatDate(exp.startDate, "yyyy")} –{" "}
+                    {exp.endDate
+                      ? safeFormatDate(exp.endDate, "yyyy")
+                      : "PRESENT"}
+                  </small>
+                </div>
+              ))}
+            </>
+          )}
+        </section>
+
+        {/* Education */}
+        <section>
+          {educations && educations.length > 0 && (
+            <>
+              <div
+                style={{
+                  display: "inline-block",
+                  background: colorHex,
+                  color: "white",
+                  padding: "6px 16px",
+                  margin: "20px 0 10px",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                }}
+              >
+                EDUCATION
+              </div>
+              {educations.map((edu, idx) => (
+                <div key={idx} style={{ marginBottom: "20px" }}>
+                  <h3
+                    style={{
+                      fontSize: "14px",
+                      margin: "0 0 4px 0",
+                      fontWeight: 600,
+                    }}
+                  >
+                    <span
+                      style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                    >
+                      {edu.degree} {edu.stream}
+                    </span>
+                  </h3>
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "color-mix(in srgb, var(--text) 65%, transparent)",
+                      display: "block",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    {edu.school}
+                    {edu.marks && ` | ${edu.marks}`}
+                  </span>
+                  {edu.description && (
+                    <div
+                      className="richTextEditorStyle whitespace-pre-line"
+                      style={{
+                        fontSize: "12px",
+                        color:
+                          "color-mix(in srgb, var(--text) 70%, transparent)",
+                        margin: "0 0 4px 0",
+                      }}
+                      dangerouslySetInnerHTML={{ __html: edu.description }}
+                    />
+                  )}
+                  <small
+                    style={{
+                      fontSize: "11px",
+                      color: "color-mix(in srgb, var(--text) 80%, transparent)",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {edu.startDate && safeFormatDate(edu.startDate, "yyyy")} –{" "}
+                    {edu.endDate
+                      ? safeFormatDate(edu.endDate, "yyyy")
+                      : "PRESENT"}
+                  </small>
+                </div>
+              ))}
+            </>
+          )}
+        </section>
+      </div>
+
+      {/* Projects Section - Full Width */}
+      {projectWorks && projectWorks.length > 0 && (
+        <>
+          <div
+            style={{
+              display: "inline-block",
+              background: colorHex,
+              color: "white",
+              padding: "6px 16px",
+              margin: "20px 0 10px",
+              fontSize: "13px",
+              fontWeight: 600,
+            }}
+          >
+            PROJECTS
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            {projectWorks.map((proj, idx) => (
+              <div key={idx} style={{ marginBottom: "20px" }}>
+                <h3
+                  style={{
+                    fontSize: "14px",
+                    margin: "0 0 4px 0",
+                    fontWeight: 600,
+                  }}
+                >
+                  <span
+                    data-resume-entry-title
+                    style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                  >
+                    {proj.title}
+                  </span>
+                  {proj.company && (
+                    <span
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="inline"
+                      style={{
+                        fontSize: "calc(1em * var(--heading-scale))",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {proj.company}
+                    </span>
+                  )}
+                </h3>
+                {proj.company && (
+                  <span
+                    data-resume-entry-subtitle
+                    data-entry-subtitle-slot="newline"
+                    style={{
+                      fontSize: "12px",
+                      color: "color-mix(in srgb, var(--text) 65%, transparent)",
+                      display: "block",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    {proj.company}
+                  </span>
+                )}
+                {proj.description && (
+                  <div
+                    className="richTextEditorStyle whitespace-pre-line"
+                    style={{
+                      fontSize: "12px",
+                      color: "color-mix(in srgb, var(--text) 70%, transparent)",
+                      marginBottom: "4px",
+                    }}
+                    dangerouslySetInnerHTML={{ __html: proj.description || "" }}
+                  />
+                )}
+                {proj.links && proj.links.length > 0 && (
+                  <div style={{ marginTop: "6px" }}>
+                    {proj.links.map((link, i) => (
+                      <a
+                        key={i}
+                        href={link}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: "block",
+                          fontSize: "11px",
+                          color: "var(--accent)",
+                          textDecoration: "underline",
+                          marginBottom: "2px",
+                        }}
+                      >
+                        {link.replace(/^https?:\/\/(www\.)?/, "")}
+                      </a>
+                    ))}
+                  </div>
+                )}
+                <small
+                  style={{
+                    fontSize: "11px",
+                    color: "color-mix(in srgb, var(--text) 80%, transparent)",
+                    fontWeight: 600,
+                  }}
+                >
+                  {proj.startDate && safeFormatDate(proj.startDate, "yyyy")} –{" "}
+                  {proj.endDate
+                    ? safeFormatDate(proj.endDate, "yyyy")
+                    : "PRESENT"}
+                </small>
+              </div>
+            ))}
+          </div>
+        </>
       )}
-    </div>
+
+      {/* Skills */}
+      {skills && skills.length > 0 && (
+        <>
+          <div
+            style={{
+              display: "inline-block",
+              background: colorHex,
+              color: "white",
+              padding: "6px 16px",
+              margin: "20px 0 10px",
+              fontSize: "13px",
+              fontWeight: 600,
+            }}
+          >
+            SKILLS
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            {skills.map((skill, idx) => (
+              <div key={idx} style={{ marginBottom: "15px" }}>
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    display: "block",
+                    marginBottom: "4px",
+                  }}
+                >
+                  {skill.title}
+                </span>
+                <div
+                  style={{
+                    background:
+                      "color-mix(in srgb, var(--text) 20%, transparent)",
+                    height: "6px",
+                    borderRadius: "5px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "100%",
+                      background: colorHex,
+                      width: "75%",
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </main>
   );
 };

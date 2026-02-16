@@ -23,15 +23,15 @@ export default function PersonalInfoForm({
   const form = useForm<PersonalInfoValues>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {
-      firstName: resumeData.firstName || "",
-      lastName: resumeData.lastName || "",
-      jobTitle: resumeData.jobTitle || "",
-      city: resumeData.city || "",
-      country: resumeData.country || "",
-      phone: resumeData.phone || "",
-      email: resumeData.email || "",
-      socialLinks: resumeData.socialLinks || [],
-      portfolioLink: resumeData.portfolioLink || "",
+      firstName: resumeData.content.firstName || "",
+      lastName: resumeData.content.lastName || "",
+      jobTitle: resumeData.content.jobTitle || "",
+      city: resumeData.content.city || "",
+      country: resumeData.content.country || "",
+      phone: resumeData.content.phone || "",
+      email: resumeData.content.email || "",
+      socialLinks: resumeData.content.socialLinks || [],
+      portfolioLink: resumeData.content.portfolioLink || "",
     },
   });
 
@@ -41,18 +41,37 @@ export default function PersonalInfoForm({
       if (!isValid) return;
       setResumeData({
         ...resumeData,
-        ...values,
-        socialLinks:
-          values.socialLinks
-            ?.filter((links) => links !== undefined)
-            .map((links) => links.trim())
-            .filter((links) => links !== "") || [],
+        content: {
+          ...resumeData.content,
+          ...values,
+          socialLinks:
+            values.socialLinks
+              ?.filter((links) => links !== undefined)
+              .map((links) => links.trim())
+              .filter((links) => links !== "") || [],
+        },
       });
     });
     return unsubscribe;
   }, [form, resumeData, setResumeData]);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  const isImageFieldDisabled = [
+    "ats1",
+    "ats2",
+    "ats3",
+    "ats4",
+    "ats5",
+    "ats6",
+    "ats7",
+    "ats8",
+    "ats11",
+    "ats12",
+    "ats13",
+    "ats14",
+    "ats15",
+  ].includes(resumeData.styleId);
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
@@ -74,6 +93,12 @@ export default function PersonalInfoForm({
                       {...fieldValues}
                       type="file"
                       accept="image/*"
+                      disabled={isImageFieldDisabled}
+                      className={
+                        isImageFieldDisabled
+                          ? "cursor-not-allowed opacity-50"
+                          : ""
+                      }
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         fieldValues.onChange(file);
@@ -84,6 +109,12 @@ export default function PersonalInfoForm({
                   <Button
                     variant="secondary"
                     type="button"
+                    disabled={isImageFieldDisabled}
+                    className={
+                      isImageFieldDisabled
+                        ? "cursor-not-allowed opacity-50"
+                        : ""
+                    }
                     onClick={() => {
                       fieldValues.onChange(null);
                       if (photoInputRef.current) {

@@ -29,13 +29,25 @@ model Resume {
   portfolioLink   String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  skills          Skill[]
-  educations      Education[]
-  workExperiences WorkExperience[]
-  projectWorks    ProjectWork[]
-  certifications  Certification[]
-  others          Other?
   styleId         String?
+  columnLayout    String           @default("double")
+  fontFamily      String           @default("inter")
+  letterSpacing   Float            @default(0)
+  lineHeight      Float            @default(1.5)
+  margins         Int              @default(0)
+  photoShape      String           @default("square")
+  sectionConfigs  Json?            @default("{}")
+  sectionOrder    String[]         @default([])
+  showPhoto       Boolean          @default(true)
+  titleAlign      String           @default("left")
+  design          Json?
+  dateFormat      String?
+  certifications  Certification[]
+  educations      Education[]
+  others          Other?
+  projectWorks    ProjectWork[]
+  skills          Skill[]
+  workExperiences WorkExperience[]
 
   @@map("resumes")
 }
@@ -50,9 +62,8 @@ model WorkExperience {
   description String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
-  resumeId String @default("1")
+  resumeId    String    @default("1")
+  resume      Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 
   @@map("work_experiences")
 }
@@ -67,11 +78,11 @@ model Education {
   startDate   DateTime?
   endDate     DateTime?
   description String?
+  isPresent   Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
-  resumeId String
+  resumeId    String
+  resume      Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 
   @@map("educations")
 }
@@ -86,9 +97,8 @@ model ProjectWork {
   createdAt   DateTime  @default(now())
   links       String[]
   updatedAt   DateTime  @updatedAt
-
-  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
-  resumeId String
+  resumeId    String
+  resume      Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 
   @@map("project_works")
 }
@@ -100,9 +110,8 @@ model Certification {
   link        String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
-  resumeId String
+  resumeId    String
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 
   @@map("certifications")
 }
@@ -113,21 +122,19 @@ model Skill {
   skillName String[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
-  resumeId String
+  resumeId  String
+  resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 
   @@map("skills")
 }
 
 model Other {
-  id     String @id @default(cuid())
-  resume Resume @relation(fields: [id], references: [id], onDelete: Cascade)
-
+  id          String   @id @default(cuid())
   title       String?
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  resume      Resume   @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@map("others")
 }
@@ -144,4 +151,26 @@ model UserSubscription {
   updatedAt               DateTime @updatedAt
 
   @@map("user_subscriptions")
+}
+
+model OfferLetter {
+  id        String      @id @default(cuid())
+  userId    String
+
+  status    OfferStatus @default(DRAFT)
+
+  content   Json        // OfferLetterValues (legacy-safe)
+  design    Json?       // Optional editor-only config
+  styleId   String?     // Optional, future-proofing
+
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([userId])
+}
+
+enum OfferStatus {
+  DRAFT
+  FINALIZED
+  ARCHIVED
 }

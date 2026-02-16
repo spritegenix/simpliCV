@@ -1,9 +1,10 @@
 import { Prisma } from "@prisma/client";
-import { ResumeValues } from "./validation";
+// Trigger type update
+import { ResumeDocument } from "@/types/resumeDocument";
 
 export interface EditorFormProps {
-  resumeData: ResumeValues;
-  setResumeData: (data: ResumeValues) => void;
+  resumeData: ResumeDocument;
+  setResumeData: (data: ResumeDocument) => void;
 }
 
 export const resumeDataInclude = {

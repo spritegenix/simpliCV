@@ -6,7 +6,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/RichTextEditor";
 import { EditorFormProps } from "@/lib/types";
 import { summarySchema, SummaryValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,7 +21,7 @@ export default function SummaryForm({
   const form = useForm<SummaryValues>({
     resolver: zodResolver(summarySchema),
     defaultValues: {
-      summary: resumeData.summary || "",
+      summary: resumeData.content.summary || "",
     },
   });
 
@@ -29,7 +29,13 @@ export default function SummaryForm({
     const { unsubscribe } = form.watch(async (values) => {
       const isValid = await form.trigger();
       if (!isValid) return;
-      setResumeData({ ...resumeData, ...values });
+      setResumeData({
+        ...resumeData,
+        content: {
+          ...resumeData.content,
+          ...values,
+        },
+      });
     });
     return unsubscribe;
   }, [form, resumeData, setResumeData]);
@@ -52,9 +58,9 @@ export default function SummaryForm({
               <FormItem>
                 <FormLabel className="sr-only">Professional summary</FormLabel>
                 <FormControl>
-                  <Textarea
-                    {...field}
+                  <RichTextEditor
                     value={field.value || ""}
+                    onChange={(content) => field.onChange(content)}
                     placeholder="A brief, engaging text about yourself"
                   />
                 </FormControl>

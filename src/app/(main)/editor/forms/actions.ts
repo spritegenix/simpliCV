@@ -14,6 +14,43 @@ import {
 import { auth } from "@clerk/nextjs/server";
 import genAI from "@/lib/gemini";
 
+// Helper function to convert markdown bullets to HTML
+function convertMarkdownToHtml(text: string): string {
+  const lines = text.split('\n');
+  let html = '';
+  let inList = false;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Check if line is a bullet point (starts with * or -)
+    if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+      if (!inList) {
+        html += '<ul>';
+        inList = true;
+      }
+      // Remove the bullet marker and wrap in <li>
+      const content = trimmed.substring(2).trim();
+      html += `<li><p>${content}</p></li>`;
+    } else if (trimmed) {
+      // Close list if we were in one
+      if (inList) {
+        html += '</ul>';
+        inList = false;
+      }
+      // Regular paragraph
+      html += `<p>${trimmed}</p>`;
+    }
+  }
+
+  // Close list if still open
+  if (inList) {
+    html += '</ul>';
+  }
+
+  return html;
+}
+
 
 export async function generateSummary(input: GenerateSummaryInput) {
   const { userId } = await auth();
@@ -69,7 +106,7 @@ export async function generateSummary(input: GenerateSummaryInput) {
   // console.log("systemMessage", systemMessage);
   // console.log("userMessage", userMessage);
 
-  const model = genAI.getGenerativeModel({model: "gemini-flash-latest"});
+  const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
   const response = await model.generateContent([systemMessage, userMessage]);
   const aiResponse = response?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
 
@@ -123,10 +160,12 @@ export async function generateWorkExperience(
 
   console.log("aiResponse from generateWorkExperience", aiResponse);
 
+  const rawDescription = (aiResponse.match(/Description:([\s\S]*)/)?.[1] || "").trim();
+
   return {
     position: aiResponse.match(/Job title: (.*)/)?.[1] || "",
     company: aiResponse.match(/Company: (.*)/)?.[1] || "",
-    description: (aiResponse.match(/Description:([\s\S]*)/)?.[1] || "").trim(),
+    description: convertMarkdownToHtml(rawDescription),
     startDate: aiResponse.match(/Start date: (\d{4}-\d{2}-\d{2})/)?.[1],
     endDate: aiResponse.match(/End date: (\d{4}-\d{2}-\d{2})/)?.[1],
   } satisfies WorkExperience;
@@ -170,8 +209,10 @@ export async function generateProject(input: GenerateProjectInput) {
 
   console.log("aiResponse from generateProject", aiResponse);
 
+  const rawDescription = (aiResponse.match(/Description:([\s\S]*)/)?.[1] || "").trim();
+
   return {
     title: aiResponse.match(/Project title: (.*)/)?.[1] || "",
-    description: (aiResponse.match(/Description:([\s\S]*)/)?.[1] || "").trim(),
+    description: convertMarkdownToHtml(rawDescription),
   } satisfies ProjectWork;
 }

@@ -1,6 +1,9 @@
 "use client";
-import { useStyleAsideState } from "@/app/(main)/editor/Footer";
-import React, { useState } from "react";
+import {
+  useResumeTemplateCategoryState,
+  useStyleAsideState,
+} from "@/app/(main)/editor/styleAsideState";
+import React from "react";
 import { Sidebar } from "./SideBar";
 import {
   resumeCategories,
@@ -8,50 +11,467 @@ import {
   resumeStyles,
 } from "../ResumeStyles/Styles";
 import { Card } from "@/app/(resumeSample)/templates/TemplateCard";
-import { ResumeValues } from "@/lib/validation";
-import { cn, mapToResumeValues } from "@/lib/utils";
-import { ResumeServerData } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
-import useAutoSaveResume from "@/app/(main)/editor/useAutoSaveResume";
-import useUnloadWarning from "@/hooks/useUnloadWarning";
 import { CircleX, Loader2 } from "lucide-react";
 import TabsScroll from "../TabsScroll";
+import { ResumeDocument } from "@/types/resumeDocument";
 
-interface ResumeEditorProps {
-  resumeToEdit: ResumeServerData | null;
+interface ResumeTemplateAsideProps {
+  resumeData: ResumeDocument;
+  setResumeData: React.Dispatch<React.SetStateAction<ResumeDocument>>;
+  isSaving: boolean;
 }
 
 export default function ResumeTemplateAside({
-  resumeToEdit,
-}: ResumeEditorProps) {
+  resumeData,
+  setResumeData,
+  isSaving,
+}: ResumeTemplateAsideProps) {
   const { open, setOpen } = useStyleAsideState();
-  const [resumeData, setResumeData] = useState<ResumeValues>(
-    resumeToEdit ? mapToResumeValues(resumeToEdit) : {},
-  );
-  const [selectedCat, setSelectedCat] = useState<ResumeCategory>(
-    resumeCategories[0],
-  );
-
-  const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData);
-
-  // useEffectAfterFirst(() => {
-  //   if (!isSaving) {
-  //     window.location.reload();
-  //   }
-  // }, [isSaving]);
-
-  // useEffect(() => {
-  //   console.log(isSaving, "isA");
-  //   if (!isSaving) {
-  //     window.location.reload();
-  //   }
-  // }, [isSaving]);
-
-  useUnloadWarning(hasUnsavedChanges);
+  const { selectedCategory, setSelectedCategory } =
+    useResumeTemplateCategoryState();
   const router = useRouter();
   const searchParams = useSearchParams();
   async function handleSelectResumeTemplate(styleId: string) {
-    setResumeData({ ...resumeData, styleId });
+    setResumeData((prev) => {
+      if (styleId === "ats1") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats2") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Lora",
+              },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats3") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats4") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Libre Baskerville",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats5") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: "Open Sans",
+              },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "stacked",
+                detailsAlign: "left",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats6") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: "Open Sans",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats7") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Source Serif 4",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats8") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats9") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats10") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Source Serif 4",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats12") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Libre Baskerville",
+              },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+                detailsAlign: "center",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats13") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats14") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: undefined,
+              },
+              personalDetails: {
+                ...prev.design.customization?.personalDetails,
+                detailsLayout: "compact",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats15") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              fontFamily: "serif",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Libre Baskerville",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "ats1") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            color: {
+              ...prev.design.color,
+              // ATS 1 thumbnail/brand uses a yellow accent by default.
+              accent: "#f59e0b",
+            },
+          },
+        };
+      }
+
+      if (styleId === "modern1") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            color: {
+              ...prev.design.color,
+              // Modern 1 uses a navy sidebar in the template thumbnail.
+              accent: "#1F3D4F",
+            },
+            typography: {
+              ...prev.design.typography,
+              // Body is driven by selectedFont (Open Sans). Keep base family stable.
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: "Open Sans",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "modern2") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              // Body is driven by selectedFont (Lora). Keep base family stable.
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "serif",
+                selectedFont: "Lora",
+              },
+              sectionHeadings: {
+                ...prev.design.customization?.sectionHeadings,
+                // Modern 2 default heading bar is wired to style 1.
+                headingStyle: 1,
+                headingCapitalization: "uppercase",
+                headingSize: "S",
+                headingIcons: "filled",
+              },
+            },
+          },
+        };
+      }
+
+      if (styleId === "modern4") {
+        return {
+          ...prev,
+          styleId,
+          design: {
+            ...prev.design,
+            typography: {
+              ...prev.design.typography,
+              // Body is driven by selectedFont (Open Sans). Keep base family stable.
+              fontFamily: "inter",
+            },
+            customization: {
+              ...prev.design.customization,
+              font: {
+                ...prev.design.customization?.font,
+                category: "sans",
+                selectedFont: "Open Sans",
+              },
+            },
+          },
+        };
+      }
+
+      return { ...prev, styleId };
+    });
     // Update styleId in URL without losing other query params
     const params = new URLSearchParams(searchParams.toString());
     params.set("styleId", styleId);
@@ -80,8 +500,8 @@ export default function ResumeTemplateAside({
         {resumeCategories.map((category, index) => (
           <Tabs
             key={index}
-            onClick={() => setSelectedCat(category)}
-            isActive={selectedCat === category}
+            onClick={() => setSelectedCategory(category)}
+            isActive={selectedCategory === category}
           >
             {category}
           </Tabs>
@@ -91,7 +511,7 @@ export default function ResumeTemplateAside({
       {/* Templates  */}
       <div className="grid grid-cols-2 items-start gap-4 overflow-y-auto md:h-[calc(100vh-7.2rem)]">
         {resumeStyles
-          .filter((style) => style.category?.includes(selectedCat))
+          .filter((style) => style.category?.includes(selectedCategory))
           .map((style) => (
             <div
               key={style.id}

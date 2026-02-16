@@ -1,5 +1,5 @@
 // RichTextEditor.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Bold,
   Italic,
@@ -52,18 +52,26 @@ import {
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
+  placeholder?: string;
   className?: string;
   isBubbleButtons?: boolean;
   isFloatingButtons?: boolean;
+  designTextColor?: string;
+  onDesignTextColorChange?: (hex: string) => void;
 }
 
 export function RichTextEditor({
   value,
   onChange,
+  placeholder,
   className,
   isBubbleButtons = false,
   isFloatingButtons = false,
+  designTextColor,
+  onDesignTextColorChange,
 }: RichTextEditorProps) {
+  const [isEmpty, setIsEmpty] = useState(true);
+
   const editor = useEditor({
     extensions: [
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -86,6 +94,7 @@ export function RichTextEditor({
     content: value || "",
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
+      setIsEmpty(editor.isEmpty);
     },
   });
 
@@ -93,6 +102,9 @@ export function RichTextEditor({
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value || "");
+    }
+    if (editor) {
+      setIsEmpty(editor.isEmpty);
     }
   }, [editor, value]);
 
@@ -102,10 +114,19 @@ export function RichTextEditor({
 
   return (
     <div className={cn("overflow-hidden rounded-md border", className)}>
-      <MenuButtons editor={editor} />
+      <MenuButtons
+        editor={editor}
+        designTextColor={designTextColor}
+        onDesignTextColorChange={onDesignTextColorChange}
+      />
       {isBubbleButtons && <BubbleMenuButtons editor={editor} />}
       {isFloatingButtons && <FloatingMenuButtons editor={editor} />}
-      <div className="min-h-32 max-w-none p-2">
+      <div className="relative min-h-32 max-w-none p-2">
+        {placeholder && isEmpty && (
+          <div className="pointer-events-none absolute left-2 top-2 text-sm text-muted-foreground">
+            {placeholder}
+          </div>
+        )}
         <EditorContent editor={editor} />
       </div>
     </div>
@@ -113,7 +134,15 @@ export function RichTextEditor({
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function MenuButtons({ editor }: { editor: any }) {
+function MenuButtons({
+  editor,
+  designTextColor,
+  onDesignTextColorChange,
+}: {
+  editor: any;
+  designTextColor?: string;
+  onDesignTextColorChange?: (hex: string) => void;
+}) {
   return (
     <div className="flex flex-wrap gap-1 border-b bg-muted/50 p-1">
       {/* Heading DropDown  */}
@@ -345,8 +374,12 @@ function MenuButtons({ editor }: { editor: any }) {
       </Button>
       {/* Text Color  */}
       <ColorPicker
-        color={editor.getAttributes("text")?.color}
+        color={designTextColor ?? editor.getAttributes("text")?.color}
         onChange={(color) => {
+          const hex = typeof color.hex === "string" ? color.hex : undefined;
+          if (hex) {
+            onDesignTextColorChange?.(hex);
+          }
           editor.chain().focus().setColor(color.hex).run();
         }}
       />
@@ -359,7 +392,27 @@ function MenuButtons({ editor }: { editor: any }) {
           "h-8 px-2 py-1",
           editor.isActive("bulletList") && "bg-muted",
         )}
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        onClick={() => {
+          const { from, to } = editor.state.selection;
+          const isRangeSelected = from !== to;
+
+          if (editor.isActive("bulletList")) {
+            // If already in bullet list, toggle it off
+            editor.chain().focus().toggleBulletList().run();
+          } else if (isRangeSelected) {
+            // If text is selected, wrap selection in bullet list
+            editor.chain().focus().toggleBulletList().run();
+          } else {
+            // If nothing selected, select all content and wrap in bullets
+            const { doc } = editor.state;
+            editor
+              .chain()
+              .focus()
+              .setTextSelection({ from: 0, to: doc.content.size })
+              .toggleBulletList()
+              .run();
+          }
+        }}
       >
         <List className="size-4" />
       </Button>
@@ -372,7 +425,27 @@ function MenuButtons({ editor }: { editor: any }) {
           "h-8 px-2 py-1",
           editor.isActive("orderedList") && "border bg-muted",
         )}
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        onClick={() => {
+          const { from, to } = editor.state.selection;
+          const isRangeSelected = from !== to;
+
+          if (editor.isActive("orderedList")) {
+            // If already in ordered list, toggle it off
+            editor.chain().focus().toggleOrderedList().run();
+          } else if (isRangeSelected) {
+            // If text is selected, wrap selection in ordered list
+            editor.chain().focus().toggleOrderedList().run();
+          } else {
+            // If nothing selected, select all content and wrap in numbered list
+            const { doc } = editor.state;
+            editor
+              .chain()
+              .focus()
+              .setTextSelection({ from: 0, to: doc.content.size })
+              .toggleOrderedList()
+              .run();
+          }
+        }}
       >
         <ListOrdered className="size-4" />
       </Button>

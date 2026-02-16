@@ -23,39 +23,57 @@ export const safeFormatDate = (
   }
 };
 
+export function getResumeDateFormat(
+  dateFormat: string | undefined | null,
+  fallback: string,
+): string {
+  const value = (dateFormat || "").trim();
+  return value.length > 0 ? value : fallback;
+}
+
+export type OngoingLabel = "Present" | "present";
+
+export function getOngoingLabel(
+  section: "education" | "experience" | "project",
+): OngoingLabel {
+  return section === "education" ? "Present" : "present";
+}
+
 export function fileReplacer(key: unknown, value: unknown) {
   return value instanceof File
     ? {
-      name: value.name,
-      size: value.size,
-      type: value.type,
-      lastModified: value.lastModified,
-    }
+        name: value.name,
+        size: value.size,
+        type: value.type,
+        lastModified: value.lastModified,
+      }
     : value;
 }
 
-// Use Cases 
+// Use Cases
 // 1. Detecting file changes in React state
 // useEffect(() => {
 //   // run effect only if file actually changed
 // }, [JSON.stringify(file, fileReplacer)]);
 
-// 2. Comparing files by metadata 
+// 2. Comparing files by metadata
 // JSON.stringify(file1, fileReplacer) === JSON.stringify(file2, fileReplacer) // true if metadata matches
 
-// 3.Logging or debugging File objects 
+// 3.Logging or debugging File objects
 // console.log(JSON.stringify(file)) // "{}"
 // console.log(JSON.stringify(file, fileReplacer)) // {"name":"avatar.png","size":34567,"type":"image/png","lastModified":1712222222222}
 
 // 4. Storing file metadata (not contents)
-// localStorage.setItem("fileMeta", JSON.stringify(file, fileReplacer)); 
+// localStorage.setItem("fileMeta", JSON.stringify(file, fileReplacer));
 
 // 5. To avoid re-uploading the same file:
 // if (JSON.stringify(old.photo, fileReplacer) === JSON.stringify(new.photo, fileReplacer)) {
 //   payload.photo = undefined; // no need to update it
 // }
 
-export function mapToResumeValues(data: ResumeServerData): ResumeValues {
+export function mapToResumeValues(
+  data: ResumeServerData,
+): ResumeValues & { design?: any } {
   return {
     id: data.id,
     title: data.title || undefined,
@@ -70,7 +88,7 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
     email: data.email || undefined,
     socialLinks: data.socialLinks || undefined,
     portfolioLink: data.portfolioLink || undefined,
-    styleId: data.styleId || "1",
+    styleId: data.styleId || "ats1",
     workExperiences: data.workExperiences.map((exp) => ({
       position: exp.position || undefined,
       company: exp.company || undefined,
@@ -88,6 +106,7 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
       startDate: edu.startDate?.toISOString().split("T")[0],
       endDate: edu.endDate?.toISOString().split("T")[0],
       description: edu.description || undefined,
+      isPresent: (edu as any).isPresent || undefined,
     })),
     projectWorks: data.projectWorks?.map((proj) => ({
       company: proj.company || undefined,
@@ -108,13 +127,14 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
     })),
     others: data.others
       ? {
-        title: data.others.title || undefined,
-        description: data.others.description || undefined,
-      }
+          title: data.others.title || undefined,
+          description: data.others.description || undefined,
+        }
       : undefined,
     borderStyle: data.borderStyle,
     colorHex: data.colorHex,
     baseFontSize: data.baseFontSize,
     summary: data.summary || undefined,
+    design: (data as any).design || undefined,
   };
-};
+}

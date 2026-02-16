@@ -1,282 +1,119 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
+import { MapPin, Phone, Mail, Globe, Link2 } from "lucide-react";
 import { ResumeValues } from "@/lib/validation";
-import { cn } from "@/lib/utils";
 import useDimensions from "@/hooks/useDimensions";
 import { safeFormatDate } from "@/lib/utils";
-import Image from "next/image";
-import { MapPin, Phone, Mail, Globe, Link as LinkIcon } from "lucide-react";
+import { format as formatDate } from "date-fns";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
 }
 
-export default function Modern8({ resumeData, className }: ResumePreviewProps) {
+export default function TealModern({
+  resumeData,
+  className = "",
+}: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef);
-
-  // Default color: Teal
-  const accentColor =
-    resumeData.colorHex === "#000000" || !resumeData.colorHex
-      ? "#14b8a6" // Teal-500
-      : resumeData.colorHex;
+  const accentColor = "var(--accent)";
+  const greenColor = "color-mix(in srgb, var(--accent) 65%, var(--text))";
 
   return (
     <div
-      className={cn(
-        "aspect-[210/297] h-fit w-full bg-white text-slate-800 shadow-sm",
-        className,
-      )}
+      className={`resume-root modern aspect-[210/297] h-fit w-full bg-white ${className}`}
       ref={containerRef}
+      style={{
+        color: "var(--text)",
+        fontSize: "var(--base-font)",
+      }}
     >
-      {/* Montserrat Font Injection */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
-        `,
-        }}
-      />
+      {/* Font styles */}
+      <style>{`
+        /* Modern 8 Font Hierarchy:
+           - Heading: Montserrat SemiBold/Bold
+           - Subtitle: Montserrat Medium
+           - Body: Open Sans Regular (driven by --resume-font-family)
+        */
+        
+        /* Section headings: Montserrat Bold */
+        #resumePreviewContent [data-resume-section-heading] {
+          font-family: var(--font-montserrat), var(--resume-font-family) !important;
+          font-weight: 700 !important;
+        }
+
+        /* Entry titles: Montserrat SemiBold */
+        #resumePreviewContent [data-resume-entry-title] {
+          font-family: var(--font-montserrat), var(--resume-font-family) !important;
+          font-weight: 600 !important;
+        }
+
+        /* Entry subtitles: Montserrat Medium */
+        #resumePreviewContent [data-resume-entry-subtitle] {
+          font-family: var(--font-montserrat), var(--resume-font-family) !important;
+          font-weight: 500 !important;
+        }
+
+        /* Header name: Montserrat Bold */
+        #resumePreviewContent [data-resume-header] h1 {
+          font-family: var(--font-montserrat), var(--resume-font-family) !important;
+          font-weight: 700 !important;
+        }
+
+        /* Body text uses Open Sans Regular via --resume-font-family */
+      `}</style>
 
       <div
-        className={cn(
-          "relative h-full font-['Montserrat',sans-serif]",
-          !width && "invisible",
-        )}
+        className={`h-full ${!width ? "invisible" : ""}`}
         style={{
           zoom: (1 / 794) * width,
+          fontFamily: "var(--resume-font-family)",
+          direction: "ltr",
+          borderTop: `18px solid ${accentColor}`,
+          borderBottom: `18px solid ${accentColor}`,
         }}
         id="resumePreviewContent"
       >
-        {/* HEADER TOP BAR */}
         <div
-          className="h-[60px] w-full"
-          style={{ backgroundColor: accentColor }}
-        />
+          style={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {/* HEADER */}
+          <Header
+            resumeData={resumeData}
+            accentColor={accentColor}
+            greenColor={greenColor}
+          />
 
-        {/* 2-COLUMN LAYOUT */}
-        <div className="grid h-[calc(100%-60px)] grid-cols-[280px_1fr]">
-          {/* LEFT COLUMN */}
-          <div className="border-r border-slate-200 bg-slate-50 px-8 pb-10 pt-8">
-            {/* PROFILE IMAGE */}
-            <div className="mb-8 flex justify-center">
-              <PhotoSection resumeData={resumeData} colorHex={accentColor} />
-            </div>
+          {/* CONTENT */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "280px 1fr",
+              flex: 1,
+            }}
+          >
+            {/* LEFT COLUMN */}
+            <LeftColumn
+              resumeData={resumeData}
+              accentColor={accentColor}
+              greenColor={greenColor}
+            />
 
-            {/* CONTACT */}
-            <div className="mb-8">
-              <SectionTitleSide title="Contact" colorHex={accentColor} />
-              <ContactSection resumeData={resumeData} colorHex={accentColor} />
-            </div>
-
-            {/* LANGUAGES */}
-            <div className="mb-8">
-              <SectionTitleSide title="Languages" colorHex={accentColor} />
-              {/* Mock languages as strictly not in schema but common in this template type, using Others or similar if present, else static/hidden */}
-              {/* Assuming we might map skills or just skip if no explicit data. Using a placeholder or skill mapping if tagged */}
-              <div className="space-y-2">
-                {/* Placeholder if user added languages in 'skills' or we leave empty. 
-                            Let's map Skills here just in case user put lang there, or skip. 
-                            Actually, prompt asks for "Languages" section. We'll check if any skill is language-like or just render generic if empty? 
-                            Better: Render Skills here as "Pro Skills" later, and if `others` has content, maybe use that.
-                        */}
-              </div>
-            </div>
-
-            {/* PRO SKILLS */}
-            {resumeData.skills && resumeData.skills.length > 0 && (
-              <div className="mb-8">
-                <SectionTitleSide title="Pro Skills" colorHex={accentColor} />
-                <div className="space-y-4">
-                  {resumeData.skills.map((skill, idx) => (
-                    <div key={idx}>
-                      <h4 className="mb-1.5 text-xs font-bold uppercase text-slate-700">
-                        {skill.title}
-                      </h4>
-                      <div className="space-y-2">
-                        {skill.skillName?.map((item, i) => (
-                          <div key={i} className="relative">
-                            <div className="mb-0.5 flex justify-between text-[10px] font-semibold text-slate-600">
-                              <span>{item}</span>
-                            </div>
-                            {/* Skill Bar Mockup */}
-                            <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
-                              <div
-                                className="h-full rounded-full"
-                                style={{
-                                  width: `${Math.random() * 40 + 60}%`,
-                                  backgroundColor: accentColor,
-                                }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* SOCIAL */}
-            {resumeData.socialLinks && resumeData.socialLinks.length > 0 && (
-              <div className="mb-8">
-                <SectionTitleSide title="Social" colorHex={accentColor} />
-                <div className="space-y-3">
-                  {resumeData.socialLinks.map((link, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <div
-                        className="rounded-full p-1.5 text-white"
-                        style={{ backgroundColor: accentColor }}
-                      >
-                        <LinkIcon size={10} />
-                      </div>
-                      <a
-                        href={link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap text-[11px] font-medium text-slate-600 hover:text-slate-900"
-                      >
-                        {link.replace(/^https?:\/\/(www\.)?/, "")}
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* RIGHT COLUMN */}
+            <RightColumn
+              resumeData={resumeData}
+              accentColor={accentColor}
+              greenColor={greenColor}
+            />
           </div>
 
-          {/* RIGHT COLUMN */}
-          <div className="px-10 pb-10 pt-12">
-            {/* NAME BLOCK */}
-            <div className="mb-12">
-              <div
-                className="-ml-10 inline-block rounded-r-full px-10 py-5 shadow-sm"
-                style={{ backgroundColor: accentColor }}
-              >
-                <h1 className="text-4xl font-extrabold uppercase tracking-wide text-white">
-                  {resumeData.firstName} {resumeData.lastName}
-                </h1>
-                {resumeData.jobTitle && (
-                  <p className="mt-1 text-sm font-bold uppercase tracking-[0.2em] text-white opacity-90">
-                    {resumeData.jobTitle}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* ABOUT ME */}
-            {resumeData.summary && (
-              <div className="mb-10">
-                <SectionTitleMain title="About Me" colorHex={accentColor} />
-                <p className="text-justify text-sm leading-relaxed text-slate-600">
-                  {resumeData.summary}
-                </p>
-              </div>
-            )}
-
-            {/* EXPERIENCE */}
-            {resumeData.workExperiences &&
-              resumeData.workExperiences.length > 0 && (
-                <div className="mb-10">
-                  <SectionTitleMain
-                    title="Job Experience"
-                    colorHex={accentColor}
-                  />
-                  <div className="space-y-8">
-                    {resumeData.workExperiences.map((exp, idx) => (
-                      <div
-                        key={idx}
-                        className="grid break-inside-avoid grid-cols-[100px_1fr] gap-4"
-                      >
-                        {/* Date */}
-                        <div className="pt-0.5 text-right">
-                          <span className="block text-xs font-bold uppercase text-slate-500">
-                            {exp.endDate
-                              ? safeFormatDate(exp.endDate, "yyyy")
-                              : "Present"}
-                          </span>
-                          <span className="block text-[10px] font-semibold uppercase text-slate-400">
-                            {exp.startDate &&
-                              safeFormatDate(exp.startDate, "MMM")}
-                          </span>
-                        </div>
-
-                        {/* Content */}
-                        <div className="relative border-l-2 border-slate-200 pl-6">
-                          {/* Dot */}
-                          <div
-                            className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full ring-2 ring-white"
-                            style={{ backgroundColor: accentColor }}
-                          />
-
-                          <h4 className="text-md font-bold uppercase tracking-tight text-slate-800">
-                            {exp.position}
-                          </h4>
-                          <div
-                            className="mb-2 text-xs font-bold uppercase text-slate-500"
-                            style={{ color: accentColor }}
-                          >
-                            {exp.company}
-                          </div>
-
-                          <div
-                            className="text-justify text-xs leading-relaxed text-slate-600"
-                            dangerouslySetInnerHTML={{
-                              __html: exp.description || "",
-                            }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-            {/* EDUCATION */}
-            {resumeData.educations && resumeData.educations.length > 0 && (
-              <div>
-                <SectionTitleMain title="Education" colorHex={accentColor} />
-                <div className="space-y-6">
-                  {resumeData.educations.map((edu, idx) => (
-                    <div
-                      key={idx}
-                      className="grid break-inside-avoid grid-cols-[100px_1fr] gap-4"
-                    >
-                      <div className="pt-0.5 text-right">
-                        <span className="block text-xs font-bold uppercase text-slate-500">
-                          {edu.endDate
-                            ? safeFormatDate(edu.endDate, "yyyy")
-                            : "Present"}
-                        </span>
-                      </div>
-                      <div className="relative border-l-2 border-slate-200 pl-6">
-                        <div
-                          className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full ring-2 ring-white"
-                          style={{ backgroundColor: accentColor }}
-                        />
-                        <h4 className="text-md font-bold uppercase text-slate-800">
-                          {edu.degree}
-                        </h4>
-                        <div
-                          className="mb-1 text-xs font-bold uppercase text-slate-500"
-                          style={{ color: accentColor }}
-                        >
-                          {edu.school}
-                        </div>
-                        {edu.description && (
-                          <div className="text-xs text-slate-600">
-                            {edu.description}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          {/* FOOTER */}
+          <div style={{ height: "10px" }} />
         </div>
       </div>
     </div>
@@ -287,14 +124,16 @@ export default function Modern8({ resumeData, className }: ResumePreviewProps) {
 // COMPONENTS
 // ----------------------------------------------------------------------
 
-const PhotoSection = ({
+const Header = ({
   resumeData,
-  colorHex,
+  accentColor,
+  greenColor,
 }: {
   resumeData: ResumeValues;
-  colorHex: string;
+  accentColor: string;
+  greenColor: string;
 }) => {
-  const { photo } = resumeData;
+  const { firstName, lastName, jobTitle, photo, borderStyle } = resumeData;
   const [photoSrc, setPhotoSrc] = useState<string>(
     photo instanceof File ? "" : photo || "",
   );
@@ -308,37 +147,71 @@ const PhotoSection = ({
     if (photo === null) setPhotoSrc("");
   }, [photo]);
 
-  if (!photoSrc) return null;
+  const getBorderRadius = () => {
+    if (borderStyle === "square") return "0px";
+    if (borderStyle === "circle") return "50%";
+    return "10px";
+  };
 
   return (
-    <div className="relative h-[160px] w-[160px]">
-      <Image
-        src={photoSrc}
-        fill
-        alt="Profile"
-        className="rounded-full border-2 bg-white object-cover p-1"
-        style={{ borderColor: colorHex }}
-      />
-    </div>
+    <header
+      data-resume-header
+      style={{
+        display: "flex",
+        alignItems: "center",
+        padding: "30px",
+        gap: "30px",
+      }}
+    >
+      {photoSrc && (
+        <div
+          style={{
+            width: "120px",
+            height: "120px",
+            border: `4px solid ${accentColor}`,
+            padding: "4px",
+            borderRadius: getBorderRadius(),
+          }}
+        >
+          <img
+            src={photoSrc}
+            alt="Profile"
+            style={{
+              width: "100%",
+              height: "100%",
+              borderRadius: getBorderRadius(),
+              objectFit: "cover",
+            }}
+          />
+        </div>
+      )}
+
+      <div>
+        <h1
+          style={{
+            fontSize: "var(--name-font-size)",
+            fontWeight: "var(--name-font-weight)",
+            margin: 0,
+          }}
+        >
+          {firstName} <span style={{ color: accentColor }}>{lastName}</span>
+        </h1>
+        {jobTitle && (
+          <h2
+            style={{
+              fontSize: "calc(var(--name-font-size) * 0.55)",
+              color: "color-mix(in srgb, var(--text) 70%, transparent)",
+              margin: "4px 0 0 0",
+              fontWeight: 400,
+            }}
+          >
+            {jobTitle}
+          </h2>
+        )}
+      </div>
+    </header>
   );
 };
-
-const SectionTitleSide = ({
-  title,
-  colorHex,
-}: {
-  title: string;
-  colorHex: string;
-}) => (
-  <div className="relative mb-4">
-    <h3
-      className="inline-block border-b-2 pb-1 pr-4 text-sm font-bold uppercase tracking-widest text-slate-800"
-      style={{ borderColor: colorHex }}
-    >
-      {title}
-    </h3>
-  </div>
-);
 
 const SectionTitleMain = ({
   title,
@@ -346,74 +219,654 @@ const SectionTitleMain = ({
 }: {
   title: string;
   colorHex: string;
-}) => (
-  <div className="mb-6 flex items-center gap-3">
-    <div
-      className="h-1 w-10 rounded-full"
-      style={{ backgroundColor: colorHex }}
-    />
-    <h3 className="text-lg font-black uppercase tracking-widest text-slate-800">
+}) => {
+  return (
+    <h3
+      data-resume-section-heading
+      style={{
+        fontSize: "calc(16px * var(--heading-scale))",
+        color: colorHex,
+        marginBottom: "15px",
+        fontWeight: 600,
+      }}
+    >
       {title}
     </h3>
-    <div className="h-[1px] flex-grow bg-slate-200" />
-  </div>
-);
+  );
+};
 
-const ContactSection = ({
+const LeftColumn = ({
   resumeData,
-  colorHex,
+  accentColor,
+  greenColor,
 }: {
   resumeData: ResumeValues;
-  colorHex: string;
+  accentColor: string;
+  greenColor: string;
 }) => {
-  const { city, country, phone, email, portfolioLink } = resumeData;
-
-  const Wrapper = ({
-    icon: Icon,
-    text,
-    href,
-  }: {
-    icon: React.ElementType; // Fixed: Changed from any to React.ElementType
-    text: string;
-    href?: string;
-  }) => (
-    <div className="mb-3 flex items-start gap-3">
-      <div
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white"
-        style={{ backgroundColor: colorHex }}
-      >
-        <Icon size={14} />
-      </div>
-      <div className="flex items-center pt-1.5">
-        {href ? (
-          <a
-            href={href}
-            className="break-all text-[11px] font-semibold text-slate-600 hover:text-slate-900"
-          >
-            {text}
-          </a>
-        ) : (
-          <span className="text-[11px] font-semibold text-slate-600">
-            {text}
-          </span>
-        )}
-      </div>
-    </div>
-  );
+  const {
+    phone,
+    email,
+    city,
+    country,
+    portfolioLink,
+    socialLinks,
+    certifications,
+    skills,
+    others,
+  } = resumeData;
 
   return (
-    <div>
-      {(city || country) && (
-        <Wrapper
-          icon={MapPin}
-          text={[city, country].filter(Boolean).join(", ")}
-        />
+    <aside
+      style={{
+        padding: "30px",
+      }}
+    >
+      {/* CONTACT */}
+      {(phone || email || city || country || portfolioLink) && (
+        <section data-resume-personal-details style={{ marginBottom: "25px" }}>
+          <h3
+            data-resume-section-heading
+            style={{
+              fontSize: "14px",
+              color: accentColor,
+              marginBottom: "10px",
+              fontWeight: 600,
+              paddingBottom: "8px",
+              borderBottom: `2px solid ${greenColor}`,
+            }}
+          >
+            Contact
+          </h3>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {(city || country) && (
+              <li
+                style={{
+                  fontSize: "12px",
+                  marginBottom: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <MapPin size={12} />{" "}
+                {[city, country].filter(Boolean).join(", ")}
+              </li>
+            )}
+            {phone && (
+              <li
+                style={{
+                  fontSize: "12px",
+                  marginBottom: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <Phone size={12} /> {phone}
+              </li>
+            )}
+            {email && (
+              <li
+                style={{
+                  fontSize: "12px",
+                  marginBottom: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <Mail size={12} /> {email}
+              </li>
+            )}
+            {portfolioLink && (
+              <li
+                style={{
+                  fontSize: "12px",
+                  marginBottom: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <Globe size={12} /> Portfolio
+              </li>
+            )}
+          </ul>
+        </section>
       )}
-      {phone && <Wrapper icon={Phone} text={phone} href={`tel:${phone}`} />}
-      {email && <Wrapper icon={Mail} text={email} href={`mailto:${email}`} />}
-      {portfolioLink && (
-        <Wrapper icon={Globe} text="Portfolio" href={portfolioLink} />
+
+      {/* SOCIAL MEDIA */}
+      {socialLinks && socialLinks.length > 0 && (
+        <section style={{ marginBottom: "25px" }}>
+          <h3
+            data-resume-section-heading
+            style={{
+              fontSize: "14px",
+              color: accentColor,
+              marginBottom: "10px",
+              fontWeight: 600,
+              paddingBottom: "8px",
+              borderBottom: `2px solid ${greenColor}`,
+            }}
+          >
+            Social media
+          </h3>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {socialLinks.map((link, idx) => (
+              <li key={idx} style={{ fontSize: "12px", marginBottom: "8px" }}>
+                {link.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
-    </div>
+
+      {/* PRO SKILLS */}
+      {skills && skills.length > 0 && (
+        <section style={{ marginBottom: "25px" }}>
+          <h3
+            style={{
+              fontSize: "14px",
+              color: accentColor,
+              marginBottom: "10px",
+              fontWeight: 600,
+              paddingBottom: "8px",
+              borderBottom: `2px solid ${greenColor}`,
+            }}
+          >
+            PRO SKILLS
+          </h3>
+          {skills.map((skill, idx) => (
+            <div key={idx} style={{ marginBottom: "12px" }}>
+              <span
+                style={{
+                  fontSize: "12px",
+                  display: "block",
+                  marginBottom: "4px",
+                  fontWeight: 500,
+                }}
+              >
+                {skill.title}
+              </span>
+              <div
+                style={{
+                  height: "6px",
+                  background: "#e0f1f1",
+                  marginTop: "4px",
+                  borderRadius: "3px",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    background: accentColor,
+                    width: "70%",
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {/* CERTIFICATIONS */}
+      {certifications && certifications.length > 0 && (
+        <section style={{ marginBottom: "25px" }}>
+          <h3
+            style={{
+              fontSize: "14px",
+              color: accentColor,
+              marginBottom: "10px",
+              fontWeight: 600,
+              paddingBottom: "8px",
+              borderBottom: `2px solid ${greenColor}`,
+            }}
+          >
+            CERTIFICATIONS
+          </h3>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {certifications.map((cert, idx) => (
+              <li key={idx} style={{ marginBottom: "8px" }}>
+                {cert.link ? (
+                  <a
+                    href={cert.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontSize: "12px",
+                      color: accentColor,
+                      textDecoration: "none",
+                      fontWeight: 500,
+                    }}
+                  >
+                    • {cert.title}
+                  </a>
+                ) : (
+                  <span style={{ fontSize: "12px", fontWeight: 500 }}>
+                    • {cert.title}
+                  </span>
+                )}
+                {cert.description && (
+                  <p
+                    style={{
+                      fontSize: "11px",
+                      color: "#666",
+                      margin: "2px 0 0 10px",
+                    }}
+                  >
+                    {cert.description}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* OTHERS / CUSTOM SECTION */}
+      {others?.title && (
+        <section style={{ marginBottom: "25px" }}>
+          <h3
+            style={{
+              fontSize: "14px",
+              color: accentColor,
+              marginBottom: "10px",
+              fontWeight: 600,
+              paddingBottom: "8px",
+              borderBottom: `2px solid ${greenColor}`,
+            }}
+          >
+            {others.title}
+          </h3>
+          <div
+            style={{ fontSize: "12px", color: "#555", lineHeight: "1.6" }}
+            dangerouslySetInnerHTML={{ __html: others.description || "" }}
+          />
+        </section>
+      )}
+    </aside>
+  );
+};
+
+const RightColumn = ({
+  resumeData,
+  accentColor,
+  greenColor,
+}: {
+  resumeData: ResumeValues;
+  accentColor: string;
+  greenColor: string;
+}) => {
+  const { summary, workExperiences, projectWorks, educations } = resumeData;
+
+  return (
+    <main style={{ padding: "30px" }}>
+      {/* ABOUT ME */}
+      {summary && (
+        <section style={{ marginBottom: "30px" }}>
+          <h3
+            style={{
+              fontSize: "16px",
+              color: accentColor,
+              marginBottom: "15px",
+              fontWeight: 600,
+            }}
+          >
+            ABOUT ME
+          </h3>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: summary || "",
+            }}
+            className="richTextEditorStyle !m-0 whitespace-pre-line"
+            style={{
+              fontSize: "12px",
+              color: "#555",
+              lineHeight: "1.6",
+            }}
+          />
+        </section>
+      )}
+
+      {/* EXPERIENCE */}
+      {workExperiences && workExperiences.length > 0 && (
+        <section style={{ marginBottom: "30px" }}>
+          <h3
+            style={{
+              fontSize: "16px",
+              color: accentColor,
+              marginBottom: "15px",
+              fontWeight: 600,
+            }}
+          >
+            EXPERIENCE
+          </h3>
+          <div
+            style={{
+              position: "relative",
+              paddingLeft: "20px",
+            }}
+          >
+            {/* Timeline Line */}
+            <div
+              style={{
+                content: "",
+                position: "absolute",
+                left: "4px",
+                top: 0,
+                width: "2px",
+                height: "100%",
+                background: greenColor,
+              }}
+            />
+
+            {workExperiences.map((exp, idx) => (
+              <div
+                key={idx}
+                style={{
+                  position: "relative",
+                  marginBottom: "20px",
+                  paddingLeft: "20px",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "0px",
+                    top: "5px",
+                    width: "10px",
+                    height: "10px",
+                    background: accentColor,
+                    borderRadius: "50%",
+                    borderColor: "white",
+                    borderStyle: "var(--resume-border-style)" as any,
+                    borderWidth: "calc(var(--resume-border-width) * 2)",
+                  }}
+                />
+                <div>
+                  <h4
+                    style={{
+                      fontSize: "13px",
+                      margin: "0 0 4px 0",
+                      fontWeight: 600,
+                    }}
+                  >
+                    <span data-resume-entry-title>{exp.position}</span>
+                    {exp.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        style={{
+                          fontWeight: 600,
+                        }}
+                      >
+                        {exp.company}
+                      </span>
+                    )}
+                  </h4>
+                  <strong
+                    style={{
+                      fontSize: "11px",
+                      color: accentColor,
+                      display: "block",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    {exp.startDate && formatDate(exp.startDate, "yyyy")} |{" "}
+                    {exp.endDate ? formatDate(exp.endDate, "yyyy") : "PRESENT"}
+                  </strong>
+                  {exp.company && (
+                    <strong
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      style={{
+                        fontSize: "11px",
+                        color: accentColor,
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {exp.company}
+                    </strong>
+                  )}
+                  <div
+                    style={{ fontSize: "12px", color: "#555" }}
+                    dangerouslySetInnerHTML={{ __html: exp.description || "" }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* PROJECTS */}
+      {projectWorks && projectWorks.length > 0 && (
+        <section style={{ marginBottom: "30px" }}>
+          <h3
+            style={{
+              fontSize: "16px",
+              color: accentColor,
+              marginBottom: "15px",
+              fontWeight: 600,
+            }}
+          >
+            PROJECTS
+          </h3>
+          <div
+            style={{
+              position: "relative",
+              paddingLeft: "20px",
+            }}
+          >
+            {/* Timeline Line */}
+            <div
+              style={{
+                content: "",
+                position: "absolute",
+                left: "4px",
+                top: 0,
+                width: "2px",
+                height: "100%",
+                background: greenColor,
+              }}
+            />
+
+            {projectWorks.map((proj, idx) => (
+              <div
+                key={idx}
+                style={{
+                  position: "relative",
+                  marginBottom: "20px",
+                  paddingLeft: "20px",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "0px",
+                    top: "5px",
+                    width: "10px",
+                    height: "10px",
+                    background: accentColor,
+                    borderRadius: "50%",
+                    borderColor: "white",
+                    borderStyle: "var(--resume-border-style)" as any,
+                    borderWidth: "calc(var(--resume-border-width) * 2)",
+                  }}
+                />
+                <div>
+                  <h4
+                    style={{
+                      fontSize: "13px",
+                      margin: "0 0 4px 0",
+                      fontWeight: 600,
+                    }}
+                  >
+                    <span data-resume-entry-title>{proj.title}</span>
+                    {proj.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {proj.company}
+                      </span>
+                    )}
+                  </h4>
+                  <strong
+                    style={{
+                      fontSize: "11px",
+                      color: accentColor,
+                      display: "block",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    {proj.startDate && formatDate(proj.startDate, "yyyy")} |{" "}
+                    {proj.endDate
+                      ? formatDate(proj.endDate, "yyyy")
+                      : "PRESENT"}
+                  </strong>
+                  {proj.company && (
+                    <strong
+                      data-resume-entry-subtitle
+                      data-entry-subtitle-slot="newline"
+                      style={{
+                        fontSize: "11px",
+                        color: accentColor,
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {proj.company}
+                    </strong>
+                  )}
+                  {proj.links && proj.links.length > 0 && (
+                    <div style={{ fontSize: "11px", marginBottom: "4px" }}>
+                      {proj.links.map((link, linkIdx) => (
+                        <a
+                          key={linkIdx}
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            color: accentColor,
+                            marginRight: "8px",
+                            textDecoration: "none",
+                          }}
+                        >
+                          <Link2
+                            size={10}
+                            style={{ display: "inline", marginRight: "2px" }}
+                          />
+                          Link {linkIdx + 1}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                  <div
+                    style={{ fontSize: "12px", color: "#555" }}
+                    dangerouslySetInnerHTML={{ __html: proj.description || "" }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* EDUCATION */}
+      {educations && educations.length > 0 && (
+        <section style={{ marginBottom: "30px" }}>
+          <h3
+            style={{
+              fontSize: "16px",
+              color: accentColor,
+              marginBottom: "15px",
+              fontWeight: 600,
+            }}
+          >
+            EDUCATION
+          </h3>
+          <div
+            style={{
+              position: "relative",
+              paddingLeft: "20px",
+            }}
+          >
+            {/* Timeline Line */}
+            <div
+              style={{
+                content: "",
+                position: "absolute",
+                left: "4px",
+                top: 0,
+                width: "2px",
+                height: "100%",
+                background: greenColor,
+              }}
+            />
+
+            {educations.map((edu, idx) => (
+              <div
+                key={idx}
+                style={{
+                  position: "relative",
+                  marginBottom: "20px",
+                  paddingLeft: "20px",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "0px",
+                    top: "5px",
+                    width: "10px",
+                    height: "10px",
+                    background: accentColor,
+                    borderRadius: "50%",
+                    borderColor: "white",
+                    borderStyle: "var(--resume-border-style)" as any,
+                    borderWidth: "calc(var(--resume-border-width) * 2)",
+                  }}
+                />
+                <div>
+                  <h4
+                    style={{
+                      fontSize: "13px",
+                      margin: "0 0 4px 0",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {edu.degree} {edu.stream}
+                  </h4>
+                  <strong
+                    style={{
+                      fontSize: "11px",
+                      color: accentColor,
+                      display: "block",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    {edu.school}{" "}
+                    {edu.startDate && formatDate(edu.startDate, "yyyy")} |{" "}
+                    {edu.endDate ? formatDate(edu.endDate, "yyyy") : "PRESENT"}
+                    {edu.marks && ` | ${edu.marks}`}
+                  </strong>
+                  {edu.description && (
+                    <div
+                      style={{ fontSize: "12px", color: "#555" }}
+                      dangerouslySetInnerHTML={{ __html: edu.description }}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+    </main>
   );
 };

@@ -10,11 +10,9 @@ export default async function Layout({
 }) {
   const { userId } = await auth();
 
-  if (!userId) {
-    return null;
-  }
-
-  const userSubscriptionLevel = await getUserSubscriptionLevel(userId);
+  const userSubscriptionLevel = userId
+    ? await getUserSubscriptionLevel(userId)
+    : "free";
 
   return (
     <SubscriptionLevelProvider userSubscriptionLevel={userSubscriptionLevel}>

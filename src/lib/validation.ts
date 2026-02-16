@@ -1,6 +1,24 @@
 import { z } from "zod";
 
-export const optionalString = z.string().trim().optional().or(z.literal("")).or(z.null()).transform(val => val === null ? undefined : val);
+export const resumeSectionKeys = [
+  "summary",
+  "workExperiences",
+  "projectWorks",
+  "skills",
+  "educations",
+  "certifications",
+  "others",
+] as const;
+
+export const sectionOrderSchema = z.array(z.enum(resumeSectionKeys)).optional();
+
+export const optionalString = z
+  .string()
+  .trim()
+  .optional()
+  .or(z.literal(""))
+  .or(z.null())
+  .transform((val) => (val === null ? undefined : val));
 export const optionalStringArray = z.array(z.string().trim()).optional();
 
 export const generalInfoSchema = z.object({
@@ -14,22 +32,25 @@ export const personalInfoSchema = z.object({
   photo: z
     .union([
       // Case 1: Photo is a File (for when a new file is uploaded)
-      z.instanceof(File).refine(
-        (file) => file.type.startsWith("image/"),
-        "Must be an image file"
-      ).refine(
-        (file) => file.size <= 1024 * 1024 * 4,
-        "File must be less than 4MB"
-      ),
-      
+      z
+        .instanceof(File)
+        .refine(
+          (file) => file.type.startsWith("image/"),
+          "Must be an image file",
+        )
+        .refine(
+          (file) => file.size <= 1024 * 1024 * 4,
+          "File must be less than 4MB",
+        ),
+
       // Case 2: Photo is a string (for when a URL is already provided)
       z.string().url("Invalid URL for photo").optional(),
-      
+
       // Case 3: Photo can be null (for deleting photo)
       z.literal(null).optional(),
     ])
     .optional(),
-  
+
   firstName: optionalString,
   lastName: optionalString,
   jobTitle: optionalString,
@@ -76,6 +97,7 @@ export const educationSchema = z.object({
         description: optionalString,
         startDate: optionalString,
         endDate: optionalString,
+        isPresent: z.boolean().optional(),
       }),
     )
     .optional(),
@@ -124,7 +146,8 @@ export const otherSchema = z.object({
       title: optionalString,
       description: optionalString,
     })
-    .optional(),
+    .optional()
+    .nullable(),
 });
 
 export type OtherValues = z.infer<typeof otherSchema>;
@@ -158,10 +181,17 @@ export const resumeSchema = z.object({
   ...otherSchema.shape,
   ...skillsSchema.shape,
   ...summarySchema.shape,
+  sectionOrder: sectionOrderSchema,
+  dateFormat: optionalString,
   colorHex: optionalString,
   borderStyle: optionalString,
-  baseFontSize: z.number().min(10, "Must be at least 10").max(20, "Must be at most 20").optional(),
+  baseFontSize: z
+    .number()
+    .min(8.5, "Must be at least 8.5")
+    .max(16, "Must be at most 16")
+    .optional(),
   styleId: optionalString,
+  detailsArrangement: z.enum(["compact", "stacked"]).optional(),
 });
 
 export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {

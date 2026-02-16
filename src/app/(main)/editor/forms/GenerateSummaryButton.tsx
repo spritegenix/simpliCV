@@ -2,14 +2,15 @@ import LoadingButton from "@/components/LoadingButton";
 import { useToast } from "@/hooks/use-toast";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { canUseAITools } from "@/lib/permissions";
-import { ResumeValues } from "@/lib/validation";
 import { WandSparklesIcon } from "lucide-react";
 import { useState } from "react";
 import { useSubscriptionLevel } from "../../SubscriptionLevelProvider";
 import { generateSummary } from "./actions";
+import { ResumeDocument } from "@/types/resumeDocument";
+import { toLegacyResumeValues } from "@/lib/resumeDocument";
 
 interface GenerateSummaryButtonProps {
-  resumeData: ResumeValues;
+  resumeData: ResumeDocument;
   onSummaryGenerated: (summary: string) => void;
 }
 
@@ -33,7 +34,9 @@ export default function GenerateSummaryButton({
 
     try {
       setLoading(true);
-      const aiResponse = await generateSummary(resumeData);
+      const aiResponse = await generateSummary(
+        toLegacyResumeValues(resumeData),
+      );
       onSummaryGenerated(aiResponse);
     } catch (error) {
       console.error(error);

@@ -45,7 +45,7 @@ export default function SkillsForm({
   const form = useForm<SkillsValues>({
     resolver: zodResolver(skillsSchema),
     defaultValues: {
-      skills: resumeData.skills || [],
+      skills: resumeData.content.skills || [],
     },
   });
 
@@ -67,7 +67,10 @@ export default function SkillsForm({
 
       setResumeData({
         ...resumeData,
-        skills: skills,
+        content: {
+          ...resumeData.content,
+          skills,
+        },
       });
     });
     return unsubscribe;

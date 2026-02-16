@@ -8,8 +8,15 @@ export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json();
     if (!url) {
-      return NextResponse.json({ error: "Missing URL parameter" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing URL parameter" },
+        { status: 400 },
+      );
     }
+
+    // Add print=true parameter to render in print-friendly mode
+    const printUrl = new URL(url);
+    printUrl.searchParams.set("print", "true");
 
     const browser = await chromium.launch({
       headless: true,
@@ -19,18 +26,23 @@ export async function POST(req: NextRequest) {
     const page = await browser.newPage();
 
     // Wait for network to be idle to ensure all content loads
-    await page.goto(url, { waitUntil: "networkidle" });
-    
-    // Wait for the resume content to be visible
-    await page.waitForSelector('#resumePreviewContent', { timeout: 30000 });
-    
+    await page.goto(printUrl.toString(), { waitUntil: "networkidle" });
+
+    // Wait for the resume content to exist in the DOM.
+    // In print mode, some layouts/CSS can make the element non-"visible" while
+    // still being renderable to PDF.
+    await page.waitForSelector("#resumePreviewContent", {
+      timeout: 30000,
+      state: "attached",
+    });
+
     // Additional wait for fonts and dynamic content to load
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(1200);
 
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
-      margin: { top: "0.6cm", bottom: "0.6cm", left: "0.6cm", right: "0.6cm" },
+      margin: { top: "0", bottom: "0", left: "0", right: "0" },
       preferCSSPageSize: true, // renders more accurately
     });
 
@@ -48,6 +60,9 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("PDF generation error:", error);
-    return NextResponse.json({ message: "Error generating PDF" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error generating PDF" },
+      { status: 500 },
+    );
   }
 }

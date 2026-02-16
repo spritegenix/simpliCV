@@ -21,7 +21,6 @@ export default function TemplateCard({
   const premiumModal = usePremiumModal();
 
   if (!isUser) {
-    // console.log("not user");
     return (
       <Link href={`/sign-in`}>
         <div className="cursor-pointer">
@@ -32,7 +31,6 @@ export default function TemplateCard({
   }
 
   if (canCreate) {
-    // console.log("can create");
     return (
       <Link href={`/editor?&styleId=${style.id}`}>
         <div className="cursor-pointer">
@@ -58,7 +56,7 @@ export default function TemplateCard({
 export function Card({
   style,
   isOnEditPage,
-  isSaving
+  isSaving,
 }: {
   style: ResumeStyle;
   isOnEditPage?: boolean;
@@ -75,17 +73,21 @@ export function Card({
           className="object-contain transition-all duration-500"
         />
       )}
-     {!isSaving && <div
-        className={cn(
-           "absolute inset-x-0 top-0 z-10 flex h-0 flex-col items-center justify-center overflow-hidden bg-black/70 text-white transition-all duration-500 group-hover:h-32 group-hover:p-2",
-          isOnEditPage && "group-hover:h-full",
-        )}
-      >
-        <h2 className={cn("text-xl font-medium", isOnEditPage && "text-base")}>
-          {style.name}
-        </h2>
-        <p className="line-clamp-4 font-rubik text-sm">{style.desc}</p>
-      </div>}
+      {!isSaving && (
+        <div
+          className={cn(
+            "absolute inset-x-0 top-0 z-10 flex h-0 flex-col items-center justify-center overflow-hidden bg-black/70 text-white transition-all duration-500 group-hover:h-32 group-hover:p-2",
+            isOnEditPage && "group-hover:h-full",
+          )}
+        >
+          <h2
+            className={cn("text-base font-medium", isOnEditPage && "text-sm")}
+          >
+            {style.name}
+          </h2>
+          <p className="line-clamp-4 font-rubik text-sm">{style.desc}</p>
+        </div>
+      )}
     </div>
   );
 }

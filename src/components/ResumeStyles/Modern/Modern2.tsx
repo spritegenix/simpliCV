@@ -19,25 +19,56 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
-
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#65615f" : resumeData.colorHex;
   return (
     <div
       className={cn(
-        "aspect-[210/297] h-fit w-full bg-white p-6 text-[#65615f]",
+        "resume-root modern aspect-[210/297] h-fit w-full bg-white",
         className,
       )}
+      style={{
+        color: "var(--text)",
+        fontSize: "var(--base-font)",
+        fontFamily: "var(--resume-font-family)",
+        lineHeight: "var(--resume-line-height)",
+      }}
       ref={containerRef}
     >
+      <style>
+        {`
+          /* Modern 2 default font hierarchy (Preview + Print/PDF)
+             - Heading: Montserrat SemiBold / Bold
+             - Subtitle: Montserrat Medium
+             - Body: Lora Regular (driven by --resume-font-family)
+          */
+          #resumePreviewContent [data-resume-section-heading],
+          #resumePreviewContent [data-resume-entry-title] {
+            font-family: var(--font-montserrat) !important;
+            font-weight: 600 !important;
+          }
+
+          #resumePreviewContent [data-resume-entry-subtitle] {
+            font-family: var(--font-montserrat) !important;
+            font-weight: 500 !important;
+          }
+
+          /* Modern 2 default section heading background (like reference image)
+             - Applies when Section Headings style = 1 (default)
+             - Other heading styles still work via the global heading-style system
+          */
+          #resumePreviewContent [data-resume-section-heading] {
+            display: block;
+            padding: 0.25em 0.5em;
+          }
+
+          #resumePreviewContent[data-section-heading-style="1"] [data-resume-section-heading] {
+            background: color-mix(in srgb, var(--text) 60%, transparent) !important;
+            color: white !important;
+          }
+        `}
+      </style>
       <div
         className={cn(
-          "space-y-2 font-inter",
-          BaseFontSize,
+          "space-y-[calc(var(--section-gap)*0.5)] px-8 py-6",
           !width && "invisible",
         )}
         style={{
@@ -53,31 +84,39 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
         {/* Summary */}
         {resumeData.summary && (
           <>
-            <Heading colorHex={colorHex}>Professional Summary</Heading>
-            <Text>{resumeData.summary}</Text>
+            <Heading>Professional Summary</Heading>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: resumeData.summary || "",
+              }}
+              className="richTextEditorStyle !m-0 whitespace-pre-line"
+            />
           </>
         )}
         {/* Experience */}
         {!!resumeData?.workExperiences &&
           resumeData?.workExperiences?.length > 0 && (
             <>
-              <Heading colorHex={colorHex}>Professional Experience</Heading>
+              <Heading>Professional Experience</Heading>
               {resumeData.workExperiences?.map((exp, index) => (
                 <div key={index} className="!m-0 break-inside-avoid">
                   <div className="!m-0 flex items-center justify-between">
                     <span
                       className="text-[1.2em] font-semibold"
                       style={{
-                        color: colorHex,
+                        color: "var(--accent)",
                       }}
                     >
-                      {exp.company}
-                    </span>
-                    {exp.jobLocation && <span>{exp.jobLocation}</span>}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[1.1em] font-semibold italic">
-                      {exp.position}
+                      <span data-resume-entry-title>{exp.company}</span>
+                      {exp.position && (
+                        <span
+                          data-resume-entry-subtitle
+                          data-entry-subtitle-slot="inline"
+                          className="font-semibold italic"
+                        >
+                          {exp.position}
+                        </span>
+                      )}
                     </span>
                     {exp.startDate && (
                       <span>
@@ -87,6 +126,20 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
                           : "Present"}
                       </span>
                     )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    {exp.position ? (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="newline"
+                        className="text-[1.1em] font-semibold italic"
+                      >
+                        {exp.position}
+                      </span>
+                    ) : (
+                      <span />
+                    )}
+                    {exp.jobLocation && <span>{exp.jobLocation}</span>}
                   </div>
                   <div
                     dangerouslySetInnerHTML={{ __html: exp.description || "" }}
@@ -99,23 +152,33 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
         {/* Projects */}
         {!!resumeData.projectWorks && resumeData.projectWorks?.length > 0 && (
           <>
-            <Heading colorHex={colorHex}>Project Work</Heading>
+            <Heading>Project Work</Heading>
             {resumeData.projectWorks?.map((item, index) => (
               <div key={index} className="!m-0 break-inside-avoid">
                 <div className="!m-0 flex justify-between gap-1">
                   <p className="flex gap-1">
                     <Link
+                      data-resume-entry-title
                       href={
                         !!item?.links && item?.links[0] ? item?.links[0] : "#"
                       }
                       target="_blank"
                       className="text-[1.2em] font-semibold"
                       style={{
-                        color: colorHex,
+                        color: "var(--accent)",
                       }}
                     >
                       {item.title}
                     </Link>
+                    {item.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="inline"
+                        className="italic"
+                      >
+                        {item.company}
+                      </span>
+                    )}
                     {!!item.links &&
                       item.links.map((l, index) => (
                         <span key={index} className="mr-1 mt-1">
@@ -124,9 +187,6 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
                       ))}
                   </p>
                   <p className="flex flex-col text-right">
-                    {item.company && (
-                      <span className="italic">{item.company}</span>
-                    )}
                     {item.startDate && (
                       <span>
                         {item.startDate &&
@@ -138,6 +198,15 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
                     )}
                   </p>
                 </div>
+                {item.company && (
+                  <span
+                    data-resume-entry-subtitle
+                    data-entry-subtitle-slot="newline"
+                    className="italic"
+                  >
+                    {item.company}
+                  </span>
+                )}
                 <div
                   dangerouslySetInnerHTML={{ __html: item.description || "" }}
                   className="richTextEditorStyle whitespace-pre-line"
@@ -149,7 +218,7 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
         {/* Skills  */}
         {!!resumeData.skills && resumeData.skills?.length > 0 && (
           <>
-            <Heading colorHex={colorHex}>Skills</Heading>
+            <Heading>Skills</Heading>
             {resumeData.skills?.map((skill, index) => (
               <div key={index} className="!m-0 break-inside-avoid">
                 <div className="!m-0 flex items-center justify-between">
@@ -168,7 +237,7 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
         {/* Academics */}
         {!!resumeData.educations && resumeData.educations?.length > 0 && (
           <>
-            <Heading colorHex={colorHex}>Academics</Heading>
+            <Heading>Academics</Heading>
             <div className="!m-0 grid grid-cols-2 gap-5">
               {resumeData.educations?.map((edu, index) => (
                 <div key={index} className="break-inside-avoid">
@@ -178,9 +247,9 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
                     </span>{" "}
                     <span>
                       {edu.startDate &&
-                        `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                        `${safeFormatDate(edu.startDate, "yyyy")} -`}{" "}
                       {edu.endDate
-                        ? safeFormatDate(edu.endDate, "MMM yyyy")
+                        ? safeFormatDate(edu.endDate, "yyyy")
                         : "Present"}
                     </span>
                   </p>
@@ -201,7 +270,7 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
           {!!resumeData.certifications &&
             resumeData.certifications?.length > 0 && (
               <div>
-                <Heading colorHex={colorHex}>Certifications</Heading>
+                <Heading>Certifications</Heading>
                 <div
                   className={`flex flex-wrap gap-x-2 ${resumeData.certifications.find((skill) => skill.description) && "flex-col"}`}
                 >
@@ -224,7 +293,7 @@ export default function Modern2({ resumeData, className }: ResumePreviewProps) {
           {/* Interest  */}
           {!!resumeData.others?.title && (
             <div className="!m-0 break-inside-avoid">
-              <Heading colorHex={colorHex}>{resumeData.others.title}</Heading>
+              <Heading>{resumeData.others.title}</Heading>
               <div
                 dangerouslySetInnerHTML={{
                   __html: resumeData.others.description || "",
@@ -253,8 +322,6 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
     email,
     borderStyle,
   } = resumeData;
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#65615f" : resumeData.colorHex;
 
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
@@ -266,7 +333,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
   }, [photo]);
 
   return (
-    <div className="mb-2 grid grid-cols-2">
+    <div className="mb-2">
       <div className="flex h-max gap-6">
         {photoSrc && (
           <Image
@@ -274,7 +341,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             width={500}
             height={500}
             alt="Author photo"
-            className="aspect-square h-[100px] w-[100px] object-cover object-top"
+            className="aspect-square h-[180px] w-[180px] object-cover object-top"
             style={{
               borderRadius:
                 borderStyle === BorderStyles.SQUARE
@@ -286,52 +353,56 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
           />
         )}
         <div
-          className={`flex ${photoSrc ? "h-[100px]" : ""} flex-col justify-between`}
+          className={`flex ${photoSrc ? "h-[180px]" : ""} flex-col justify-between`}
         >
-          <div className="my-auto">
+          <div className="my-auto" data-resume-header>
             <p
-              className="text-[3em] font-bold"
               style={{
-                color: colorHex,
+                color: "var(--accent)",
+                fontSize: "calc(var(--name-font-size) * 1.15)",
+                fontWeight: "var(--name-font-weight)" as any,
               }}
             >
               {firstName} {lastName}
             </p>
             <p
-              className="text-[1.6em] font-medium"
+              className="font-medium"
               style={{
-                color: colorHex,
+                color: "var(--accent)",
+                fontSize: "calc(var(--name-font-size) * 0.65)",
               }}
             >
               {jobTitle}
             </p>
+            {/* Demographics below role */}
+            <div className="mt-2" data-resume-personal-details>
+              {(city || country) && (
+                <p className="flex items-center gap-1">
+                  <span className="text-[var(--accent)]">
+                    <BiSolidMap />
+                  </span>
+                  {city}
+                  {city && country ? ", " : ""}
+                  {country}
+                </p>
+              )}
+              <ContactLinks text={phone} href={`tel:${phone}`} />
+              <ContactLinks text={email} href={`mailto:${email}`} />
+              {!!socialLinks &&
+                socialLinks.length > 0 &&
+                socialLinks.map((link, index) => (
+                  <ContactLinks
+                    key={index}
+                    text={link.split("://")?.[1]}
+                    href={link}
+                  />
+                ))}
+              {portfolioLink && (
+                <ContactLinks text={"Portfolio"} href={portfolioLink} />
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      {/* Social Links  */}
-      <div className="my-auto ml-auto">
-        {(city || country) && (
-          <p className="flex items-center gap-1">
-            <BiSolidMap />
-            {city}
-            {city && country ? ", " : ""}
-            {country}
-          </p>
-        )}
-        <ContactLinks text={phone} href={`tel:${phone}`} />
-        <ContactLinks text={email} href={`mailto:${email}`} />
-        {!!socialLinks &&
-          socialLinks.length > 0 &&
-          socialLinks.map((link, index) => (
-            <ContactLinks
-              key={index}
-              text={link.split("://")?.[1]}
-              href={link}
-            />
-          ))}
-        {portfolioLink && (
-          <ContactLinks text={"Portfolio"} href={portfolioLink} />
-        )}
       </div>
     </div>
   );
@@ -348,37 +419,43 @@ function PersonalInfoHeader1({ resumeData }: { resumeData: ResumeValues }) {
     phone,
     email,
   } = resumeData;
-  const colorHex =
-    resumeData.colorHex === "#000000" ? "#65615f" : resumeData.colorHex;
 
   return (
     <div className="mb-2">
       <Link
         href={resumeData.portfolioLink || "#"}
         className="cursor-pointer text-center"
+        data-resume-header
       >
         <p
-          className="text-[3em] font-bold"
           style={{
-            color: colorHex,
+            color: "var(--accent)",
+            fontSize: "calc(var(--name-font-size) * 1.15)",
+            fontWeight: "var(--name-font-weight)" as any,
           }}
         >
           {firstName} {lastName}
         </p>
         <p
-          className="text-[1.6em] font-medium"
+          className="font-medium"
           style={{
-            color: colorHex,
+            color: "var(--accent)",
+            fontSize: "calc(var(--name-font-size) * 0.65)",
           }}
         >
           {jobTitle}
         </p>
       </Link>
       {/* Social Links  */}
-      <div className="mx-auto flex max-w-xl flex-wrap justify-center gap-x-4">
+      <div
+        className="mx-auto flex max-w-xl flex-wrap justify-center gap-x-4"
+        data-resume-personal-details
+      >
         {(city || country) && (
           <p className="flex items-center gap-1">
-            <BiSolidMap />
+            <span className="text-[var(--accent)]">
+              <BiSolidMap />
+            </span>
             {city}
             {city && country ? ", " : ""}
             {country}
@@ -419,7 +496,9 @@ function ContactLinks({
           target="_blank"
           className="flex items-center gap-1"
         >
-          {icon ? icon : <SocialMediaIconFinder url={href ? href : ""} />}
+          <span className="text-[var(--accent)]">
+            {icon ? icon : <SocialMediaIconFinder url={href ? href : ""} />}
+          </span>
           {text === "NO_TEXT" ? "" : <p>{text}</p>}
         </Link>
       )}
@@ -431,25 +510,16 @@ function Text({ children }: { children: string }) {
   return <p className="!m-0 whitespace-pre-line">{children}</p>;
 }
 
-function Heading({
-  children,
-  colorHex,
-}: {
-  children: string;
-  colorHex: string | undefined;
-}) {
+function Heading({ children }: { children: string }) {
   return (
-    <>
-      <div
-        className="!mb-1 flex break-inside-avoid gap-x-0.5 px-2 py-0.5"
-        style={{
-          backgroundColor: colorHex,
-        }}
-      >
-        <h1 className="text-nowrap text-[1.2em] font-bold tracking-[0.2em] text-white">
-          {children}
-        </h1>
-      </div>
-    </>
+    <h1
+      data-resume-section-heading
+      className="!mb-1 w-full break-inside-avoid text-[1.2em] font-bold tracking-[0.2em] text-[var(--accent)]"
+      style={{
+        fontSize: "calc(1em * var(--heading-scale))",
+      }}
+    >
+      {children}
+    </h1>
   );
 }

@@ -319,8 +319,9 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
             width={500}
             height={700}
             alt="Author photo"
-            className="-ml-3 aspect-square h-[250px] w-full border-4 object-cover object-top"
+            className="-ml-3 aspect-square h-[250px] w-full border object-cover object-top"
             style={{
+              borderWidth: "calc(var(--resume-border-width) * 4)",
               borderRadius:
                 borderStyle === BorderStyles.SQUARE
                   ? "0px"

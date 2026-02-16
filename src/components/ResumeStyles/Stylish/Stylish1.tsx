@@ -54,9 +54,19 @@ export default function Stylish1({
             <div className="space-y-5">
               <div className="pl-5">
                 <h1 className="font-styleScript text-[5em]">
-                  {resumeData.firstName} {resumeData.lastName}
+                  <span
+                    style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                  >
+                    {resumeData.firstName} {resumeData.lastName}
+                  </span>
                 </h1>
-                <h2 className="text-[1.4em]">{resumeData.jobTitle}</h2>
+                <h2 className="text-[1.4em]">
+                  <span
+                    style={{ fontSize: "calc(1em * var(--heading-scale))" }}
+                  >
+                    {resumeData.jobTitle}
+                  </span>
+                </h2>
               </div>
               {/* Academics */}
               {!!resumeData.educations && resumeData.educations?.length > 0 && (
@@ -371,7 +381,9 @@ function Heading({
   return (
     <>
       <h1 className={cn("text-nowrap text-[1.3em] font-bold", className)}>
-        {children}
+        <span style={{ fontSize: "calc(1em * var(--heading-scale))" }}>
+          {children}
+        </span>
       </h1>
     </>
   );

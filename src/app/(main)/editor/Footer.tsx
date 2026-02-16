@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { steps } from "./steps";
 import { Link } from "next-view-transitions";
-import { create } from "zustand";
+import { useStyleAsideState } from "./styleAsideState";
 
 interface FooterProps {
   currentStep: string;
@@ -41,12 +41,12 @@ export default function Footer({
         <div className="flex items-center gap-3">
           <Button
             variant="premium"
-             className="!text-sm"
+            className="!text-sm"
             onClick={() => setOpen(true)}
             title={"Change Style"}
           >
-             <span className="hidden sm:inline">Change Resume Style</span>
-             <FileUser className="inline sm:hidden" />
+            <span className="hidden sm:inline">Change Resume Style</span>
+            <FileUser className="inline sm:hidden" />
           </Button>
           <Button
             variant="secondary"
@@ -97,17 +97,3 @@ export default function Footer({
     </footer>
   );
 }
-
-// Zustand store
-interface StyleAsideState {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-}
-
-export const useStyleAsideState = create<StyleAsideState>((set) => ({
-  open: false,
-  setOpen: (open: boolean) => {
-    console.log("Style Aside State Changed:", open);
-    set({ open });
-  },
-}));

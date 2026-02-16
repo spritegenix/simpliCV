@@ -6,6 +6,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import "./swiper.css";
 import { ViewTransitions } from "next-view-transitions";
+import DevSwUnregister from "@/components/DevSwUnregister";
+import { resumeFontVariableClassName } from "./fonts";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,13 +39,18 @@ export default function RootLayout({
             async
           />
         </head> */}
-        <body className={`${inter.className} antialiased`}>
+        <body
+          className={`${inter.className} ${resumeFontVariableClassName} antialiased`}
+        >
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >
+            {process.env.NODE_ENV === "development" ? (
+              <DevSwUnregister />
+            ) : null}
             <ViewTransitions>
               {/*  modal portal */}
               <div id="modal-portal" className="relative z-[999999]" />

@@ -13,39 +13,30 @@ import { BiSolidMap } from "react-icons/bi";
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
+  dateFormat?: string;
 }
 
-export default function Modern1({ resumeData, className }: ResumePreviewProps) {
+export default function Modern3({ resumeData, className, dateFormat = "MMM yyyy" }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { width } = useDimensions(containerRef);
-
-  const BaseFontSize = resumeData?.baseFontSize
-    ? `text-[${resumeData.baseFontSize}px]`
-    : "text-[10px]";
-
-  const colorHex =
-    resumeData.colorHex === "#000000" || resumeData.colorHex === undefined
-      ? "#6f706a"
-      : resumeData.colorHex;
   return (
     <div
       className={cn(
-        "relative aspect-[210/297] h-fit w-full overflow-hidden bg-white font-poppins",
+        "resume-root modern relative aspect-[210/297] h-fit w-full overflow-hidden bg-white",
         className,
       )}
+      style={{
+        color: "var(--text)",
+        fontSize: "var(--base-font)",
+        fontFamily: "var(--resume-font-family)",
+        lineHeight: "var(--resume-line-height)",
+      }}
       ref={containerRef}
     >
       <div
-        className="absolute z-[0] h-[180px] w-screen"
-        style={{
-          backgroundColor: hexToRgbaPercent(colorHex, 100),
-        }}
-      />
-      <div
         className={cn(
-          "mx-10 grid h-full grid-cols-12 space-y-2",
-          BaseFontSize,
+          "grid h-full grid-cols-12 space-y-2",
           !width && "invisible",
         )}
         style={{
@@ -55,9 +46,10 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
       >
         {/* Left Side  */}
         <div
-          className="z-[1] col-span-4 mt-16 space-y-3 rounded-t-full p-6"
+          className="z-[1] col-span-4 space-y-3 rounded-t-full p-6"
           style={{
-            backgroundColor: alteredHexToRgbaPercent(colorHex),
+            backgroundColor:
+              "color-mix(in srgb, var(--accent) 12%, transparent)",
           }}
         >
           <PersonalInfoHeader resumeData={resumeData} />
@@ -104,9 +96,9 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     <div className="!m-0">
                       <p>
                         {edu.startDate &&
-                          `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
+                          `${safeFormatDate(edu.startDate, dateFormat)} -`}{" "}
                         {edu.endDate
-                          ? safeFormatDate(edu.endDate, "MMM yyyy")
+                          ? safeFormatDate(edu.endDate, dateFormat)
                           : "Present"}
                       </p>
                       <p className="font-semibold">
@@ -174,22 +166,44 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
           )}
         </div>
         {/* Right Side  */}
-        <div className="z-[1] col-span-8 space-y-3 p-6 pl-3">
+        <div className="z-[1] col-span-8 space-y-3 p-6 pr-0 pl-3">
           {/* Name And Job Title  */}
-          <div className="my-16 text-end text-white">
-            <p className="text-[40px]">
-              <span className="font-bold">{resumeData.firstName}</span>{" "}
-              <span className="font-semibold">{resumeData.lastName}</span>
+          <div
+            className="my-16 text-end"
+            style={{ color: "var(--text)" }}
+            data-resume-header
+          >
+            <p
+              style={{
+                fontSize: "calc(var(--base-font) * 1.9 * var(--heading-scale))",
+                color: "var(--accent)",
+                fontWeight: "var(--name-font-weight)" as any,
+              }}
+            >
+              <span>{resumeData.firstName}</span>{" "}
+              <span>{resumeData.lastName}</span>
             </p>
-            <p className="text-[16px] font-medium">{resumeData.jobTitle}</p>
+            <p
+              className="font-medium"
+              style={{
+                fontSize:
+                  "calc(var(--base-font) * 1.35 * var(--heading-scale))",
+                color: "var(--text)",
+              }}
+            >
+              {resumeData.jobTitle}
+            </p>
           </div>
           {/* Summary */}
           {resumeData.summary && (
             <div className="space-y-2">
               <Heading>Professional Summary</Heading>
-              <div>
-                <Text>{resumeData.summary}</Text>
-              </div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: resumeData.summary || "",
+                }}
+                className="richTextEditorStyle !m-0 whitespace-pre-line"
+              />
             </div>
           )}
           {/* Experience */}
@@ -202,26 +216,43 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     {resumeData.workExperiences?.map((exp, index) => (
                       <li
                         key={index}
-                        className="relative z-10 break-inside-avoid before:absolute before:-left-4 before:top-0 before:z-10 before:h-3 before:w-3 before:rounded-full before:border-[1px] before:border-zinc-900 before:bg-white after:absolute after:-left-[11px] after:top-0 after:z-0 after:h-full after:w-px after:bg-zinc-900"
+                        className="relative z-10 break-inside-avoid before:absolute before:-left-4 before:top-0 before:z-10 before:h-3 before:w-3 before:rounded-full before:border-[length:var(--resume-border-width)] before:bg-white before:[border-color:var(--accent)] before:[border-style:var(--resume-border-style)] after:absolute after:-left-[11px] after:top-0 after:z-0 after:h-full after:w-0 after:border-l-[length:var(--resume-border-width)] after:[border-left-color:var(--accent)] after:[border-left-style:var(--resume-border-style)]"
                       >
                         <div className="!m-0 flex items-center justify-between">
                           <span className="text-[1.2em] font-semibold">
-                            {exp.company}
-                          </span>
-                          {exp.jobLocation && <span>{exp.jobLocation}</span>}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-[1.1em] font-semibold italic">
-                            {exp.position}
+                            <span data-resume-entry-title>{exp.company}</span>
+                            {exp.position && (
+                              <span
+                                data-resume-entry-subtitle
+                                data-entry-subtitle-slot="inline"
+                                className="font-semibold italic"
+                              >
+                                {exp.position}
+                              </span>
+                            )}
                           </span>
                           {exp.startDate && (
                             <span>
-                              {safeFormatDate(exp.startDate, "MMM yyyy")} -{" "}
+                              {safeFormatDate(exp.startDate, dateFormat)} -{" "}
                               {exp.endDate
-                                ? safeFormatDate(exp.endDate, "MMM yyyy")
+                                ? safeFormatDate(exp.endDate, dateFormat)
                                 : "Present"}
                             </span>
                           )}
+                        </div>
+                        <div className="flex items-center justify-between">
+                          {exp.position ? (
+                            <span
+                              data-resume-entry-subtitle
+                              data-entry-subtitle-slot="newline"
+                              className="text-[1.1em] font-semibold italic"
+                            >
+                              {exp.position}
+                            </span>
+                          ) : (
+                            <span />
+                          )}
+                          {exp.jobLocation && <span>{exp.jobLocation}</span>}
                         </div>
                         <div
                           dangerouslySetInnerHTML={{
@@ -245,6 +276,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     <div className="!m-0 flex justify-between gap-1">
                       <p className="flex gap-1">
                         <Link
+                          data-resume-entry-title
                           href={
                             !!item?.links && item?.links[0]
                               ? item?.links[0]
@@ -255,6 +287,15 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                         >
                           {item.title}
                         </Link>
+                        {item.company && (
+                          <span
+                            data-resume-entry-subtitle
+                            data-entry-subtitle-slot="inline"
+                            className="italic"
+                          >
+                            {item.company}
+                          </span>
+                        )}
                         {!!item.links &&
                           item.links.map((l, index) => (
                             <span key={index} className="mr-1 mt-1">
@@ -263,20 +304,26 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                           ))}
                       </p>
                       <p className="flex flex-col text-right">
-                        {item.company && (
-                          <span className="italic">{item.company}</span>
-                        )}
                         {item.startDate && (
                           <span>
                             {item.startDate &&
-                              `${safeFormatDate(item.startDate, "MMM yyyy")} - `}
+                              `${safeFormatDate(item.startDate, dateFormat)} - `}
                             {item.endDate
-                              ? safeFormatDate(item.endDate, "MMM yyyy")
+                              ? safeFormatDate(item.endDate, dateFormat)
                               : "Present"}
                           </span>
                         )}
                       </p>
                     </div>
+                    {item.company && (
+                      <span
+                        data-resume-entry-subtitle
+                        data-entry-subtitle-slot="newline"
+                        className="italic"
+                      >
+                        {item.company}
+                      </span>
+                    )}
                     <div
                       dangerouslySetInnerHTML={{
                         __html: item.description || "",
@@ -325,7 +372,7 @@ function PersonalInfoHeader({ resumeData }: { resumeData: ResumeValues }) {
         </div>
       )}
       {/* Social Links  */}
-      <div className="space-y-2">
+      <div className="space-y-2" data-resume-personal-details>
         {(city || country || socialLinks || portfolioLink) && (
           <Heading>Contact</Heading>
         )}
@@ -387,13 +434,21 @@ function Text({ children }: { children: string }) {
 function Heading({ children }: { children: string }) {
   return (
     <>
-      <div className="grid break-inside-avoid grid-cols-6 items-center">
-        <h1 className="col-span-3 text-wrap text-[1.2em] font-semibold uppercase">
+      <div className="break-inside-avoid">
+        <h1
+          data-resume-section-heading
+          className="text-wrap font-semibold"
+          style={{
+            color: "var(--accent)",
+            fontSize: "calc(1em * var(--heading-scale))",
+            paddingBottom: "0.25em",
+            borderBottomWidth: "var(--resume-border-width)",
+            borderBottomStyle: "var(--resume-border-style)" as any,
+            borderBottomColor: "currentColor",
+          }}
+        >
           {children}
         </h1>
-        <div className="col-span-3 flex items-center justify-end">
-          <div className="h-0.5 w-10/12 bg-zinc-700" />
-        </div>
       </div>
     </>
   );
