@@ -14,12 +14,83 @@
   }
 
   .print-resume section,
-  .print-resume>div {
+  .print-resume > div {
     page-break-inside: avoid;
     break-inside: avoid;
   }
 
   .print-resume [data-resume-section] {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+
+/* Offer letter preview - print-safe & pagination-safe */
+.offer-page {
+  width: 210mm;
+  height: 297mm;
+  page-break-after: always;
+  background: white;
+}
+
+.offer-page:last-child {
+  page-break-after: auto;
+}
+
+.offer-page-inner {
+  padding: 24mm;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+/* Prevent awkward page splits */
+.offer-section {
+  page-break-inside: avoid;
+  break-inside: avoid;
+  margin-bottom: 1rem;
+}
+
+/* Print + PDF correctness */
+@media print {
+  body {
+    margin: 0;
+    background: white;
+  }
+
+  .print-mode {
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  .print-mode #offerPreviewContent {
+    gap: 0 !important;
+  }
+
+  .print-mode .shadow-md,
+  .print-mode .border {
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .print-mode .offer-page {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .print-mode .offer-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  #offerPreviewContent {
+    gap: 0;
+  }
+
+  .offer-page-inner {
+    padding: 24mm;
+  }
+
+  .offer-section {
     page-break-inside: avoid;
     break-inside: avoid;
   }
@@ -201,13 +272,15 @@ body {
   border-style: var(--resume-border-style, solid);
 }
 
-[data-resume-design-scope="ats"] #resumePreviewContent> :not([hidden])~ :not([hidden]) {
+[data-resume-design-scope="ats"]
+  #resumePreviewContent
+  > :not([hidden])
+  ~ :not([hidden]) {
   margin-top: var(--resume-section-gap, 0.5rem);
   margin-bottom: 0;
 }
 
 @media print {
-
   html,
   body {
     background: #fff !important;
@@ -277,6 +350,24 @@ body {
 
 .ProseMirror-focused {
   outline: none;
+}
+
+.ProseMirror p {
+  margin-bottom: 1em;
+}
+
+.ProseMirror p:last-child {
+  margin-bottom: 0;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.25rem;
+  margin-bottom: 1em;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.25em;
 }
 
 .cl-rootBox {
@@ -474,7 +565,6 @@ body {
 }
 
 @keyframes bounce05 {
-
   85%,
   92%,
   100% {
@@ -552,7 +642,6 @@ body {
 }
 
 @keyframes keyboard05 {
-
   5%,
   12%,
   21%,
