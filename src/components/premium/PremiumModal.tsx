@@ -34,6 +34,12 @@ export default function PremiumModal() {
 
   const [loading, setLoading] = useState(false);
 
+  // TEMPORARY: Force modal closed for testing - remove these lines to re-enable
+  const TESTING_MODE = true;
+  if (TESTING_MODE && open) {
+    setOpen(false);
+  }
+
   async function handlePremiumClick(priceId: string) {
     try {
       setLoading(true);
@@ -56,8 +62,9 @@ export default function PremiumModal() {
 
   return (
     <Dialog
-      open={open}
+      open={TESTING_MODE ? false : open}
       onOpenChange={(open) => {
+        if (TESTING_MODE) return;
         if (!loading) {
           setOpen(open);
         }

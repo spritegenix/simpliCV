@@ -47,16 +47,23 @@ export default async function Page() {
       getUserSubscriptionLevel(userId),
     ]);
   } catch (error) {
-    console.warn(
-      "[db] Failed to load resumes page; rendering empty state. " +
-        "This usually means DATABASE_URL is unreachable.",
-      error,
-    );
+    // Suppress console warning in dev to avoid source map noise
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        "[db] Failed to load resumes page; rendering empty state. " +
+          "This usually means DATABASE_URL is unreachable.",
+        error,
+      );
+    }
   }
 
   return (
     <Layout>
-      <Wrapper bgColor="bg-w3 pattern3 pb-20" isTop2 containerClassName="min-h-screen">
+      <Wrapper
+        bgColor="bg-w3 pattern3 pb-20"
+        isTop2
+        containerClassName="min-h-screen"
+      >
         <div className="flex justify-between">
           <div className="text-white">
             <h1 className="text-3xl font-bold">Your Resumes</h1>
