@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import type { OfferLetterDocument } from "@/lib/offer-letter/offerLetterDocument";
 import OfferLetterContent from "./OfferLetterContent";
+import { offerLetterBgMap } from "@/components/OfferLetterStyles";
 
 interface OfferLetterPreviewProps {
   document: OfferLetterDocument;
@@ -14,6 +15,9 @@ export default function OfferLetterPreview({
   document,
   className,
 }: OfferLetterPreviewProps) {
+  const styleId = document.styleId ?? "default";
+  const BgComponent = offerLetterBgMap[styleId] ?? null;
+
   return (
     <div
       id="offerPreviewContent"
@@ -28,6 +32,9 @@ export default function OfferLetterPreview({
           "aspect-[1/1.414]",
         )}
       >
+        {/* Page-level background — fills entire page */}
+        {BgComponent && <BgComponent />}
+
         <OfferLetterContent document={document} />
       </div>
     </div>

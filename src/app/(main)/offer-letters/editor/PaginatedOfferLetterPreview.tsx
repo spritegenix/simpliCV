@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import useDimensions from "@/hooks/useDimensions";
 import type { OfferLetterDocument } from "@/lib/offer-letter/offerLetterDocument";
 import OfferLetterContent from "./OfferLetterContent";
+import { offerLetterBgMap } from "@/components/OfferLetterStyles";
 
 interface PaginatedOfferLetterPreviewProps {
   document: OfferLetterDocument;
@@ -66,6 +67,9 @@ export default function PaginatedOfferLetterPreview({
     return () => window.clearTimeout(timer);
   }, [document, pageHeight, contentAreaHeight]);
 
+  const styleId = document.styleId ?? "default";
+  const BgComponent = offerLetterBgMap[styleId] ?? null;
+
   return (
     <div
       id="offerPreviewContent"
@@ -105,6 +109,9 @@ export default function PaginatedOfferLetterPreview({
               height: pageHeight ? `${pageHeight}px` : "297mm",
             }}
           >
+            {/* Page-level background — fills the entire page, unaffected by padding */}
+            {BgComponent && <BgComponent />}
+
             {/* Text content area - clipped at page bounds, positioned with margin offset */}
             <div
               className="absolute overflow-hidden"

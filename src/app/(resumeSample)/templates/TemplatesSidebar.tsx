@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ResumeStyle } from "@/components/ResumeStyles/Styles";
+import { offerLetterStyles } from "@/components/OfferLetterStyles/OfferLetterStyles";
 import TemplateCard from "./TemplateCard";
+import OfferLetterTemplateCard from "./OfferLetterTemplateCard";
 
 type TemplateType = "resume" | "offerLetter";
 
@@ -19,9 +21,6 @@ export default function TemplatesSidebar({
   isUser,
 }: TemplatesSidebarProps) {
   const [selectedType, setSelectedType] = useState<TemplateType>("resume");
-
-  // For now, only show resume templates. Offer letter templates can be added later
-  const displayTemplates = selectedType === "resume" ? templates : [];
 
   return (
     <div className="flex gap-6">
@@ -68,7 +67,7 @@ export default function TemplatesSidebar({
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {selectedType === "resume" &&
-            displayTemplates.map((style) => (
+            templates.map((style) => (
               <TemplateCard
                 key={style.id}
                 style={style}
@@ -77,16 +76,8 @@ export default function TemplatesSidebar({
               />
             ))}
           {selectedType === "offerLetter" &&
-            // Show empty grid items to maintain layout
-            Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="group relative cursor-not-allowed rounded-sm border-0 text-center transition-all duration-300"
-              >
-                <div className="flex aspect-[650/650] items-center justify-center bg-white/5">
-                  <p className="text-white/40">Coming Soon</p>
-                </div>
-              </div>
+            offerLetterStyles.map((style) => (
+              <OfferLetterTemplateCard key={style.id} style={style} />
             ))}
         </div>
       </div>
