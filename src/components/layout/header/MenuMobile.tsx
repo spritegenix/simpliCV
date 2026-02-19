@@ -1,6 +1,7 @@
 import { Link } from "next-view-transitions";
 import React, { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
+import { useAuth } from "@clerk/nextjs";
 
 interface NavItem {
   id: number | string;
@@ -47,6 +48,27 @@ const SingleNavItem: React.FC<SingleNavItemProps> = ({
   activeItemId,
 }) => {
   const [isItemOpen, setItemOpen] = useState(false);
+  const { isLoaded, isSignedIn } = useAuth();
+
+  const getBasePath = (url: string) => {
+    const urlSegments = url.split("/");
+    return `/${urlSegments[1]}`;
+  };
+
+  const getSafeHref = (href: string) => {
+    const basePath = getBasePath(href);
+    const isProtectedNav =
+      basePath === "/resumes" ||
+      basePath === "/offer-letters" ||
+      basePath === "/editor" ||
+      basePath === "/_billing";
+
+    if (isLoaded && !isSignedIn && isProtectedNav) {
+      return `/sign-in?redirect_url=${encodeURIComponent(href)}`;
+    }
+
+    return href;
+  };
 
   const toggleItem = () => {
     setItemOpen(!isItemOpen);
@@ -57,7 +79,7 @@ const SingleNavItem: React.FC<SingleNavItemProps> = ({
       <div>
         <div className="flex w-full items-center justify-between border-b border-zinc-200">
           <Link
-            href={item.href ?? "#"}
+            href={item.href ? getSafeHref(item.href) : "#"}
             className={`hover:bg-bg1 relative flex justify-between px-5 py-3 transition-all hover:text-white ${
               activeItemId === item.id.toString() ? "text-bg1" : "text-black"
             }`}
@@ -86,7 +108,7 @@ const SingleNavItem: React.FC<SingleNavItemProps> = ({
             {item.subNav.map((subItem, index) => (
               <Link
                 key={index}
-                href={subItem.href ?? "#"}
+                href={subItem.href ? getSafeHref(subItem.href) : "#"}
                 onClick={() => {
                   setIsMobileMenuOpen(false); // Close the menu when a subnav item is clicked
                 }}

@@ -2,23 +2,84 @@
 
 import { canCreateResume, canUseCustomizations } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
+import { safeResumeCount } from "@/lib/dbSafe";
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { resumeSchema, ResumeValues } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
 // import { del, put } from "@vercel/blob";
-// import { uploadToS3, deleteFromS3 } from "@/lib/s3"; 
+// import { uploadToS3, deleteFromS3 } from "@/lib/s3";
 import { deleteFromS3 } from "@/lib/s3";
 // import path from "path";
 
+import { ResumeDesign } from "@/types/resumeDesign";
 
+/**
+ * Remove null bytes from strings to prevent PostgreSQL UTF8 encoding errors
+ * Also handles other invalid characters that might cause encoding issues
+ */
+function sanitizeString(value: string): string {
+  // Remove null bytes and other control characters except newline, tab, and carriage return
+  return value.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F]/g, '');
+}
 
-export async function saveResume(values: ResumeValues) {
+/**
+ * Deeply sanitize an object by removing null bytes from all strings
+ * and pruning undefined values
+ */
+function deepSanitizeAndPrune<T>(value: T): T {
+  if (value === undefined || value === null) return value;
+
+  // Handle strings - sanitize them
+  if (typeof value === "string") {
+    return sanitizeString(value) as T;
+  }
+
+  // Handle arrays
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => deepSanitizeAndPrune(item))
+      .filter((item) => item !== undefined) as T;
+  }
+
+  // Handle objects (but preserve special types like Date)
+  if (typeof value === "object") {
+    // Preserve Date objects as-is
+    if (value instanceof Date) return value;
+
+    const result: Record<string, unknown> = {};
+    for (const [key, nested] of Object.entries(value as any)) {
+      const sanitized = deepSanitizeAndPrune(nested);
+      if (sanitized !== undefined) {
+        result[key] = sanitized;
+      }
+    }
+    return result as T;
+  }
+
+  // Return primitives as-is (numbers, booleans, etc.)
+  return value;
+}
+
+// Keep the old function name for backward compatibility with design sanitization
+function pruneUndefinedDeep<T>(value: T): T {
+  return deepSanitizeAndPrune(value);
+}
+
+export async function saveResume(values: ResumeValues, design?: ResumeDesign) {
   const { id } = values;
 
   // console.log("received values", values);
 
-  const { photo, workExperiences, educations, certifications, others, projectWorks, skills, ...resumeValues } =
-    resumeSchema.parse(values);
+  const {
+    photo,
+    workExperiences,
+    educations,
+    certifications,
+    others,
+    projectWorks,
+    skills,
+    ...resumeValues
+  } = resumeSchema.parse(values);
 
   const { userId } = await auth();
 
@@ -29,10 +90,12 @@ export async function saveResume(values: ResumeValues) {
   const subscriptionLevel = await getUserSubscriptionLevel(userId);
 
   if (!id) {
-    const resumeCount = await prisma.resume.count({ where: { userId } });
+    const resumeCount = await safeResumeCount(userId);
 
     if (!canCreateResume(subscriptionLevel, resumeCount)) {
-      throw new Error("Maximum resume count reached for this subscription level");
+      throw new Error(
+        "Maximum resume count reached for this subscription level",
+      );
     }
   }
 
@@ -45,12 +108,15 @@ export async function saveResume(values: ResumeValues) {
   }
 
   const hasCustomizations =
-    (resumeValues.borderStyle && resumeValues.borderStyle !== existingResume?.borderStyle) ||
-    (resumeValues.colorHex && resumeValues.colorHex !== existingResume?.colorHex);
+    (resumeValues.borderStyle &&
+      resumeValues.borderStyle !== existingResume?.borderStyle) ||
+    (resumeValues.colorHex &&
+      resumeValues.colorHex !== existingResume?.colorHex);
 
-  if (hasCustomizations && !canUseCustomizations(subscriptionLevel)) {
-    throw new Error("Customizations not allowed for this subscription level");
-  }
+  // TODO: Re-enable when premium subscription is implemented
+  // if (hasCustomizations && !canUseCustomizations(subscriptionLevel)) {
+  //   throw new Error("Customizations not allowed for this subscription level");
+  // }
 
   let newPhotoUrl: string | undefined | null = undefined;
 
@@ -78,7 +144,7 @@ export async function saveResume(values: ResumeValues) {
   //   newPhotoUrl = newUrl;
   // } else if (photo === null) {
   //   if (existingResume?.photoUrl) {
-  //     //-------> Vercel Bolb 
+  //     //-------> Vercel Bolb
   //     // await del(existingResume.photoUrl);
   //     //---------> S3
   //     const urlParts = new URL(existingResume.photoUrl);
@@ -111,9 +177,13 @@ export async function saveResume(values: ResumeValues) {
     newPhotoUrl = null;
   }
 
-  // Sanitize resumeValues to remove nulls or undefined where not allowed
-  const sanitizedResumeValues = {
-    ...resumeValues,
+  const { dateFormat: _dateFormat, ...resumeValuesWithoutDateFormat } =
+    resumeValues;
+
+  // Sanitize ALL resume values to remove null bytes and undefined values
+  // pruneUndefinedDeep now also sanitizes all strings recursively
+  const sanitizedResumeValues = pruneUndefinedDeep({
+    ...resumeValuesWithoutDateFormat,
     colorHex: resumeValues.colorHex || undefined, // Required in DB, default provided by DB if undefined, but if null we must use undefined
     borderStyle: resumeValues.borderStyle || undefined,
     // For other optional string fields that might be null from Zod, ensure they are compatible
@@ -130,17 +200,19 @@ export async function saveResume(values: ResumeValues) {
     portfolioLink: resumeValues.portfolioLink || undefined,
     styleId: resumeValues.styleId || undefined,
     baseFontSize: resumeValues.baseFontSize || undefined,
-  };
+    // Persist full design only when provided (and scrub undefineds for Prisma JSON).
+    design: design ? pruneUndefinedDeep(design) : undefined,
+  });
 
   if (id) {
     return prisma.resume.update({
       where: { id },
       data: {
         ...sanitizedResumeValues,
-        photoUrl: newPhotoUrl,
+        photoUrl: newPhotoUrl ? sanitizeString(newPhotoUrl) : newPhotoUrl,
         workExperiences: {
           deleteMany: {},
-          create: workExperiences?.map((exp) => ({
+          create: workExperiences?.map((exp) => deepSanitizeAndPrune({
             ...exp,
             startDate: exp.startDate ? new Date(exp.startDate) : undefined,
             endDate: exp.endDate ? new Date(exp.endDate) : undefined,
@@ -148,7 +220,7 @@ export async function saveResume(values: ResumeValues) {
         },
         educations: {
           deleteMany: {},
-          create: educations?.map((edu) => ({
+          create: educations?.map((edu) => deepSanitizeAndPrune({
             ...edu,
             startDate: edu.startDate ? new Date(edu.startDate) : undefined,
             endDate: edu.endDate ? new Date(edu.endDate) : undefined,
@@ -156,30 +228,34 @@ export async function saveResume(values: ResumeValues) {
         },
         certifications: {
           deleteMany: {},
-          create: certifications?.map((cert) => ({
+          create: certifications?.map((cert) => deepSanitizeAndPrune({
             ...cert,
           })),
         },
         skills: {
           deleteMany: {},
-          create: skills?.map((skill) => ({
+          create: skills?.map((skill) => deepSanitizeAndPrune({
             ...skill,
           })),
         },
         projectWorks: {
           deleteMany: {},
-          create: projectWorks?.map((project) => ({
+          create: projectWorks?.map((project) => deepSanitizeAndPrune({
             ...project,
-            startDate: project.startDate ? new Date(project.startDate) : undefined,
+            startDate: project.startDate
+              ? new Date(project.startDate)
+              : undefined,
             endDate: project.endDate ? new Date(project.endDate) : undefined,
           })),
         },
-        others: others ? {
-          upsert: {
-            update: { ...others },
-            create: { ...others },
-          },
-        } : undefined,
+        others: others
+          ? {
+            upsert: {
+              update: deepSanitizeAndPrune({ ...others }),
+              create: deepSanitizeAndPrune({ ...others }),
+            },
+          }
+          : undefined,
       },
     });
   } else {
@@ -187,40 +263,42 @@ export async function saveResume(values: ResumeValues) {
       data: {
         ...sanitizedResumeValues,
         userId,
-        photoUrl: newPhotoUrl,
+        photoUrl: newPhotoUrl ? sanitizeString(newPhotoUrl) : newPhotoUrl,
         workExperiences: {
-          create: workExperiences?.map((exp) => ({
+          create: workExperiences?.map((exp) => deepSanitizeAndPrune({
             ...exp,
             startDate: exp.startDate ? new Date(exp.startDate) : undefined,
             endDate: exp.endDate ? new Date(exp.endDate) : undefined,
           })),
         },
         educations: {
-          create: educations?.map((edu) => ({
+          create: educations?.map((edu) => deepSanitizeAndPrune({
             ...edu,
             startDate: edu.startDate ? new Date(edu.startDate) : undefined,
             endDate: edu.endDate ? new Date(edu.endDate) : undefined,
           })),
         },
         certifications: {
-          create: certifications?.map((cert) => ({
+          create: certifications?.map((cert) => deepSanitizeAndPrune({
             ...cert,
           })),
         },
         skills: {
-          create: skills?.map((skill) => ({
+          create: skills?.map((skill) => deepSanitizeAndPrune({
             ...skill,
           })),
         },
         projectWorks: {
-          create: projectWorks?.map((project) => ({
+          create: projectWorks?.map((project) => deepSanitizeAndPrune({
             ...project,
-            startDate: project.startDate ? new Date(project.startDate) : undefined,
+            startDate: project.startDate
+              ? new Date(project.startDate)
+              : undefined,
             endDate: project.endDate ? new Date(project.endDate) : undefined,
           })),
         },
         others: {
-          create: others || undefined
+          create: others ? deepSanitizeAndPrune(others) : undefined,
         },
       },
     });

@@ -21,7 +21,7 @@ export default function InterestForm({
   const form = useForm<OtherValues>({
     resolver: zodResolver(otherSchema),
     defaultValues: {
-      others: resumeData.others || { title: "", description: "" },
+      others: resumeData.content.others || { title: "", description: "" },
     },
   });
 
@@ -29,7 +29,13 @@ export default function InterestForm({
     const { unsubscribe } = form.watch(async (values) => {
       const isValid = await form.trigger();
       if (!isValid) return;
-      setResumeData({ ...resumeData, others: values.others || undefined });
+      setResumeData({
+        ...resumeData,
+        content: {
+          ...resumeData.content,
+          others: values.others || undefined,
+        },
+      });
     });
     return unsubscribe;
   }, [form, resumeData, setResumeData]);
@@ -84,6 +90,21 @@ export default function InterestForm({
                           shouldDirty: true,
                         });
                       }}
+                      designTextColor={
+                        resumeData.design.color.text || undefined
+                      }
+                      onDesignTextColorChange={(hex) =>
+                        setResumeData({
+                          ...resumeData,
+                          design: {
+                            ...resumeData.design,
+                            color: {
+                              ...resumeData.design.color,
+                              text: hex,
+                            },
+                          },
+                        })
+                      }
                     />
                   </div>
                 </FormControl>

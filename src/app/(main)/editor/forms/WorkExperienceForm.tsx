@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -13,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { EditorFormProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { workExperienceSchema, WorkExperienceValues } from "@/lib/validation";
+import { MonthYearPicker } from "@/components/ui/month-year-picker";
 
 import {
   closestCenter,
@@ -35,7 +37,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GripHorizontal } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import GenerateWorkExperienceButton from "./GenerateWorkExperienceButton";
 import { RichTextEditor } from "@/components/RichTextEditor";
@@ -47,7 +49,7 @@ export default function WorkExperienceForm({
   const form = useForm<WorkExperienceValues>({
     resolver: zodResolver(workExperienceSchema),
     defaultValues: {
-      workExperiences: resumeData.workExperiences || [],
+      workExperiences: resumeData.content.workExperiences || [],
     },
   });
 
@@ -57,8 +59,11 @@ export default function WorkExperienceForm({
       if (!isValid) return;
       setResumeData({
         ...resumeData,
-        workExperiences:
-          values.workExperiences?.filter((exp) => exp !== undefined) || [],
+        content: {
+          ...resumeData.content,
+          workExperiences:
+            values.workExperiences?.filter((exp) => exp !== undefined) || [],
+        },
       });
     });
     return unsubscribe;
@@ -114,6 +119,8 @@ export default function WorkExperienceForm({
                   index={index}
                   form={form}
                   remove={remove}
+                  resumeData={resumeData}
+                  setResumeData={setResumeData}
                 />
               ))}
             </SortableContext>
@@ -146,6 +153,8 @@ interface WorkExperienceItemProps {
   form: UseFormReturn<WorkExperienceValues>;
   index: number;
   remove: (index: number) => void;
+  resumeData: EditorFormProps["resumeData"];
+  setResumeData: EditorFormProps["setResumeData"];
 }
 
 function WorkExperienceItem({
@@ -153,6 +162,8 @@ function WorkExperienceItem({
   form,
   index,
   remove,
+  resumeData,
+  setResumeData,
 }: WorkExperienceItemProps) {
   const {
     attributes,
@@ -162,6 +173,19 @@ function WorkExperienceItem({
     transition,
     isDragging,
   } = useSortable({ id });
+
+  const endDateValue = form.watch(`workExperiences.${index}.endDate`);
+  const [isPresent, setIsPresent] = useState<boolean>(() => !endDateValue);
+  const lastEndDateRef = useRef<string>(endDateValue || "");
+
+  useEffect(() => {
+    if (endDateValue) {
+      lastEndDateRef.current = endDateValue;
+      // If user picked an end date, it can't be "present".
+      if (isPresent) setIsPresent(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endDateValue]);
 
   return (
     <div
@@ -250,10 +274,9 @@ function WorkExperienceItem({
             <FormItem>
               <FormLabel>Start date</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  type="date"
-                  value={field.value?.slice(0, 10) || ""}
+                <MonthYearPicker
+                  value={field.value || ""}
+                  onChange={field.onChange}
                 />
               </FormControl>
               <FormMessage />
@@ -267,21 +290,36 @@ function WorkExperienceItem({
             <FormItem>
               <FormLabel>End date</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  type="date"
-                  value={field.value?.slice(0, 10) || ""}
+                <MonthYearPicker
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                  disabled={isPresent}
                 />
               </FormControl>
+
+              <div className="flex items-center gap-2 pt-2">
+                <Checkbox
+                  checked={isPresent}
+                  onCheckedChange={(checked) => {
+                    const next = !!checked;
+                    setIsPresent(next);
+                    if (next) {
+                      if (field.value) lastEndDateRef.current = field.value;
+                      form.setValue(`workExperiences.${index}.endDate`, "", {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    }
+                  }}
+                />
+                <span className="text-sm">Present (currently working)</span>
+              </div>
+
               <FormMessage />
             </FormItem>
           )}
         />
       </div>
-      <FormDescription>
-        Leave <span className="font-semibold">end date</span> empty if you are
-        currently working here.
-      </FormDescription>
       <FormField
         control={form.control}
         name={`workExperiences.${index}.description`}
@@ -302,6 +340,19 @@ function WorkExperienceItem({
                       },
                     );
                   }}
+                  designTextColor={resumeData.design.color.text || undefined}
+                  onDesignTextColorChange={(hex) =>
+                    setResumeData({
+                      ...resumeData,
+                      design: {
+                        ...resumeData.design,
+                        color: {
+                          ...resumeData.design.color,
+                          text: hex,
+                        },
+                      },
+                    })
+                  }
                 />
               </div>
             </FormControl>

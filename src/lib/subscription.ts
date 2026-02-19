@@ -6,11 +6,24 @@ export type SubscriptionLevel = "free" | "pro" | "pro_plus";
 
 export const getUserSubscriptionLevel = cache(
   async (userId: string): Promise<SubscriptionLevel> => {
-    const subscription = await prisma.userSubscription.findUnique({
-      where: {
-        userId,
-      },
-    });
+    let subscription:
+      | Awaited<ReturnType<typeof prisma.userSubscription.findUnique>>
+      | null;
+
+    try {
+      subscription = await prisma.userSubscription.findUnique({
+        where: {
+          userId,
+        },
+      });
+    } catch (error) {
+      console.warn(
+        "[db] Failed to fetch user subscription; defaulting to free. " +
+          "This usually means DATABASE_URL is unreachable.",
+        error,
+      );
+      return "free";
+    }
 
     if (!subscription || subscription.stripeCurrentPeriodEnd < new Date()) {
       return "free";

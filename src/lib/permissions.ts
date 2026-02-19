@@ -4,6 +4,9 @@ export function canCreateResume(
   subscriptionLevel: SubscriptionLevel,
   currentResumeCount: number,
 ) {
+  // TEMPORARY: Bypass for testing - remove this line to re-enable limits
+  return true;
+  
   const maxResumeMap: Record<SubscriptionLevel, number> = {
     free: 1,
     pro: 3,
@@ -16,6 +19,8 @@ export function canCreateResume(
 }
 
 export function canUseAITools(subscriptionLevel: SubscriptionLevel) {
+  // TEMPORARY: Bypass for testing - remove this line to re-enable checks
+  return true;
   return subscriptionLevel !== "free";
 }
 

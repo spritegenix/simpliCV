@@ -19,6 +19,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ResumeServerData } from "@/lib/types";
 import { mapToResumeValues } from "@/lib/utils";
+import { DEFAULT_STYLE_ID, toResumeDocument } from "@/lib/resumeDocument";
 import { formatDate } from "date-fns";
 import {
   ExternalLink,
@@ -34,7 +35,7 @@ import { Link } from "next-view-transitions";
 import { usePrintPdf } from "@/hooks/usePrintPdf";
 import { RWebShare } from "react-web-share";
 import { env } from "@/env";
-import { resumeStyles } from "@/components/ResumeStyles/Styles";
+import { resumeStyles } from "@/components/ResumeStyles/Styles.client";
 
 interface ResumeItemProps {
   resume: ResumeServerData;
@@ -42,7 +43,7 @@ interface ResumeItemProps {
 
 export default function ResumeItem({ resume }: ResumeItemProps) {
   const { handlePrintPdf } = usePrintPdf();
-  const currentStyleId = resume.styleId || "pankaj-prajapat";
+  const currentStyleId = resume.styleId || DEFAULT_STYLE_ID;
 
   const wasUpdated = resume.updatedAt !== resume.createdAt;
 
@@ -51,7 +52,7 @@ export default function ResumeItem({ resume }: ResumeItemProps) {
   )?.component;
 
   return (
-    <div className="group relative rounded-lg border border-transparent bg-secondary p-3 transition-all duration-300 hover:border-border hover:bg-w1">
+    <div className="group relative rounded-lg border border-transparent bg-secondary p-0 transition-all duration-300 hover:border-border hover:bg-w1">
       <div className="space-y-3">
         <Link
           href={`/editor?resumeId=${resume.id}&styleId=${resume.styleId}`}
@@ -61,11 +62,11 @@ export default function ResumeItem({ resume }: ResumeItemProps) {
             {resume.title || "No title"}
           </p>
           {resume.description && (
-            <p className="line-clamp-2 font-rubik cursor-pointer text-sm">
+            <p className="line-clamp-2 cursor-pointer font-rubik text-sm">
               {resume.description}
             </p>
           )}
-          <p className="text-xs font-rubik text-muted-foreground">
+          <p className="font-rubik text-xs text-muted-foreground">
             {wasUpdated ? "Updated" : "Created"} on{" "}
             {formatDate(resume.updatedAt, "MMM d, yyyy h:mm a")}
           </p>
@@ -73,14 +74,14 @@ export default function ResumeItem({ resume }: ResumeItemProps) {
         <div className="relative inline-block w-full">
           {ResumeStylePreview ? (
             <ResumeStylePreview
-              resumeData={mapToResumeValues(resume)}
+              resumeData={toResumeDocument(mapToResumeValues(resume))}
               className="overflow-hidden shadow-sm transition-shadow group-hover:shadow-lg"
             />
           ) : (
             <p>Corrupt File</p>
           )}
           <Link
-            href={`/editor?resumeId=${resume.id}&styleId=${resume.styleId}`}
+            href={`/editor?resumeId=${resume.id}&styleId=${currentStyleId}`}
             className="absolute inset-0"
           />
         </div>
@@ -88,7 +89,11 @@ export default function ResumeItem({ resume }: ResumeItemProps) {
       <MoreMenu
         resumeId={resume.id}
         resumeData={resume}
-        onPrintClick={() => handlePrintPdf(`${env.NEXT_PUBLIC_BASE_URL}/resume/${resume.id}?&styleId=${resume.styleId}`)}
+        onPrintClick={() =>
+          handlePrintPdf(
+            `${env.NEXT_PUBLIC_BASE_URL}/resume/${resume.id}?&styleId=${resume.styleId}`,
+          )
+        }
       />
     </div>
   );
@@ -118,7 +123,11 @@ function MoreMenu({ resumeId, resumeData, onPrintClick }: MoreMenuProps) {
         <DropdownMenuContent>
           <DropdownMenuItem asChild>
             <Link
-              href={resumeData.id ? `/resume/${resumeData.id}?&styleId=${resumeData.styleId}` : "#"}
+              href={
+                resumeData.id
+                  ? `/resume/${resumeData.id}?&styleId=${resumeData.styleId}`
+                  : "#"
+              }
               target="_blank"
               className="flex items-center gap-2"
             >

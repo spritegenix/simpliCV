@@ -2,16 +2,17 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import useDebounce from "@/hooks/useDebounce";
 import { fileReplacer } from "@/lib/utils";
-import { ResumeValues } from "@/lib/validation";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { saveResume } from "./actions";
+import { ResumeDocument } from "@/types/resumeDocument";
+import { toLegacyResumeValues } from "@/lib/resumeDocument";
 
-export default function useAutoSaveResume(resumeData: ResumeValues) {
+export default function useAutoSaveResume(resumeData: ResumeDocument) {
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const debouncedResumeData = useDebounce(resumeData, 1500);
-  const [resumeId, setResumeId] = useState(resumeData.id);
+  const [resumeId, setResumeId] = useState(resumeData.content.id);
   const [lastSavedData, setLastSavedData] = useState(
     structuredClone(resumeData),
   );
@@ -34,37 +35,41 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
         setIsError(false);
 
         const newData = structuredClone(debouncedResumeData);
+        const legacyToSave = structuredClone(toLegacyResumeValues(newData));
 
         // Check if photo is a File that needs to be uploaded
-        if (newData.photo instanceof File && !photoUploadedRef.current) {
+        if (legacyToSave.photo instanceof File && !photoUploadedRef.current) {
           const { uploadFileToS3 } = await import("@/lib/upload-file");
-          const uploadedUrl = await uploadFileToS3(newData.photo);
+          const uploadedUrl = await uploadFileToS3(legacyToSave.photo);
 
           // Save the uploaded URL to our ref
           photoUrlRef.current = uploadedUrl;
           photoUploadedRef.current = true;
 
           // Update the newData with the URL
-          newData.photo = uploadedUrl;
-        } else if (newData.photo instanceof File && photoUrlRef.current) {
+          legacyToSave.photo = uploadedUrl;
+        } else if (legacyToSave.photo instanceof File && photoUrlRef.current) {
           // If it's a File but we already uploaded it, use the cached URL
-          newData.photo = photoUrlRef.current;
+          legacyToSave.photo = photoUrlRef.current;
         }
 
         // Compare only if both are strings (URLs)
         const skipPhotoUpload =
-          typeof lastSavedData.photo === "string" &&
-          typeof newData.photo === "string" &&
-          lastSavedData.photo === newData.photo;
+          typeof toLegacyResumeValues(lastSavedData).photo === "string" &&
+          typeof legacyToSave.photo === "string" &&
+          toLegacyResumeValues(lastSavedData).photo === legacyToSave.photo;
 
         // Server Action to save Data in DataBase
-        const updatedResume = await saveResume({
-          ...newData,
-          // Skip sending photo if it hasn't changed
-          ...(skipPhotoUpload && { photo: undefined }),
-          id: resumeId,
-          styleId: searchParams.get("styleId") || "1",
-        });
+        const updatedResume = await saveResume(
+          {
+            ...legacyToSave,
+            // Skip sending photo if it hasn't changed
+            ...(skipPhotoUpload && { photo: undefined }),
+            id: resumeId,
+            styleId: newData.styleId,
+          },
+          newData.design,
+        );
 
         setResumeId(updatedResume.id);
         setLastSavedData(newData);
@@ -104,27 +109,26 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
     }
 
     function compareData() {
-      // Special case for when photo is a File
-      if (debouncedResumeData.photo instanceof File) {
+      // Compare the full resume document including design
+      const current = structuredClone(debouncedResumeData);
+      const previous = structuredClone(lastSavedData);
+
+      // Handle photo separately since it might be a File object
+      if (current.content.photo instanceof File) {
         if (!photoUploadedRef.current) {
           // If we haven't uploaded this photo yet, then yes, we have changes
           return true;
         }
 
         // If we've uploaded the photo, compare everything else except the photo
-        const current = { ...debouncedResumeData, photo: null };
-        const previous = { ...lastSavedData, photo: null };
-
-        return (
-          JSON.stringify(current, fileReplacer) !==
-          JSON.stringify(previous, fileReplacer)
-        );
+        current.content.photo = null;
+        previous.content.photo = null;
       }
 
-      // Standard comparison for everything else
+      // Standard comparison for everything including design
       return (
-        JSON.stringify(debouncedResumeData, fileReplacer) !==
-        JSON.stringify(lastSavedData, fileReplacer)
+        JSON.stringify(current, fileReplacer) !==
+        JSON.stringify(previous, fileReplacer)
       );
     }
 
@@ -147,16 +151,17 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
   useEffect(() => {
     // If the photo changes to a new File, reset our upload flag
     if (
-      resumeData.photo instanceof File &&
-      resumeData.photo !== debouncedResumeData.photo
+      resumeData.content.photo instanceof File &&
+      resumeData.content.photo !== debouncedResumeData.content.photo
     ) {
       photoUploadedRef.current = false;
       photoUrlRef.current = null;
     }
-  }, [resumeData.photo, debouncedResumeData.photo]);
+  }, [resumeData.content.photo, debouncedResumeData.content.photo]);
 
   return {
     isSaving,
+    resumeId,
     hasUnsavedChanges:
       JSON.stringify(resumeData, fileReplacer) !==
       JSON.stringify(lastSavedData, fileReplacer),

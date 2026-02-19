@@ -53,7 +53,10 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
         id="resumePreviewContent"
       >
         {/* Left Side  */}
-        <div className="col-span-4 space-y-3 border-2 border-black p-6">
+        <div
+          className="col-span-4 space-y-3 border border-black p-6"
+          style={{ borderWidth: "calc(var(--resume-border-width) * 2)" }}
+        >
           <PersonalInfoHeader
             resumeData={resumeData}
             ColorOpacity={ColorOpacity}
@@ -69,9 +72,11 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     className="!m-0 break-inside-avoid space-y-2"
                   >
                     <div className="!m-0 flex flex-col">
-                      <p className="font-semibold">{skill.title}</p>
+                      <p className="font-semibold text-black">{skill.title}</p>
                       {skill.skillName && skill.skillName.length > 0 && (
-                        <p>{skill.skillName?.join(", ")}</p>
+                        <p className="text-black">
+                          {skill.skillName?.join(", ")}
+                        </p>
                       )}
                     </div>
                     <p className="whitespace-pre-line"></p>
@@ -95,19 +100,19 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     )}
                   >
                     <div className="!m-0">
-                      <p>
+                      <p className="text-black">
                         {edu.startDate &&
                           `${safeFormatDate(edu.startDate, "MMM yyyy")} -`}{" "}
                         {edu.endDate
                           ? safeFormatDate(edu.endDate, "MMM yyyy")
                           : "Present"}
                       </p>
-                      <p className="font-semibold">
+                      <p className="font-semibold text-black">
                         {edu.school}
                         {edu.location && `, ${edu.location}`}
                       </p>{" "}
                     </div>
-                    <ul className="!mt-0 list-disc pl-3">
+                    <ul className="!mt-0 list-disc pl-3 text-black">
                       {(edu.degree || edu.stream) && (
                         <li className="">
                           {edu.degree} {edu.stream && `(${edu.stream})`}
@@ -139,11 +144,13 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                     >
                       <Link
                         href={skill.link ? skill.link : "#"}
-                        className="before:mr-1 before:content-['•']"
+                        className="text-black before:mr-1 before:content-['•']"
                       >
                         {skill.title}
                       </Link>{" "}
-                      {skill.description && <p>{skill.description}</p>}
+                      {skill.description && (
+                        <p className="text-black">{skill.description}</p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -168,10 +175,12 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
         <div className="col-span-8 space-y-3 p-6 pl-3">
           {/* Name And Job Title  */}
           <div className="">
-            <p className="text-[2.5rem] font-bold">
+            <p className="text-[2.5rem] font-bold text-black">
               {resumeData.firstName} {resumeData.lastName}
             </p>
-            <p className="text-[2em] font-medium">{resumeData.jobTitle}</p>
+            <p className="text-[2em] font-medium text-black">
+              {resumeData.jobTitle}
+            </p>
           </div>
           {/* Summary */}
           {resumeData.summary && (
@@ -198,12 +207,12 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                       className="relative z-10 grid break-inside-avoid grid-cols-12"
                     >
                       <div className="col-span-2 pr-4 text-center">
-                        <p>
+                        <p className="text-black">
                           {exp.jobLocation && <span>{exp.jobLocation}</span>}
                         </p>
                         <div>
                           {exp.startDate && (
-                            <div className="mx-auto flex flex-col justify-center text-center">
+                            <div className="mx-auto flex flex-col justify-center text-center text-black">
                               <span>
                                 {safeFormatDate(exp.startDate, "MMM yyyy")}
                               </span>{" "}
@@ -224,12 +233,12 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                         />
                         <div className="pl-4">
                           <div className="!m-0 flex items-center justify-between pl-1">
-                            <span className="text-[1.2em] font-semibold">
+                            <span className="text-[1.2em] font-semibold text-black">
                               {exp.company}
                             </span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-[1.1em] font-semibold italic">
+                            <span className="text-[1.1em] font-semibold italic text-black">
                               {exp.position}
                             </span>
                           </div>
@@ -237,7 +246,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                             dangerouslySetInnerHTML={{
                               __html: exp.description || "",
                             }}
-                            className="richTextEditorStyle whitespace-pre-line"
+                            className="richTextEditorStyle whitespace-pre-line text-black"
                           />
                         </div>
                       </div>
@@ -260,7 +269,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                   <div
                     className={`${item.company || item.startDate ? "col-span-2 pr-2" : ""} text-center`}
                   >
-                    <div className="flex flex-col">
+                    <div className="flex flex-col text-black">
                       {item.company && (
                         <span className="italic">{item.company}</span>
                       )}
@@ -315,7 +324,7 @@ export default function Modern1({ resumeData, className }: ResumePreviewProps) {
                         dangerouslySetInnerHTML={{
                           __html: item.description || "",
                         }}
-                        className="richTextEditorStyle whitespace-pre-line"
+                        className="richTextEditorStyle whitespace-pre-line text-black"
                       />
                     </div>
                   </div>
@@ -366,8 +375,9 @@ function PersonalInfoHeader({
             width={500}
             height={500}
             alt="Author photo"
-            className="-ml-3 aspect-square h-full w-full border-4 border-white object-cover object-top"
+            className="-ml-3 aspect-square h-full w-full border border-white object-cover object-top"
             style={{
+              borderWidth: "calc(var(--resume-border-width) * 4)",
               borderRadius:
                 borderStyle === BorderStyles.SQUARE
                   ? "0px"
@@ -381,7 +391,7 @@ function PersonalInfoHeader({
       {/* Social Links  */}
       <div className="flex flex-col gap-2">
         {(city || country) && (
-          <p className="flex items-center gap-1">
+          <p className="flex items-center gap-1 text-black">
             <span
               className="p-0.5"
               style={{
@@ -454,7 +464,7 @@ function ContactLinks({
           >
             {icon ? icon : <SocialMediaIconFinder url={href ? href : ""} />}
           </span>
-          {text === "NO_TEXT" ? "" : <p>{text}</p>}
+          {text === "NO_TEXT" ? "" : <p className="text-black">{text}</p>}
         </Link>
       )}
     </>
@@ -462,7 +472,7 @@ function ContactLinks({
 }
 
 function Text({ children }: { children: string }) {
-  return <p className="!m-0 whitespace-pre-line">{children}</p>;
+  return <p className="!m-0 whitespace-pre-line text-black">{children}</p>;
 }
 
 function Heading1({
@@ -475,7 +485,7 @@ function Heading1({
   return (
     <>
       <div className="relative break-inside-avoid overflow-hidden">
-        <h1 className="relative z-10 inline-block w-fit text-nowrap text-[1.2em] font-semibold uppercase">
+        <h1 className="relative z-10 inline-block w-fit text-nowrap text-[1.2em] font-semibold uppercase text-black">
           {children}
         </h1>
         <span
@@ -497,7 +507,12 @@ function Heading({
 }) {
   return (
     <>
-      <h1 className={cn("flex text-nowrap text-[1.3em] font-bold", className)}>
+      <h1
+        className={cn(
+          "flex text-nowrap text-[1.3em] font-bold text-black",
+          className,
+        )}
+      >
         {children}
       </h1>
     </>
