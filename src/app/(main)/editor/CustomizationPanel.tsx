@@ -616,6 +616,7 @@ export default function CustomizationPanel({
           setSpaceBetweenEntries={setSpaceBetweenEntries}
           borderWidth={borderWidth}
           setBorderWidth={setBorderWidth}
+          disableSpaceBetweenEntries={resumeData.styleId?.startsWith("ats")}
         />
 
         {/* Design tokens */}

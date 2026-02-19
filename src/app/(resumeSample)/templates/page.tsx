@@ -16,7 +16,8 @@ export default async function TemplatesPage() {
   // already fetches `/api/user/subscription` and `/api/user/resume-count`
   // to compute `canCreate`. Render immediately and let client adjust UI.
   const isUser = !!userId;
-  const canCreate = false;
+  // TEMPORARY: Allow template selection for testing
+  const canCreate = true;
 
   return (
     <Layout footerStyle>

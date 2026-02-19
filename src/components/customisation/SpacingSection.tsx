@@ -10,6 +10,7 @@ interface SpacingSectionProps {
   setSpaceBetweenEntries: (value: number) => void;
   borderWidth: number;
   setBorderWidth: (value: number) => void;
+  disableSpaceBetweenEntries?: boolean;
 }
 
 export default function SpacingSection({
@@ -21,6 +22,7 @@ export default function SpacingSection({
   setSpaceBetweenEntries,
   borderWidth,
   setBorderWidth,
+  disableSpaceBetweenEntries = false,
 }: SpacingSectionProps) {
   return (
     <Card>
@@ -103,11 +105,11 @@ export default function SpacingSection({
         </div>
 
         {/* Space between Entries */}
-        <div className="space-y-2">
+        <div className={`space-y-2${disableSpaceBetweenEntries ? " pointer-events-none opacity-50" : ""}`}>
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium">Space between Entries</label>
             <span className="text-sm text-primary">
-              {spaceBetweenEntries}mm
+              {disableSpaceBetweenEntries ? "N/A" : `${spaceBetweenEntries}mm`}
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -117,6 +119,7 @@ export default function SpacingSection({
               max={20}
               step={0.5}
               value={spaceBetweenEntries}
+              disabled={disableSpaceBetweenEntries}
               onChange={(e) => setSpaceBetweenEntries(Number(e.target.value))}
               className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-muted [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
             />
@@ -125,6 +128,7 @@ export default function SpacingSection({
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
+                disabled={disableSpaceBetweenEntries}
                 onClick={() =>
                   setSpaceBetweenEntries(Math.max(0, spaceBetweenEntries - 1))
                 }
@@ -135,6 +139,7 @@ export default function SpacingSection({
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
+                disabled={disableSpaceBetweenEntries}
                 onClick={() =>
                   setSpaceBetweenEntries(Math.min(20, spaceBetweenEntries + 1))
                 }

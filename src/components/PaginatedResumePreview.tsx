@@ -32,6 +32,14 @@ export default function PaginatedResumePreview({
   // Calculate A4 page height based on current width (Aspect Ratio 1:1.414)
   const pageHeight = width ? width * 1.414 : 0;
 
+  // Page-level vertical margin so content doesn't stick to top/bottom edges
+  // on page 2+. Applied uniformly to every page for consistency.
+  const PAGE_MARGIN_RATIO = 0.03; // 3 % of page height (~9 mm on real A4)
+  const pageMargin = pageHeight
+    ? Math.round(pageHeight * PAGE_MARGIN_RATIO)
+    : 0;
+  const effectiveColumnHeight = pageHeight ? pageHeight - 2 * pageMargin : 0;
+
   useEffect(() => {
     if (!containerRef.current || !width || !pageHeight) return;
 
@@ -118,14 +126,14 @@ export default function PaginatedResumePreview({
             data-resume-preview-page-inner
             style={
               {
-                "--page-height": `${pageHeight}px`,
+                "--page-height": `${effectiveColumnHeight}px`,
                 "--page-width": `${width}px`,
                 transform: width
                   ? `translateX(-${pageIndex * width}px)`
                   : "none",
                 width: width ? `${width}px` : "100%",
                 position: width ? "absolute" : "relative",
-                top: 0,
+                top: pageMargin,
                 left: 0,
               } as React.CSSProperties
             }
