@@ -33,6 +33,9 @@ frontend:
         - echo "NEXT_PUBLIC_NODE_ENV=$NEXT_PUBLIC_NODE_ENV" >> .env
         - echo "NODE_ENV=$NODE_ENV" >> .env
 
+        # Apply any pending Prisma migrations to the production DB
+        - npx prisma migrate deploy
+
         # Disable telemetry and build
         - NEXT_TELEMETRY_DISABLED=1 npm run build
 
