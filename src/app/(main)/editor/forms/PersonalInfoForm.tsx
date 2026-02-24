@@ -13,8 +13,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { EditorFormProps } from "@/lib/types";
 import { personalInfoSchema, PersonalInfoValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import PhotoCropModal from "@/components/PhotoCropModal";
 
 export default function PersonalInfoForm({
   resumeData,
@@ -56,11 +57,12 @@ export default function PersonalInfoForm({
   }, [form, resumeData, setResumeData]);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const [pendingPhoto, setPendingPhoto] = useState<File | null>(null);
+  // Stores the RHF onChange so we can call it after cropping
+  const pendingOnChangeRef = useRef<((file: File | null) => void) | null>(null);
 
   const isImageFieldDisabled = [
-    "ats1",
     "ats2",
-    "ats3",
     "ats4",
     "ats5",
     "ats6",
@@ -101,7 +103,12 @@ export default function PersonalInfoForm({
                       }
                       onChange={(e) => {
                         const file = e.target.files?.[0];
-                        fieldValues.onChange(file);
+                        if (file) {
+                          pendingOnChangeRef.current = fieldValues.onChange;
+                          setPendingPhoto(file);
+                          // Reset input so the same file can be re-selected
+                          e.target.value = "";
+                        }
                       }}
                       ref={photoInputRef}
                     />
@@ -291,6 +298,18 @@ export default function PersonalInfoForm({
           />
         </form>
       </Form>
+
+      <PhotoCropModal
+        file={pendingPhoto}
+        onConfirm={(croppedFile) => {
+          pendingOnChangeRef.current?.(croppedFile);
+          setPendingPhoto(null);
+        }}
+        onClose={() => {
+          setPendingPhoto(null);
+          if (photoInputRef.current) photoInputRef.current.value = "";
+        }}
+      />
     </div>
   );
 }
