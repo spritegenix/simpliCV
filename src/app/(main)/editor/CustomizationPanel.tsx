@@ -473,15 +473,12 @@ export default function CustomizationPanel({
     ?.detailsLayout as string | undefined;
   const isAts1 = resumeData.styleId === "ats1";
   const isAts2 = resumeData.styleId === "ats2";
-  const isAts3 = resumeData.styleId === "ats3";
   const isAts4 = resumeData.styleId === "ats4";
   const isAts6 = resumeData.styleId === "ats6";
   const isAts7 = resumeData.styleId === "ats7";
-  const isModern1 = resumeData.styleId === "modern1";
-  const isModern3 = resumeData.styleId === "modern3";
   const isModern5 = resumeData.styleId === "modern5";
   const detailsLayout: "stacked" | "compact" =
-    isAts1 || isAts2 || isAts3
+    isAts1 || isAts2
       ? rawDetailsLayout === "stacked"
         ? "stacked"
         : "compact"
@@ -509,25 +506,17 @@ export default function CustomizationPanel({
                       ? rawDetailsLayout === "stacked"
                         ? "stacked"
                         : "compact"
-                      : isModern1
-                        ? "stacked"
-                        : isModern3
+                      : isModern5
+                        ? rawDetailsLayout === "stacked"
                           ? "stacked"
-                          : isModern5
-                            ? rawDetailsLayout === "stacked"
-                              ? "stacked"
-                              : "compact"
-                            : isModern4
-                              ? "stacked"
-                              : rawDetailsLayout === "compact"
-                                ? "compact"
-                                : "stacked";
+                          : "compact"
+                        : isModern4
+                          ? "stacked"
+                          : rawDetailsLayout === "compact"
+                            ? "compact"
+                            : "stacked";
   const setDetailsLayout = (value: "stacked" | "compact") => {
-    if (
-      (isAts4 || isAts5 || isAts6 || isAts7 || isModern1 || isModern3) &&
-      value === "compact"
-    )
-      return; // Prevent setting to compact for ats4, ats5, ats6, ats7, modern1, and modern3
+    if ((isAts4 || isAts5 || isAts6 || isAts7) && value === "compact") return; // Prevent setting to compact for ats4, ats5, ats6, ats7
     if (
       (isAts8 || isAts10 || isAts14 || isAts15 || isModern5) &&
       value === "stacked"
