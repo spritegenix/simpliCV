@@ -39,8 +39,12 @@ export default function ResumePreviewSection({
   return (
     <div
       className={cn("group relative hidden w-full md:flex md:w-1/2", className)}
+      data-tour="editor-preview"
     >
-      <div className="absolute left-1 top-1 z-10 flex flex-none flex-col gap-3 opacity-50 transition-opacity group-hover:opacity-100 lg:left-1 lg:top-3 xl:opacity-100">
+      <div
+        className="absolute left-1 top-1 z-10 flex flex-none flex-col gap-3 opacity-50 transition-opacity group-hover:opacity-100 lg:left-1 lg:top-3 xl:opacity-100"
+        data-tour="editor-quick-tools"
+      >
         <ColorPicker
           color={resumeData.design.color.accent || undefined}
           onChange={(color) =>
@@ -87,7 +91,7 @@ export default function ResumePreviewSection({
         />
         <ShareButton resumeData={resumeData} />
       </div>
-      <div className="relative flex w-full flex-col overflow-auto bg-secondary p-6 gap-6">
+      <div className="relative flex w-full flex-col gap-6 overflow-auto bg-secondary p-6">
         {ResumeStylePreview ? (
           <PaginatedResumePreview
             resumeData={resumeData}

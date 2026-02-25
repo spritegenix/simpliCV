@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import type { OfferLetterDocument } from "@/lib/offer-letter/offerLetterDocument";
 import type { OfferLetterValues } from "@/lib/offer-letter/types";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,12 @@ import BodyForm from "./forms/BodyForm";
 import ClosingSignatureForm from "./forms/ClosingSignatureForm";
 import useAutoSaveOfferLetter from "./useAutoSaveOfferLetter";
 import OfferLetterPreviewSection from "./OfferLetterPreviewSection";
+import { offerLetterEditorTourSteps } from "@/data/tourSteps";
+
+// Client-only guided tour to avoid hydration mismatch from Joyride
+const GuidedTourNoSSR = dynamic(() => import("@/components/GuidedTour"), {
+  ssr: false,
+});
 
 interface OfferLetterEditorProps {
   initialDocument: OfferLetterDocument;
@@ -104,6 +111,10 @@ export default function OfferLetterEditor({
 
   return (
     <div className="flex h-screen flex-col pt-20">
+      <GuidedTourNoSSR
+        tourKey="offer-editor"
+        steps={offerLetterEditorTourSteps}
+      />
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left editor panel */}
@@ -111,30 +122,40 @@ export default function OfferLetterEditor({
           {/* Scrollable content area */}
           <div className="flex-1 overflow-y-auto px-4 pb-6">
             <div className="mx-auto max-w-3xl space-y-8 py-6">
-              <CompanyForm
-                value={offerDocument.content.company}
-                onChange={(v) => updateSection("company", v)}
-              />
+              <div data-tour="offer-company-form">
+                <CompanyForm
+                  value={offerDocument.content.company}
+                  onChange={(v) => updateSection("company", v)}
+                />
+              </div>
 
-              <DateForm
-                value={offerDocument.content.date}
-                onChange={(v) => updateSection("date", v)}
-              />
+              <div data-tour="offer-date-form">
+                <DateForm
+                  value={offerDocument.content.date}
+                  onChange={(v) => updateSection("date", v)}
+                />
+              </div>
 
-              <CandidateForm
-                value={offerDocument.content.candidate}
-                onChange={(v) => updateSection("candidate", v)}
-              />
+              <div data-tour="offer-candidate-form">
+                <CandidateForm
+                  value={offerDocument.content.candidate}
+                  onChange={(v) => updateSection("candidate", v)}
+                />
+              </div>
 
-              <BodyForm
-                value={offerDocument.content.body}
-                onChange={(v) => updateSection("body", v)}
-              />
+              <div data-tour="offer-body-form">
+                <BodyForm
+                  value={offerDocument.content.body}
+                  onChange={(v) => updateSection("body", v)}
+                />
+              </div>
 
-              <ClosingSignatureForm
-                value={offerDocument.content.closingSignature}
-                onChange={(v) => updateSection("closingSignature", v)}
-              />
+              <div data-tour="offer-closing-form">
+                <ClosingSignatureForm
+                  value={offerDocument.content.closingSignature}
+                  onChange={(v) => updateSection("closingSignature", v)}
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -14,6 +14,7 @@ import { Link } from "next-view-transitions";
 import { PlusSquare } from "lucide-react";
 import Wrapper from "@/components/Wrappers";
 import GeneratingPdfModal from "@/components/GeneratingPdfModal";
+import ResumesTour from "./ResumesTour";
 // import CreateResumeButton from "./CreateResumeButton";
 // import { canCreateResume } from "@/lib/permissions";
 
@@ -59,18 +60,23 @@ export default async function Page() {
 
   return (
     <Layout>
+      <ResumesTour />
       <Wrapper
         bgColor="bg-w3 pattern3 pb-20"
         isTop2
         containerClassName="min-h-screen"
       >
-        <div className="flex justify-between">
+        <div className="flex justify-between" data-tour="resumes-header">
           <div className="text-white">
             <h1 className="text-3xl font-bold">Your Resumes</h1>
             <p>Total: {totalCount}</p>
           </div>
           {resumes.length > 0 && (
-            <Button asChild className="flex w-fit gap-2">
+            <Button
+              asChild
+              className="flex w-fit gap-2"
+              data-tour="resumes-new-btn"
+            >
               <Link href={`/templates`}>
                 <PlusSquare className="size-5" />
                 New Resumes
@@ -99,7 +105,10 @@ export default async function Page() {
             </Button>
           </div>
         ) : (
-          <div className="flex w-full grid-cols-2 flex-col gap-2 sm:grid md:grid-cols-3 lg:grid-cols-4">
+          <div
+            className="flex w-full grid-cols-2 flex-col gap-2 sm:grid md:grid-cols-3 lg:grid-cols-4"
+            data-tour="resumes-list"
+          >
             {resumes.map((resume) => (
               <ResumeItem key={resume.id} resume={resume} />
             ))}

@@ -21,6 +21,12 @@ import {
   toResumeDocument,
 } from "@/lib/resumeDocument";
 import { ResumeDocument } from "@/types/resumeDocument";
+import { resumeEditorTourSteps } from "@/data/tourSteps";
+
+// Client-only guided tour to avoid hydration mismatch from Joyride
+const GuidedTourNoSSR = dynamic(() => import("@/components/GuidedTour"), {
+  ssr: false,
+});
 
 // Client-only resume preview to avoid hydration mismatch from dynamic styles
 const ResumePreviewSection = dynamic(() => import("./ResumePreviewSection"), {
@@ -96,6 +102,7 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
 
   return (
     <div className="flex h-screen flex-col pt-20">
+      <GuidedTourNoSSR tourKey="resume-editor" steps={resumeEditorTourSteps} />
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left editor panel */}
@@ -108,38 +115,49 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
           {/* Scrollable content area */}
           <div className="flex-1 overflow-y-auto px-3 pb-6">
             <div className="mb-4">
-              <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
+              <div data-tour="editor-breadcrumbs">
+                <Breadcrumbs
+                  currentStep={currentStep}
+                  setCurrentStep={setStep}
+                />
+              </div>
               <div className="mt-4 flex items-center gap-2 px-3">
                 {!showCustomization && (
-                  <AddContentModal
-                    onSelectSection={setStep}
-                    setResumeData={setResumeData}
-                  />
+                  <div data-tour="editor-add-content">
+                    <AddContentModal
+                      onSelectSection={setStep}
+                      setResumeData={setResumeData}
+                    />
+                  </div>
                 )}
 
                 <div className="ml-auto flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowCustomization(!showCustomization)}
-                    className="gap-2 py-4 text-base"
-                  >
-                    {showCustomization ? (
-                      <>
-                        <FileEdit className="h-4 w-4" />
-                        <span className="hidden sm:inline">Editorial</span>
-                      </>
-                    ) : (
-                      <>
-                        <Settings2 className="h-4 w-4" />
-                        <span className="hidden sm:inline">Customize</span>
-                      </>
-                    )}
-                  </Button>
-                  {!showCustomization && (
-                    <ImportResumeButton
-                      setResumeData={setResumeData}
+                  <div data-tour="editor-customize-btn">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowCustomization(!showCustomization)}
                       className="gap-2 py-4 text-base"
-                    />
+                    >
+                      {showCustomization ? (
+                        <>
+                          <FileEdit className="h-4 w-4" />
+                          <span className="hidden sm:inline">Editorial</span>
+                        </>
+                      ) : (
+                        <>
+                          <Settings2 className="h-4 w-4" />
+                          <span className="hidden sm:inline">Customize</span>
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  {!showCustomization && (
+                    <div data-tour="editor-import-btn">
+                      <ImportResumeButton
+                        setResumeData={setResumeData}
+                        className="gap-2 py-4 text-base"
+                      />
+                    </div>
                   )}
                 </div>
               </div>
@@ -150,12 +168,14 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
                 setResumeData={setResumeData}
               />
             ) : (
-              FormComponent && (
-                <FormComponent
-                  resumeData={resumeData}
-                  setResumeData={setResumeData}
-                />
-              )
+              <div data-tour="editor-form">
+                {FormComponent && (
+                  <FormComponent
+                    resumeData={resumeData}
+                    setResumeData={setResumeData}
+                  />
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -175,13 +195,15 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
       </div>
 
       {/* Fixed Footer - outside scroll */}
-      <Footer
-        currentStep={currentStep}
-        setCurrentStep={setStep}
-        showSmResumePreview={showSmResumePreview}
-        setShowSmResumePreview={setShowSmResumePreview}
-        isSaving={isSaving}
-      />
+      <div data-tour="editor-footer">
+        <Footer
+          currentStep={currentStep}
+          setCurrentStep={setStep}
+          showSmResumePreview={showSmResumePreview}
+          setShowSmResumePreview={setShowSmResumePreview}
+          isSaving={isSaving}
+        />
+      </div>
 
       {/* Template Aside */}
       <ResumeTemplateAside

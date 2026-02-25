@@ -8,6 +8,7 @@ import { Link } from "next-view-transitions";
 import { PlusSquare } from "lucide-react";
 import OfferLetterItem from "@/app/(main)/offer-letters/OfferLetterItem";
 import { OfferStatus } from "@prisma/client";
+import OfferLettersTour from "./OfferLettersTour";
 
 export const metadata: Metadata = {
   title: "Your Offer Letters",
@@ -73,18 +74,23 @@ export default async function Page() {
 
   return (
     <Layout>
+      <OfferLettersTour />
       <Wrapper
         bgColor="bg-w3 pattern3 pb-20"
         isTop2
         containerClassName="min-h-screen"
       >
-        <div className="flex justify-between">
+        <div className="flex justify-between" data-tour="offers-header">
           <div className="text-white">
             <h1 className="text-3xl font-bold">Your Offer Letters</h1>
             <p>Total: {totalCount}</p>
           </div>
           {offerLetters.length > 0 && (
-            <Button asChild className="flex w-fit gap-2">
+            <Button
+              asChild
+              className="flex w-fit gap-2"
+              data-tour="offers-new-btn"
+            >
               <Link href="/offer-letters/editor">
                 <PlusSquare className="size-5" />
                 New Offer Letter
@@ -113,7 +119,10 @@ export default async function Page() {
             </Button>
           </div>
         ) : (
-          <div className="flex w-full grid-cols-2 flex-col gap-2 sm:grid md:grid-cols-3 lg:grid-cols-4">
+          <div
+            className="flex w-full grid-cols-2 flex-col gap-2 sm:grid md:grid-cols-3 lg:grid-cols-4"
+            data-tour="offers-list"
+          >
             {offerLetters.map((offerLetter) => (
               <OfferLetterItem key={offerLetter.id} offerLetter={offerLetter} />
             ))}

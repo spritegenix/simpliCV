@@ -20,6 +20,7 @@ export default function OfferLetterPreviewSection({
   return (
     <div
       className={cn("group relative hidden w-full md:flex md:w-1/2", className)}
+      data-tour="offer-preview"
     >
       <div className="absolute left-1 top-1 z-10 flex flex-none flex-col gap-3 opacity-50 transition-opacity group-hover:opacity-100 lg:left-1 lg:top-3 xl:opacity-100">
         <FullScreenPreviewButton
