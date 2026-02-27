@@ -15,7 +15,7 @@ bunx prisma studio
 bun i @tiptap/react @tiptap/pm @tiptap/starter-kit @tiptap/extension-color @tiptap/extension-highlight @tiptap/extension-text-align
 
 https://preview.themeforest.net/item/cvland-cv-builder-resume-maker-bootstrap-template/full_screen_preview/51328668?_ga=2.47471535.96159981.1743580716-714647057.1740657963&_gac=1.128634622.1741239477.CjwKCAiAiaC-BhBEEiwAjY99qFBh_1RKnX9O1cMsa8TRYHHu1Nx0ua9JrqIGW5vxSoxSwhlz-nvhKhoCU00QAvD_BwE
-
+s
 
 
 <!-- https://github.com/codinginflow/nextjs-15-ai-resume-builder  -->
