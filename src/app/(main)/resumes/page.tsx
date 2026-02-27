@@ -47,14 +47,38 @@ export default async function Page() {
       getUserSubscriptionLevel(userId),
     ]);
   } catch (error) {
-    // Suppress console warning in dev to avoid source map noise
-    if (process.env.NODE_ENV === "production") {
-      console.error(
-        "[db] Failed to load resumes page; rendering empty state. " +
-          "This usually means DATABASE_URL is unreachable.",
-        error,
-      );
-    }
+    console.error("[RESUMES_PAGE_ERROR]", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+    });
+
+    return (
+      <Layout>
+        <Wrapper
+          bgColor="bg-w3 pattern3 pb-20"
+          isTop2
+          containerClassName="min-h-screen"
+        >
+          <div className="flex flex-col items-center justify-center py-24 text-center text-white">
+            <h1 className="text-3xl font-bold">Something went wrong</h1>
+            <p className="mt-4 max-w-md text-white/80">
+              We encountered an error while loading your resumes. This is
+              usually due to a database connection issue.
+            </p>
+            <Button
+              className="mt-8"
+              onClick={() => {
+                "use client";
+                window.location.reload();
+              }}
+            >
+              Retry
+            </Button>
+          </div>
+        </Wrapper>
+      </Layout>
+    );
   }
 
   return (

@@ -64,10 +64,37 @@ export default async function Page() {
       }),
     ]);
   } catch (error) {
-    console.warn(
-      "[db] Failed to load offer letters page; rendering empty state. " +
-        "This usually means DATABASE_URL is unreachable.",
-      error,
+    console.error("[OFFER_LETTERS_PAGE_ERROR]", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+    });
+
+    return (
+      <Layout>
+        <Wrapper
+          bgColor="bg-w3 pattern3 pb-20"
+          isTop2
+          containerClassName="min-h-screen"
+        >
+          <div className="flex flex-col items-center justify-center py-24 text-center text-white">
+            <h1 className="text-3xl font-bold">Something went wrong</h1>
+            <p className="mt-4 max-w-md text-white/80">
+              We encountered an error while loading your offer letters. This is
+              usually due to a database connection issue.
+            </p>
+            <Button
+              className="mt-8"
+              onClick={() => {
+                "use client";
+                window.location.reload();
+              }}
+            >
+              Retry
+            </Button>
+          </div>
+        </Wrapper>
+      </Layout>
     );
   }
 
